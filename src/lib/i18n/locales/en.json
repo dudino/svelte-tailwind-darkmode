@@ -3,7 +3,18 @@
     "home": "Home",
     "about": "About",
     "profile": "Profile",
-    "settings": "Settings"
+    "settings": "Settings",
+    "dashboard": "Dashboard",
+    "users": "Users",
+    "locations": "Locations",
+    "schedules": "Schedules",
+    "bookings": "Bookings",
+    "reports": "Reports",
+    "clients": "Clients",
+    "reviews": "Reviews",
+    "mySchedule": "My Schedule",
+    "myBookings": "My Bookings",
+    "clientPortal": "Client Portal"
   },
   "home": {
     "title": "Welcome to {theme} Theme",

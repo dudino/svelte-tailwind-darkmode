@@ -3,7 +3,18 @@
     "home": "Domů",
     "about": "O nás",
     "profile": "Profil",
-    "settings": "Nastavení"
+    "settings": "Nastavení",
+    "dashboard": "Dashboard",
+    "users": "Uživatelé",
+    "locations": "Lokace",
+    "schedules": "Rozvrhy",
+    "bookings": "Rezervace",
+    "reports": "Zprávy",
+    "clients": "Klienti",
+    "reviews": "Recenze",
+    "mySchedule": "Můj rozvrh",
+    "myBookings": "Mé rezervace",
+    "clientPortal": "Klientský portál"
   },
   "home": {
     "title": "Vítejte v {theme} tématu",

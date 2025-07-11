@@ -3,7 +3,18 @@
     "home": "Главная",
     "about": "О нас",
     "profile": "Профиль",
-    "settings": "Настройки"
+    "settings": "Настройки",
+    "dashboard": "Панель управления",
+    "users": "Пользователи",
+    "locations": "Локации",
+    "schedules": "Расписания",
+    "bookings": "Бронирования",
+    "reports": "Отчёты",
+    "clients": "Клиенты",
+    "reviews": "Отзывы",
+    "mySchedule": "Мое расписание",
+    "myBookings": "Мои бронирования",
+    "clientPortal": "Клиентский портал"
   },
   "home": {
     "title": "Добро пожаловать в {theme} тему",

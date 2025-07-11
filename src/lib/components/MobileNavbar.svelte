@@ -1,10 +1,15 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { _, isLoading } from 'svelte-i18n';
+	import { currentUser, permissions, isAuthenticated } from '$lib/stores/auth';
 	import Button from '$lib/components/ui/button/button.svelte';
 	import ThemeToggle from './ThemeToggle.svelte';
 	import LanguageSelector from './LanguageSelector.svelte';
-	import { Menu, X, Home, User, Settings, Info } from 'lucide-svelte';
+	import UserProfile from './auth/UserProfile.svelte';
+	import { 
+		Menu, X, Home, User, Settings, Info, Calendar, 
+		Users, MapPin, FileText, Star, BarChart3 
+	} from 'lucide-svelte';
 
 	let isOpen = false;
 	let mounted = false;
@@ -42,6 +47,53 @@
 			document.removeEventListener('click', handleOutsideClick);
 		}
 	});
+
+	// Navigation items based on user role
+	$: navigationItems = $isAuthenticated ? getNavigationItems($currentUser?.role, $permissions) : [];
+
+	function getNavigationItems(role: string | undefined, perms: any) {
+		if (!role) return [];
+
+		const baseItems = [
+			{ href: '/', icon: Home, labelKey: 'nav.dashboard', show: true }
+		];
+
+		switch (role) {
+			case 'Administrator':
+				return [
+					...baseItems,
+					{ href: '/users', icon: Users, labelKey: 'nav.users', show: perms.canManageUsers },
+					{ href: '/locations', icon: MapPin, labelKey: 'nav.locations', show: perms.canManageLocations },
+					{ href: '/schedules', icon: Calendar, labelKey: 'nav.schedules', show: perms.canManageSchedules },
+					{ href: '/bookings', icon: FileText, labelKey: 'nav.bookings', show: perms.canViewAllBookings },
+					{ href: '/reports', icon: BarChart3, labelKey: 'nav.reports', show: perms.canViewReports },
+					{ href: '/clients', icon: User, labelKey: 'nav.clients', show: perms.canManageClients },
+					{ href: '/reviews', icon: Star, labelKey: 'nav.reviews', show: true },
+					{ href: '/settings', icon: Settings, labelKey: 'nav.settings', show: true }
+				];
+
+			case 'Operator':
+				return [
+					...baseItems,
+					{ href: '/schedules', icon: Calendar, labelKey: 'nav.schedules', show: perms.canManageSchedules },
+					{ href: '/bookings', icon: FileText, labelKey: 'nav.bookings', show: perms.canCreateBookings },
+					{ href: '/clients', icon: User, labelKey: 'nav.clients', show: perms.canManageClients },
+					{ href: '/reviews', icon: Star, labelKey: 'nav.reviews', show: true }
+				];
+
+			case 'Masseuse':
+				return [
+					...baseItems,
+					{ href: '/my-schedule', icon: Calendar, labelKey: 'nav.mySchedule', show: true },
+					{ href: '/my-bookings', icon: FileText, labelKey: 'nav.myBookings', show: true },
+					{ href: '/client-portal', icon: User, labelKey: 'nav.clientPortal', show: true },
+					{ href: '/profile', icon: Settings, labelKey: 'nav.profile', show: true }
+				];
+
+			default:
+				return baseItems;
+		}
+	}
 </script>
 
 <nav class="mobile-nav fixed top-0 left-0 right-0 z-50">
@@ -57,76 +109,49 @@
 
 		<!-- Desktop Navigation with glass effect -->
 		<div class="hidden md:flex md:items-center md:space-x-8">
-			<a href="/" class="flex items-center space-x-2 text-foreground/80 hover:text-primary transition-all duration-300 hover:scale-105">
-				<Home class="h-4 w-4" />
-				<span class="font-medium">{$isLoading ? 'Home' : $_('nav.home')}</span>
-			</a>
-			<a href="/about" class="flex items-center space-x-2 text-foreground/80 hover:text-primary transition-all duration-300 hover:scale-105">
-				<Info class="h-4 w-4" />
-				<span class="font-medium">{$isLoading ? 'About' : $_('nav.about')}</span>
-			</a>
-			<a href="/profile" class="flex items-center space-x-2 text-foreground/80 hover:text-primary transition-all duration-300 hover:scale-105">
-				<User class="h-4 w-4" />
-				<span class="font-medium">{$isLoading ? 'Profile' : $_('nav.profile')}</span>
-			</a>
-			<a href="/settings" class="flex items-center space-x-2 text-foreground/80 hover:text-primary transition-all duration-300 hover:scale-105">
-				<Settings class="h-4 w-4" />
-				<span class="font-medium">{$isLoading ? 'Settings' : $_('nav.settings')}</span>
-			</a>
+			{#each navigationItems.filter(item => item.show) as item}
+				<a href={item.href} class="flex items-center space-x-2 text-foreground/80 hover:text-primary transition-all duration-300 hover:scale-105">
+					<svelte:component this={item.icon} class="h-4 w-4" />
+					<span class="font-medium">{$isLoading ? item.labelKey : $_(item.labelKey)}</span>
+				</a>
+			{/each}
 		</div>
 
 		<!-- Right side actions -->
 		<div class="flex items-center space-x-2">
+			{#if $isAuthenticated}
+				<UserProfile />
+			{/if}
 			<LanguageSelector />
 			<ThemeToggle />
-			<Button on:click={toggleMenu} variant="ghost" size="icon" class="md:hidden">
-				{#if isOpen}
-					<X class="h-5 w-5" />
-				{:else}
-					<Menu class="h-5 w-5" />
-				{/if}
-				<span class="sr-only">Toggle menu</span>
-			</Button>
+			{#if $isAuthenticated}
+				<Button on:click={toggleMenu} variant="ghost" size="icon" class="md:hidden">
+					{#if isOpen}
+						<X class="h-5 w-5" />
+					{:else}
+						<Menu class="h-5 w-5" />
+					{/if}
+					<span class="sr-only">Toggle menu</span>
+				</Button>
+			{/if}
 		</div>
 	</div>
 
 	<!-- Mobile Menu Overlay with glass effect -->
-	{#if isOpen}
+	{#if isOpen && $isAuthenticated}
 		<div class="absolute top-full left-0 right-0 md:hidden menu-overlay">
 			<!-- Menu Items -->
 			<div class="px-6 py-4 space-y-2">
-				<a 
-					href="/" 
-					class="flex items-center space-x-4 px-4 py-4 rounded-xl text-foreground/80 hover:bg-accent/50 hover:text-accent-foreground transition-all duration-300 hover:scale-105"
-					on:click={closeMenu}
-				>
-					<Home class="h-5 w-5" />
-					<span class="font-medium text-lg">{$isLoading ? 'Home' : $_('nav.home')}</span>
-				</a>
-				<a 
-					href="/about" 
-					class="flex items-center space-x-4 px-4 py-4 rounded-xl text-foreground/80 hover:bg-accent/50 hover:text-accent-foreground transition-all duration-300 hover:scale-105"
-					on:click={closeMenu}
-				>
-					<Info class="h-5 w-5" />
-					<span class="font-medium text-lg">{$isLoading ? 'About' : $_('nav.about')}</span>
-				</a>
-				<a 
-					href="/profile" 
-					class="flex items-center space-x-4 px-4 py-4 rounded-xl text-foreground/80 hover:bg-accent/50 hover:text-accent-foreground transition-all duration-300 hover:scale-105"
-					on:click={closeMenu}
-				>
-					<User class="h-5 w-5" />
-					<span class="font-medium text-lg">{$isLoading ? 'Profile' : $_('nav.profile')}</span>
-				</a>
-				<a 
-					href="/settings" 
-					class="flex items-center space-x-4 px-4 py-4 rounded-xl text-foreground/80 hover:bg-accent/50 hover:text-accent-foreground transition-all duration-300 hover:scale-105"
-					on:click={closeMenu}
-				>
-					<Settings class="h-5 w-5" />
-					<span class="font-medium text-lg">{$isLoading ? 'Settings' : $_('nav.settings')}</span>
-				</a>
+				{#each navigationItems.filter(item => item.show) as item}
+					<a 
+						href={item.href} 
+						class="flex items-center space-x-4 px-4 py-4 rounded-xl text-foreground/80 hover:bg-accent/50 hover:text-accent-foreground transition-all duration-300 hover:scale-105"
+						on:click={closeMenu}
+					>
+						<svelte:component this={item.icon} class="h-5 w-5" />
+						<span class="font-medium text-lg">{$isLoading ? item.labelKey : $_(item.labelKey)}</span>
+					</a>
+				{/each}
 			</div>
 		</div>
 	{/if}

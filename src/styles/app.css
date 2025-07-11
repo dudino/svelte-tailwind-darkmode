@@ -29,6 +29,7 @@
 		--background-rgb: 255, 255, 255;
 		--primary-rgb: 219, 39, 119;
 		--border-rgb: 203, 213, 225;
+		--card-rgb: 250, 250, 250;
 		
 		/* Enhanced light gradient variables */
 		--gradient-from: 330 100% 99%;
@@ -62,6 +63,7 @@
 		--background-rgb: 15, 8, 12;
 		--primary-rgb: 244, 114, 182;
 		--border-rgb: 39, 25, 32;
+		--card-rgb: 20, 15, 18;
 		
 		/* Enhanced dark gradient variables */
 		--gradient-from: 315 50% 2%;
