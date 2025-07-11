@@ -38,6 +38,7 @@ init({
 	fallbackLocale: defaultLocale,
 	initialLocale: initialLocale,
 	loadingDelay: 200,
+	warnOnMissingMessages: true,
 });
 
 // Listen for locale changes and save to localStorage

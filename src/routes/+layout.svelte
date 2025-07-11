@@ -26,12 +26,14 @@
 
 <ModeWatcher />
 {#if i18nLoaded}
+	{#key $locale}
 	<ProtectedRoute>
 		<MobileNavbar />
 		<main class="container mx-auto px-4 py-6">
 			<slot />
 		</main>
 	</ProtectedRoute>
+	{/key}
 {:else}
 	<!-- Loading state while i18n initializes -->
 	<div class="fixed inset-0 flex items-center justify-center bg-background">

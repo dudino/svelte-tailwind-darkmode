@@ -1,15 +1,31 @@
 <script>
-	import { _ } from 'svelte-i18n';
+	import { _, locale, isLoading } from 'svelte-i18n';
 	import { isAuthenticated } from '$lib/stores/auth';
 	import DashboardRouter from '$lib/components/dashboard/DashboardRouter.svelte';
 	import Button from '$lib/components/ui/button/button.svelte';
+	import { onMount } from 'svelte';
 	
-	// Debug translations
-	$: console.log('Current translations:', {
+	let forceUpdate = 0;
+	
+	// Force re-evaluation when locale changes
+	$: if ($locale) {
+		forceUpdate++;
+	}
+	
+	// Force reactivity by making translations dependent on locale and forceUpdate
+	$: translations = $locale && !$isLoading ? {
 		homeSubtitle: $_('home.subtitle'),
 		signIn: $_('auth.signInToAccess'),
 		navHome: $_('nav.home')
-	});
+	} : {
+		homeSubtitle: 'Loading...',
+		signIn: 'Loading...',
+		navHome: 'Loading...'
+	};
+	
+	// Debug translations
+	$: console.log('Current translations:', translations);
+	$: console.log('Current locale in page:', $locale, 'forceUpdate:', forceUpdate);
 </script>
 
 <svelte:head>
@@ -20,6 +36,7 @@
 	<DashboardRouter />
 {:else}
 	<!-- Public landing page (if somehow accessed) -->
+	{#key $locale}
 	<div class="space-y-12 relative">
 		<!-- Hero Section with enhanced styling -->
 		<section class="text-center py-16 relative">
@@ -30,13 +47,14 @@
 				<span class="gradient-text">Affinity</span>
 			</h1>
 			<p class="text-xl md:text-2xl text-muted-foreground mb-10 max-w-3xl mx-auto leading-relaxed">
-				{$_('home.subtitle')}
+				{translations.homeSubtitle}
 			</p>
 			<div class="flex gap-6 justify-center flex-wrap">
 				<Button size="lg" class="glass-button px-8 py-4 text-lg font-semibold">
-					{$_('auth.signInToAccess')}
+					{translations.signIn}
 				</Button>
 			</div>
 		</section>
 	</div>
+	{/key}
 {/if}

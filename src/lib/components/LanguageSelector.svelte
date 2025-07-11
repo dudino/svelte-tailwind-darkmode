@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { locale, locales, isLoading } from 'svelte-i18n';
+	import { locale, locales, isLoading, waitLocale } from 'svelte-i18n';
 	import { ChevronDown, Globe } from 'lucide-svelte';
 	import { createEventDispatcher } from 'svelte';
 
@@ -15,7 +15,7 @@
 
 	$: currentLanguage = languages.find(lang => lang.code === $locale) || languages[0];
 
-	function selectLanguage(langCode: string) {
+	async function selectLanguage(langCode: string) {
 		// Prevent unnecessary updates
 		if ($locale === langCode) {
 			isOpen = false;
@@ -29,8 +29,10 @@
 			localStorage.setItem('preferred-language', langCode);
 		}
 		
-		// Set the locale
+		// Set the locale and wait for it to load
 		locale.set(langCode);
+		await waitLocale(langCode);
+		
 		isOpen = false;
 		dispatch('languageChanged', langCode);
 		
