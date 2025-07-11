@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Direct i18n Test</title>
+</head>
+<body>
+    <h1>Direct Translation Test</h1>
+    <p>This test bypasses svelte-i18n and loads translations directly.</p>
+    
+    <div id="test-output"></div>
+    
+    <script>
+        // Test direct JSON loading
+        const testTranslations = async () => {
+            try {
+                console.log('Testing direct translation loading...');
+                
+                // Test if we can load the JSON files directly
+                const enResponse = await fetch('/src/lib/i18n/locales/en.json');
+                const enData = await enResponse.json();
+                
+                console.log('EN translations loaded:', enData);
+                console.log('home.subtitle:', enData.home?.subtitle);
+                
+                const csResponse = await fetch('/src/lib/i18n/locales/cs.json');
+                const csData = await csResponse.json();
+                
+                console.log('CS translations loaded:', csData);
+                console.log('home.subtitle:', csData.home?.subtitle);
+                
+                document.getElementById('test-output').innerHTML = `
+                    <h3>Direct Translation Test Results:</h3>
+                    <p><strong>English:</strong> ${enData.home?.subtitle || 'NOT FOUND'}</p>
+                    <p><strong>Czech:</strong> ${csData.home?.subtitle || 'NOT FOUND'}</p>
+                `;
+                
+            } catch (error) {
+                console.error('Direct translation test failed:', error);
+                document.getElementById('test-output').innerHTML = `
+                    <h3>Test Failed:</h3>
+                    <p style="color: red;">Error: ${error.message}</p>
+                `;
+            }
+        };
+        
+        testTranslations();
+    </script>
+</body>
+</html>

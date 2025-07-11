@@ -2,6 +2,7 @@
 	import { locale, locales, isLoading, waitLocale } from 'svelte-i18n';
 	import { ChevronDown, Globe } from 'lucide-svelte';
 	import { createEventDispatcher } from 'svelte';
+	import { refreshTranslations } from '$lib/stores/i18n';
 
 	const dispatch = createEventDispatcher();
 
@@ -49,6 +50,9 @@
 		// Set the locale and wait for it to load
 		locale.set(langCode);
 		await waitLocale(langCode);
+		
+		// Force translation refresh
+		refreshTranslations();
 		
 		isOpen = false;
 		dispatch('languageChanged', langCode);

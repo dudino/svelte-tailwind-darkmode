@@ -1,48 +1,83 @@
 <script>
-	import { _, locale, isLoading } from 'svelte-i18n';
+	import { locale, isLoading } from 'svelte-i18n';
 	import { isAuthenticated } from '$lib/stores/auth';
 	import DashboardRouter from '$lib/components/dashboard/DashboardRouter.svelte';
 	import Button from '$lib/components/ui/button/button.svelte';
 	import { onMount } from 'svelte';
+	import { reactiveLocale, refreshTranslations } from '$lib/stores/i18n';
+	
+	// Import translation files directly
+	import enTranslations from '$lib/i18n/locales/en.json';
+	import csTranslations from '$lib/i18n/locales/cs.json';
+	import ruTranslations from '$lib/i18n/locales/ru.json';
+	
+	const allTranslations = {
+		en: enTranslations,
+		cs: csTranslations,
+		ru: ruTranslations
+	};
 	
 	let forceUpdate = 0;
-	let previousLocale = '';
+	let currentTranslations = enTranslations;
 	
-	// Force re-evaluation when locale changes
-	$: if ($locale && $locale !== previousLocale) {
-		previousLocale = $locale;
+	// Direct translation function that bypasses svelte-i18n
+	function getTranslation(key) {
+		const keys = key.split('.');
+		let value = currentTranslations;
+		
+		for (const k of keys) {
+			if (value && typeof value === 'object' && k in value) {
+				value = value[k];
+			} else {
+				console.warn(`Translation key not found: ${key}`);
+				return key; // Return key if translation not found
+			}
+		}
+		
+		return value;
+	}
+	
+	// Update translations when locale changes
+	$: if ($locale && allTranslations[$locale]) {
+		console.log('Updating translations for locale:', $locale);
+		currentTranslations = allTranslations[$locale];
 		forceUpdate++;
-		console.log('Locale changed, forceUpdate:', forceUpdate, 'from', previousLocale, 'to', $locale);
+	}
+	
+	// Also update on reactive locale changes
+	$: if ($reactiveLocale) {
+		console.log('Reactive locale change detected:', $reactiveLocale);
+		if ($reactiveLocale.locale && allTranslations[$reactiveLocale.locale]) {
+			currentTranslations = allTranslations[$reactiveLocale.locale];
+			forceUpdate++;
+		}
 	}
 	
 	// Listen for manual language change events
 	onMount(() => {
 		const handleLanguageChange = (event) => {
 			console.log('Custom language change event received:', event.detail);
+			refreshTranslations();
 			forceUpdate++;
 		};
 		
-		window.addEventListener('languageChanged', handleLanguageChange);
-		
-		return () => {
-			window.removeEventListener('languageChanged', handleLanguageChange);
-		};
+		if (typeof window !== 'undefined') {
+			window.addEventListener('languageChanged', handleLanguageChange);
+			
+			return () => {
+				window.removeEventListener('languageChanged', handleLanguageChange);
+			};
+		}
 	});
 	
-	// Force reactivity by making translations dependent on locale, loading state, and forceUpdate
-	$: translations = ($locale && !$isLoading && forceUpdate >= 0) ? {
-		homeSubtitle: $_('home.subtitle'),
-		signIn: $_('auth.signInToAccess'),
-		navHome: $_('nav.home')
-	} : {
-		homeSubtitle: 'Loading...',
-		signIn: 'Loading...',
-		navHome: 'Loading...'
-	};
-	
-	// Debug translations
-	$: console.log('Current translations:', translations);
-	$: console.log('Current locale in page:', $locale, 'forceUpdate:', forceUpdate);
+	// Debug current state
+	$: console.log('Page state:', {
+		locale: $locale,
+		isLoading: $isLoading,
+		forceUpdate,
+		homeSubtitle: getTranslation('home.subtitle'),
+		currentLocale: $locale
+	});
 </script>
 
 <svelte:head>
@@ -64,11 +99,11 @@
 				<span class="gradient-text">Affinity</span>
 			</h1>
 			<p class="text-xl md:text-2xl text-muted-foreground mb-10 max-w-3xl mx-auto leading-relaxed">
-				{translations.homeSubtitle}
+				{getTranslation('home.subtitle')}
 			</p>
 			<div class="flex gap-6 justify-center flex-wrap">
 				<Button size="lg" class="glass-button px-8 py-4 text-lg font-semibold">
-					{translations.signIn}
+					{getTranslation('auth.signInToAccess')}
 				</Button>
 			</div>
 		</section>
