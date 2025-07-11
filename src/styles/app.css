@@ -10,42 +10,42 @@
 		--card-foreground: 222.2 84% 4.9%;
 		--popover: 0 0% 100%;
 		--popover-foreground: 222.2 84% 4.9%;
-		--primary: 221.2 83.2% 53.3%;
+		--primary: 330 81% 60%; /* Pink primary */
 		--primary-foreground: 210 40% 98%;
 		--secondary: 210 40% 96.1%;
 		--secondary-foreground: 222.2 47.4% 11.2%;
 		--muted: 210 40% 96.1%;
 		--muted-foreground: 215.4 16.3% 46.9%;
-		--accent: 210 40% 96.1%;
-		--accent-foreground: 222.2 47.4% 11.2%;
+		--accent: 330 81% 95%; /* Light pink accent */
+		--accent-foreground: 330 81% 20%;
 		--destructive: 0 72.22% 50.59%;
 		--destructive-foreground: 210 40% 98%;
 		--border: 214.3 31.8% 91.4%;
 		--input: 214.3 31.8% 91.4%;
-		--ring: 221.2 83.2% 53.3%;
+		--ring: 330 81% 60%; /* Pink ring */
 		--radius: 0.3rem;
 	}
-	/* 111 50% 32% */
+	/* Dark Pink Theme */
 	.dark {
-		--background: 222.2 84% 4.9%;
-		--foreground: 210 40% 98%;
-		--card: 222.2 84% 4.9%;
-		--card-foreground: 210 40% 98%;
-		--popover: 222.2 84% 4.9%;
-		--popover-foreground: 210 40% 98%;
-		--primary: 217.2 91.2% 59.8%;
-		--primary-foreground: 222.2 47.4% 11.2%;
-		--secondary: 217.2 32.6% 17.5%;
-		--secondary-foreground: 210 40% 98%;
-		--muted: 217.2 32.6% 17.5%;
-		--muted-foreground: 215 20.2% 65.1%;
-		--accent: 217.2 32.6% 17.5%;
-		--accent-foreground: 210 40% 98%;
+		--background: 315 25% 8%; /* Dark pink background */
+		--foreground: 330 15% 95%;
+		--card: 315 25% 10%; /* Slightly lighter dark pink */
+		--card-foreground: 330 15% 95%;
+		--popover: 315 25% 10%;
+		--popover-foreground: 330 15% 95%;
+		--primary: 330 81% 70%; /* Bright pink primary */
+		--primary-foreground: 315 25% 8%;
+		--secondary: 315 25% 15%; /* Dark pink secondary */
+		--secondary-foreground: 330 15% 95%;
+		--muted: 315 25% 15%;
+		--muted-foreground: 330 15% 70%;
+		--accent: 315 25% 20%; /* Dark pink accent */
+		--accent-foreground: 330 81% 70%;
 		--destructive: 0 62.8% 30.6%;
 		--destructive-foreground: 210 40% 98%;
-		--border: 217.2 32.6% 17.5%;
-		--input: 217.2 32.6% 17.5%;
-		--ring: 224.3 76.3% 48%;
+		--border: 315 25% 20%; /* Dark pink border */
+		--input: 315 25% 15%;
+		--ring: 330 81% 70%; /* Bright pink ring */
 	}
 }
 
@@ -55,5 +55,55 @@
 	}
 	body {
 		@apply bg-background text-foreground;
+	}
+}
+
+@layer components {
+	/* Mobile navbar animations */
+	.mobile-nav {
+		transition: all 0.3s ease-in-out;
+	}
+	
+	.mobile-nav .menu-overlay {
+		animation: slideDown 0.2s ease-out;
+	}
+	
+	@keyframes slideDown {
+		from {
+			opacity: 0;
+			transform: translateY(-10px);
+		}
+		to {
+			opacity: 1;
+			transform: translateY(0);
+		}
+	}
+	
+	/* Custom scrollbar for dark pink theme */
+	::-webkit-scrollbar {
+		width: 8px;
+	}
+	
+	::-webkit-scrollbar-track {
+		background: hsl(var(--background));
+	}
+	
+	::-webkit-scrollbar-thumb {
+		background: hsl(var(--border));
+		border-radius: 4px;
+	}
+	
+	::-webkit-scrollbar-thumb:hover {
+		background: hsl(var(--primary) / 0.8);
+	}
+	
+	/* Enhanced focus styles for accessibility */
+	.focus-visible {
+		@apply outline-none ring-2 ring-primary ring-offset-2 ring-offset-background;
+	}
+	
+	/* Smooth transitions for theme switching */
+	* {
+		transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
 	}
 }

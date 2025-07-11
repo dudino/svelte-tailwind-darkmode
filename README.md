@@ -1,13 +1,39 @@
-# Sveltekit + Tailwind CSS + Shadcn svelte Boilerplate with Darkmode
+# Sveltekit + Tailwind CSS + Shadcn svelte Boilerplate with Darkmode & i18n
 
-This is a simple boilerplate project for getting started with a web development project using sveltekit and Tailwind CSS, powered by Vite.
+This is a modern boilerplate project for getting started with a web development project using SvelteKit, Tailwind CSS, and internationalization support, powered by Vite.
 
 ## 🎯 Features
 
-- ✅ Vanilla JavaScript: Write modern JavaScript code without any frameworks or libraries.
-- ✅ Tailwind CSS: Utilize the power of Tailwind CSS to create highly customizable and responsive UI components.
-- ✅ Vite: Enjoy a fast development experience with Vite's blazing-fast build tooling.
-- ✅ Darkmode: Darkmode from shadcn svelte
+- ✅ **SvelteKit**: Modern web framework with excellent performance and developer experience
+- ✅ **Tailwind CSS**: Utility-first CSS framework for rapid UI development
+- ✅ **Dark Pink Theme**: Beautiful dark pink color scheme with light/dark mode toggle
+- ✅ **Mobile-First Design**: Responsive navigation with mobile hamburger menu
+- ✅ **Internationalization (i18n)**: Multi-language support with svelte-i18n
+- ✅ **Language Support**: English, Czech (Čeština), and Russian (Русский)
+- ✅ **Shadcn/ui Components**: Modern, accessible UI components
+- ✅ **Vite**: Fast development experience with hot module replacement
+- ✅ **TypeScript**: Type safety and better developer experience
+
+## 🌍 Internationalization
+
+This project supports multiple languages:
+
+- **English** (en) - Default
+- **Czech** (cs) - Čeština  
+- **Russian** (ru) - Русский
+
+### Language Features
+
+- 🔄 **Auto-detection**: Browser language detection with fallback
+- 💾 **Persistence**: Language preference saved to localStorage
+- 🎛️ **Language Selector**: Easy language switching in the navigation
+- 📱 **Mobile Support**: Language selector works on all screen sizes
+
+### Adding New Languages
+
+1. Create a new JSON file in `src/lib/i18n/locales/` (e.g., `fr.json`)
+2. Add the locale registration in `src/lib/i18n/index.ts`
+3. Update the language selector in `src/lib/components/LanguageSelector.svelte`
 
 <br><br>
 

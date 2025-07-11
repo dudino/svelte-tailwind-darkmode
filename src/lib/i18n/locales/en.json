@@ -1,0 +1,66 @@
+{
+  "nav": {
+    "home": "Home",
+    "about": "About",
+    "profile": "Profile",
+    "settings": "Settings"
+  },
+  "home": {
+    "title": "Welcome to {theme} Theme",
+    "subtitle": "A beautiful mobile-first application with dark pink theming and responsive navigation.",
+    "getStarted": "Get Started",
+    "learnMore": "Learn More",
+    "builtWith": "Built With",
+    "features": {
+      "mobileFirst": {
+        "title": "Mobile First",
+        "description": "Responsive design that works perfectly on all devices with a mobile-first approach."
+      },
+      "darkPinkTheme": {
+        "title": "Dark Pink Theme",
+        "description": "Beautiful dark pink color scheme that's easy on the eyes and stylish."
+      },
+      "modernStack": {
+        "title": "Modern Stack",
+        "description": "Built with SvelteKit, TailwindCSS, and modern web technologies."
+      }
+    }
+  },
+  "about": {
+    "title": "About Us",
+    "description": "This is a modern web application built with SvelteKit and TailwindCSS, featuring a beautiful dark pink theme and mobile-first responsive design.",
+    "mission": "Our Mission",
+    "missionText": "To create beautiful, accessible, and performant web applications that delight users across all devices and platforms."
+  },
+  "profile": {
+    "title": "User Profile",
+    "name": "Name",
+    "email": "Email",
+    "bio": "Bio",
+    "namePlaceholder": "John Doe",
+    "emailPlaceholder": "john@example.com",
+    "bioPlaceholder": "Tell us about yourself...",
+    "saveChanges": "Save Changes"
+  },
+  "settings": {
+    "title": "Settings",
+    "appearance": "Appearance",
+    "language": "Language",
+    "notifications": "Notifications",
+    "privacy": "Privacy",
+    "themeToggle": "Toggle between light and dark mode",
+    "selectLanguage": "Select your preferred language",
+    "notificationSettings": "Manage your notification preferences",
+    "privacySettings": "Control your privacy and data settings"
+  },
+  "common": {
+    "darkPink": "Dark Pink",
+    "loading": "Loading...",
+    "error": "Error",
+    "success": "Success",
+    "cancel": "Cancel",
+    "save": "Save",
+    "edit": "Edit",
+    "delete": "Delete"
+  }
+}

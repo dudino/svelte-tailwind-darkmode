@@ -1,0 +1,66 @@
+{
+  "nav": {
+    "home": "Domů",
+    "about": "O nás",
+    "profile": "Profil",
+    "settings": "Nastavení"
+  },
+  "home": {
+    "title": "Vítejte v {theme} tématu",
+    "subtitle": "Krásná mobilní aplikace s tmavě růžovým tématem a responzivní navigací.",
+    "getStarted": "Začít",
+    "learnMore": "Zjistit více",
+    "builtWith": "Postaveno s",
+    "features": {
+      "mobileFirst": {
+        "title": "Mobilní první",
+        "description": "Responzivní design, který perfektně funguje na všech zařízeních s mobilním přístupem."
+      },
+      "darkPinkTheme": {
+        "title": "Tmavě růžové téma",
+        "description": "Krásné tmavě růžové barevné schéma, které je šetrné k očím a stylové."
+      },
+      "modernStack": {
+        "title": "Moderní stack",
+        "description": "Postaveno s SvelteKit, TailwindCSS a moderními webovými technologiemi."
+      }
+    }
+  },
+  "about": {
+    "title": "O nás",
+    "description": "Toto je moderní webová aplikace postavená s SvelteKit a TailwindCSS, která obsahuje krásné tmavě růžové téma a mobilní responzivní design.",
+    "mission": "Naše mise",
+    "missionText": "Vytvářet krásné, přístupné a výkonné webové aplikace, které potěší uživatele na všech zařízeních a platformách."
+  },
+  "profile": {
+    "title": "Uživatelský profil",
+    "name": "Jméno",
+    "email": "E-mail",
+    "bio": "Bio",
+    "namePlaceholder": "Jan Novák",
+    "emailPlaceholder": "jan@priklad.cz",
+    "bioPlaceholder": "Řekněte nám něco o sobě...",
+    "saveChanges": "Uložit změny"
+  },
+  "settings": {
+    "title": "Nastavení",
+    "appearance": "Vzhled",
+    "language": "Jazyk",
+    "notifications": "Oznámení",
+    "privacy": "Soukromí",
+    "themeToggle": "Přepínání mezi světlým a tmavým režimem",
+    "selectLanguage": "Vyberte váš preferovaný jazyk",
+    "notificationSettings": "Spravujte nastavení oznámení",
+    "privacySettings": "Kontrolujte nastavení soukromí a dat"
+  },
+  "common": {
+    "darkPink": "Tmavě růžová",
+    "loading": "Načítání...",
+    "error": "Chyba",
+    "success": "Úspěch",
+    "cancel": "Zrušit",
+    "save": "Uložit",
+    "edit": "Upravit",
+    "delete": "Smazat"
+  }
+}
