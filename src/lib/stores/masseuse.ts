@@ -1,5 +1,7 @@
 import { writable, derived } from 'svelte/store';
 import type { Masseuse, Location, Room, Schedule, Booking, ClientProfile } from '$lib/types/masseuse';
+import { persistentStorage } from '$lib/utils/storage';
+import { browser } from '$app/environment';
 
 // Masseuse data from the documentation
 const initialMasseuseData: Masseuse[] = [
@@ -324,13 +326,130 @@ export const locationData: Location[] = [
 	}
 ];
 
-// Create the writable stores
+// Create the writable stores with persistent storage
 export const masseuseData = writable<Masseuse[]>(initialMasseuseData);
 export const masseuses = masseuseData; // Alias for compatibility
 export const locations = writable<Location[]>(locationData);
 export const schedules = writable<Schedule[]>([]);
 export const bookings = writable<Booking[]>([]);
 export const clientProfiles = writable<ClientProfile[]>([]);
+
+// Initialize persistent storage when in browser
+if (browser) {
+	// Helper function to handle database errors
+	const handleStorageError = async (error: any, operation: string) => {
+		console.error(`Storage error during ${operation}:`, error);
+		if (error.name === 'NotFoundError') {
+			console.log('Attempting to recreate database...');
+			try {
+				await persistentStorage.recreateDatabase();
+				console.log('Database recreated successfully');
+				return true; // Indicate retry is possible
+			} catch (recreateError) {
+				console.error('Failed to recreate database:', recreateError);
+				return false;
+			}
+		}
+		return false;
+	};
+
+	// Load masseuses from IndexedDB
+	persistentStorage.getMasseuses().then(savedMasseuses => {
+		if (savedMasseuses.length > 0) {
+			masseuseData.set(savedMasseuses);
+		} else {
+			// Save initial data to IndexedDB if none exists
+			persistentStorage.saveMasseuses(initialMasseuseData);
+		}
+	}).catch(async (error) => {
+		const shouldRetry = await handleStorageError(error, 'loading masseuses');
+		if (shouldRetry) {
+			// Retry loading after database recreation
+			try {
+				await persistentStorage.saveMasseuses(initialMasseuseData);
+			} catch (retryError) {
+				console.error('Retry failed:', retryError);
+			}
+		}
+	});
+
+	// Load locations from IndexedDB
+	persistentStorage.getLocations().then(savedLocations => {
+		if (savedLocations.length > 0) {
+			locations.set(savedLocations);
+		} else {
+			// Save initial location data to IndexedDB if none exists
+			persistentStorage.saveLocations(locationData);
+		}
+	}).catch(async (error) => {
+		const shouldRetry = await handleStorageError(error, 'loading locations');
+		if (shouldRetry) {
+			try {
+				await persistentStorage.saveLocations(locationData);
+			} catch (retryError) {
+				console.error('Retry failed:', retryError);
+			}
+		}
+	});
+
+	// Load schedules from IndexedDB
+	persistentStorage.getSchedules().then(savedSchedules => {
+		if (savedSchedules.length > 0) {
+			schedules.set(savedSchedules);
+		}
+	}).catch(async (error) => {
+		await handleStorageError(error, 'loading schedules');
+	});
+
+	// Load bookings from IndexedDB
+	persistentStorage.getBookings().then(savedBookings => {
+		if (savedBookings.length > 0) {
+			bookings.set(savedBookings);
+		}
+	}).catch(async (error) => {
+		await handleStorageError(error, 'loading bookings');
+	});
+
+	// Load client profiles from IndexedDB
+	persistentStorage.getClientProfiles().then(savedProfiles => {
+		if (savedProfiles.length > 0) {
+			clientProfiles.set(savedProfiles);
+		}
+	}).catch(async (error) => {
+		await handleStorageError(error, 'loading client profiles');
+	});
+
+	// Subscribe to changes and persist them automatically
+	masseuseData.subscribe(masseuses => {
+		if (masseuses.length > 0) {
+			persistentStorage.saveMasseuses(masseuses).catch(console.error);
+		}
+	});
+
+	locations.subscribe(locationsList => {
+		if (locationsList.length > 0) {
+			persistentStorage.saveLocations(locationsList).catch(console.error);
+		}
+	});
+
+	schedules.subscribe(schedulesList => {
+		if (schedulesList.length > 0) {
+			persistentStorage.saveSchedules(schedulesList).catch(console.error);
+		}
+	});
+
+	bookings.subscribe(bookingsList => {
+		if (bookingsList.length > 0) {
+			persistentStorage.saveBookings(bookingsList).catch(console.error);
+		}
+	});
+
+	clientProfiles.subscribe(profilesList => {
+		if (profilesList.length > 0) {
+			persistentStorage.saveClientProfiles(profilesList).catch(console.error);
+		}
+	});
+}
 
 // Derived stores
 export const availableMasseuses = derived(masseuseData, ($masseuses) => 
@@ -360,3 +479,233 @@ export function getBraSize(breasts: number): string {
 	const sizes = ['A', 'B', 'C', 'D', 'DD'];
 	return sizes[breasts - 1] || 'D+';
 }
+
+// Persistent operations
+export const masseuseOperations = {
+	// Add a new masseuse
+	async addMasseuse(masseuse: Masseuse) {
+		masseuseData.update(masseuses => {
+			const updated = [...masseuses, masseuse];
+			if (browser) {
+				persistentStorage.saveMasseuses(updated);
+			}
+			return updated;
+		});
+	},
+
+	// Update a masseuse
+	async updateMasseuse(updatedMasseuse: Masseuse) {
+		masseuseData.update(masseuses => {
+			const updated = masseuses.map(m => 
+				m.name === updatedMasseuse.name ? updatedMasseuse : m
+			);
+			if (browser) {
+				persistentStorage.saveMasseuses(updated);
+			}
+			return updated;
+		});
+	},
+
+	// Remove a masseuse
+	async removeMasseuse(name: string) {
+		masseuseData.update(masseuses => {
+			const updated = masseuses.filter(m => m.name !== name);
+			if (browser) {
+				persistentStorage.saveMasseuses(updated);
+			}
+			return updated;
+		});
+	},
+
+	// Location operations
+	async addLocation(location: Location) {
+		locations.update(locationsList => {
+			const updated = [...locationsList, location];
+			if (browser) {
+				persistentStorage.saveLocations(updated);
+			}
+			return updated;
+		});
+	},
+
+	async updateLocation(updatedLocation: Location) {
+		locations.update(locationsList => {
+			const updated = locationsList.map(l => 
+				l.id === updatedLocation.id ? updatedLocation : l
+			);
+			if (browser) {
+				persistentStorage.saveLocations(updated);
+			}
+			return updated;
+		});
+	},
+
+	async removeLocation(locationId: string) {
+		locations.update(locationsList => {
+			const updated = locationsList.filter(l => l.id !== locationId);
+			if (browser) {
+				persistentStorage.saveLocations(updated);
+			}
+			return updated;
+		});
+	},
+
+	// Schedule operations
+	async addSchedule(schedule: Schedule) {
+		schedules.update(schedulesList => {
+			const updated = [...schedulesList, schedule];
+			if (browser) {
+				persistentStorage.saveSchedules(updated);
+			}
+			return updated;
+		});
+	},
+
+	async updateSchedule(updatedSchedule: Schedule) {
+		schedules.update(schedulesList => {
+			const updated = schedulesList.map(s => 
+				s.id === updatedSchedule.id ? updatedSchedule : s
+			);
+			if (browser) {
+				persistentStorage.saveSchedules(updated);
+			}
+			return updated;
+		});
+	},
+
+	async removeSchedule(scheduleId: string) {
+		schedules.update(schedulesList => {
+			const updated = schedulesList.filter(s => s.id !== scheduleId);
+			if (browser) {
+				persistentStorage.saveSchedules(updated);
+			}
+			return updated;
+		});
+	},
+
+	// Booking operations
+	async addBooking(booking: Booking) {
+		bookings.update(bookingsList => {
+			const updated = [...bookingsList, booking];
+			if (browser) {
+				persistentStorage.saveBookings(updated);
+			}
+			return updated;
+		});
+	},
+
+	async updateBooking(updatedBooking: Booking) {
+		bookings.update(bookingsList => {
+			const updated = bookingsList.map(b => 
+				b.id === updatedBooking.id ? updatedBooking : b
+			);
+			if (browser) {
+				persistentStorage.saveBookings(updated);
+			}
+			return updated;
+		});
+	},
+
+	async removeBooking(bookingId: string) {
+		bookings.update(bookingsList => {
+			const updated = bookingsList.filter(b => b.id !== bookingId);
+			if (browser) {
+				persistentStorage.saveBookings(updated);
+			}
+			return updated;
+		});
+	},
+
+	// Client profile operations
+	async addClientProfile(profile: ClientProfile) {
+		clientProfiles.update(profilesList => {
+			const updated = [...profilesList, profile];
+			if (browser) {
+				persistentStorage.saveClientProfiles(updated);
+			}
+			return updated;
+		});
+	},
+
+	async updateClientProfile(updatedProfile: ClientProfile) {
+		clientProfiles.update(profilesList => {
+			const updated = profilesList.map(p => 
+				p.id === updatedProfile.id ? updatedProfile : p
+			);
+			if (browser) {
+				persistentStorage.saveClientProfiles(updated);
+			}
+			return updated;
+		});
+	},
+
+	async removeClientProfile(profileId: string) {
+		clientProfiles.update(profilesList => {
+			const updated = profilesList.filter(p => p.id !== profileId);
+			if (browser) {
+				persistentStorage.saveClientProfiles(updated);
+			}
+			return updated;
+		});
+	},
+
+	// Sync with server (when online)
+	async syncWithServer() {
+		if (!browser || !navigator.onLine) return;
+
+		try {
+			// Get local data
+			const localData = await persistentStorage.exportAllData();
+
+			// Here you would implement your server sync logic
+			console.log('Syncing with server...', localData);
+			
+			// Example: POST to server and update local storage with server response
+			// const serverData = await fetch('/api/sync', { method: 'POST', body: JSON.stringify(localData) });
+			
+		} catch (error) {
+			console.error('Sync failed:', error);
+		}
+	},
+
+	// Clear all local data
+	async clearLocalData() {
+		if (browser) {
+			await persistentStorage.clearAllData();
+			masseuseData.set(initialMasseuseData);
+			locations.set(locationData);
+			schedules.set([]);
+			bookings.set([]);
+			clientProfiles.set([]);
+		}
+	},
+
+	// Export all data
+	async exportData() {
+		if (browser) {
+			return await persistentStorage.exportAllData();
+		}
+		return null;
+	},
+
+	// Import data
+	async importData(data: any) {
+		if (browser) {
+			await persistentStorage.importAllData(data);
+			// Refresh all stores with imported data
+			const [masseuses, locations_data, schedules_data, bookings_data, profiles] = await Promise.all([
+				persistentStorage.getMasseuses(),
+				persistentStorage.getLocations(),
+				persistentStorage.getSchedules(),
+				persistentStorage.getBookings(),
+				persistentStorage.getClientProfiles()
+			]);
+			
+			masseuseData.set(masseuses);
+			locations.set(locations_data);
+			schedules.set(schedules_data);
+			bookings.set(bookings_data);
+			clientProfiles.set(profiles);
+		}
+	}
+};

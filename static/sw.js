@@ -1,21 +1,40 @@
-// Service Worker for Affinity PWA
+// Affinity PWA Service Worker
 const CACHE_NAME = 'affinity-v1';
-const urlsToCache = [
-  '/',
-  '/app.css',
-  '/favicon-32x32.png',
-  // Add other static assets that should be cached
+const STATIC_CACHE = 'affinity-static-v1';
+const DYNAMIC_CACHE = 'affinity-dynamic-v1';
+
+// Files to cache immediately
+const STATIC_FILES = [
+	'/',
+	'/masseuse',
+	'/masseuse/dashboard',
+	'/masseuse/schedule',
+	'/masseuse/bookings',
+	'/masseuse/analytics',
+	'/masseuse/profile',
+	'/client-portal',
+	'/manifest.json',
+	'/icon-192.png',
+	'/icon-512.png'
 ];
 
-// Install event - cache resources
-self.addEventListener('install', (event) => {
-  event.waitUntil(
-    caches.open(CACHE_NAME)
-      .then((cache) => {
-        console.log('Opened cache');
-        return cache.addAll(urlsToCache);
-      })
-  );
+// Install event - cache static files
+self.addEventListener('install', event => {
+	console.log('Service Worker installing...');
+	event.waitUntil(
+		caches.open(STATIC_CACHE)
+			.then(cache => {
+				console.log('Caching static files');
+				return cache.addAll(STATIC_FILES);
+			})
+			.then(() => {
+				console.log('Service Worker installed');
+				return self.skipWaiting();
+			})
+			.catch(error => {
+				console.error('Installation failed:', error);
+			})
+	);
 });
 
 // Fetch event - serve from cache when offline

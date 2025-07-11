@@ -12,61 +12,96 @@
 	"dir": "ltr",
 	"icons": [
 		{
-			"src": "/favicon-32x32.png",
-			"sizes": "32x32",
-			"type": "image/png"
+			"src": "/icon-48.png",
+			"sizes": "48x48",
+			"type": "image/png",
+			"purpose": "any"
 		},
 		{
-			"src": "/favicon-32x32.png",
+			"src": "/icon-72.png",
+			"sizes": "72x72",
+			"type": "image/png",
+			"purpose": "any"
+		},
+		{
+			"src": "/icon-96.png",
+			"sizes": "96x96",
+			"type": "image/png",
+			"purpose": "any"
+		},
+		{
+			"src": "/icon-144.png",
+			"sizes": "144x144",
+			"type": "image/png",
+			"purpose": "any"
+		},
+		{
+			"src": "/icon-192.png",
 			"sizes": "192x192",
 			"type": "image/png",
 			"purpose": "any"
 		},
 		{
-			"src": "/favicon-32x32.png",
+			"src": "/icon-512.png",
 			"sizes": "512x512",
 			"type": "image/png",
 			"purpose": "any"
+		},
+		{
+			"src": "/icon-192-maskable.png",
+			"sizes": "192x192",
+			"type": "image/png",
+			"purpose": "maskable"
+		},
+		{
+			"src": "/icon-512-maskable.png",
+			"sizes": "512x512",
+			"type": "image/png",
+			"purpose": "maskable"
 		}
 	],
 	"shortcuts": [
 		{
-			"name": "Client Portal",
+			"name": "Masseuse Portal",
 			"short_name": "Portal",
-			"description": "Quick access to client review portal",
-			"url": "/client-portal",
+			"description": "Quick access to masseuse portal",
+			"url": "/masseuse",
 			"icons": [
 				{
-					"src": "/favicon-32x32.png",
-					"sizes": "192x192"
+					"src": "/icon-96.png",
+					"sizes": "96x96",
+					"type": "image/png"
 				}
 			]
 		},
 		{
-			"name": "New Booking",
-			"short_name": "Book",
-			"description": "Create a new booking",
-			"url": "/bookings/new",
+			"name": "Client Portal",
+			"short_name": "Client",
+			"description": "Quick access to client portal",
+			"url": "/client-portal",
 			"icons": [
 				{
-					"src": "/favicon-32x32.png",
-					"sizes": "192x192"
+					"src": "/icon-96.png",
+					"sizes": "96x96",
+					"type": "image/png"
 				}
 			]
 		}
 	],
 	"screenshots": [
 		{
-			"src": "/favicon-32x32.png",
-			"type": "image/png",
+			"src": "/screenshot-desktop.png",
 			"sizes": "1280x720",
-			"form_factor": "wide"
+			"type": "image/png",
+			"form_factor": "wide",
+			"label": "Affinity Desktop Application"
 		},
 		{
-			"src": "/favicon-32x32.png",
+			"src": "/screenshot-mobile.png",
+			"sizes": "375x812",
 			"type": "image/png",
-			"sizes": "750x1334",
-			"form_factor": "narrow"
+			"form_factor": "narrow",
+			"label": "Affinity Mobile Application"
 		}
 	]
 }

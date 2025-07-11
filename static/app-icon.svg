@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#ec489a;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#7c3aed;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="accent" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#ffffff;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#f8fafc;stop-opacity:0.9" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="512" height="512" rx="80" ry="80" fill="url(#bg)"/>
+  
+  <!-- Main icon - Spa/Massage theme -->
+  <g transform="translate(128, 128)">
+    <!-- Spa stones/circles representing relaxation -->
+    <circle cx="80" cy="60" r="25" fill="url(#accent)" opacity="0.9"/>
+    <circle cx="150" cy="80" r="20" fill="url(#accent)" opacity="0.7"/>
+    <circle cx="200" cy="120" r="15" fill="url(#accent)" opacity="0.5"/>
+    
+    <!-- Hands representing massage -->
+    <path d="M60 150 Q80 140 100 150 Q120 160 140 150 Q160 140 180 150 L180 200 Q160 210 140 200 Q120 210 100 200 Q80 210 60 200 Z" 
+          fill="url(#accent)" opacity="0.8"/>
+    
+    <!-- Lotus/flower petals -->
+    <path d="M128 200 Q110 180 128 160 Q146 180 128 200" fill="url(#accent)" opacity="0.6"/>
+    <path d="M128 200 Q148 182 166 200 Q148 218 128 200" fill="url(#accent)" opacity="0.6"/>
+    <path d="M128 200 Q110 218 92 200 Q110 182 128 200" fill="url(#accent)" opacity="0.6"/>
+    <path d="M128 200 Q146 218 128 236 Q110 218 128 200" fill="url(#accent)" opacity="0.6"/>
+    
+    <!-- Center dot -->
+    <circle cx="128" cy="200" r="8" fill="url(#accent)"/>
+  </g>
+  
+  <!-- App name -->
+  <text x="256" y="450" text-anchor="middle" fill="white" font-family="Arial, sans-serif" font-size="36" font-weight="bold">Affinity</text>
+</svg>
