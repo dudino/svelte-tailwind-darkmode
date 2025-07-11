@@ -14,7 +14,8 @@
     "reviews": "Reviews",
     "mySchedule": "My Schedule",
     "myBookings": "My Bookings",
-    "clientPortal": "Client Portal"
+    "clientPortal": "Client Portal",
+    "analytics": "Analytics"
   },
   "home": {
     "title": "Welcome to {theme} Theme",

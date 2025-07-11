@@ -84,10 +84,11 @@
 			case 'Masseuse':
 				return [
 					...baseItems,
-					{ href: '/my-schedule', icon: Calendar, labelKey: 'nav.mySchedule', show: true },
-					{ href: '/my-bookings', icon: FileText, labelKey: 'nav.myBookings', show: true },
-					{ href: '/client-portal', icon: User, labelKey: 'nav.clientPortal', show: true },
-					{ href: '/profile', icon: Settings, labelKey: 'nav.profile', show: true }
+					{ href: '/masseuse/dashboard', icon: Home, labelKey: 'nav.dashboard', show: true },
+					{ href: '/masseuse/schedule', icon: Calendar, labelKey: 'nav.mySchedule', show: true },
+					{ href: '/masseuse/bookings', icon: FileText, labelKey: 'nav.myBookings', show: true },
+					{ href: '/masseuse/analytics', icon: BarChart3, labelKey: 'nav.analytics', show: true },
+					{ href: '/masseuse/profile', icon: User, labelKey: 'nav.profile', show: true }
 				];
 
 			default:

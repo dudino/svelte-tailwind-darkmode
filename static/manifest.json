@@ -1,0 +1,72 @@
+{
+	"name": "Affinity - Massage Parlor PWA",
+	"short_name": "Affinity",
+	"description": "Professional massage scheduling and management application",
+	"start_url": "/",
+	"display": "standalone",
+	"background_color": "#0f0f23",
+	"theme_color": "#ec489a",
+	"orientation": "portrait-primary",
+	"categories": ["business", "health", "lifestyle"],
+	"lang": "en",
+	"dir": "ltr",
+	"icons": [
+		{
+			"src": "/favicon-32x32.png",
+			"sizes": "32x32",
+			"type": "image/png"
+		},
+		{
+			"src": "/favicon-32x32.png",
+			"sizes": "192x192",
+			"type": "image/png",
+			"purpose": "any"
+		},
+		{
+			"src": "/favicon-32x32.png",
+			"sizes": "512x512",
+			"type": "image/png",
+			"purpose": "any"
+		}
+	],
+	"shortcuts": [
+		{
+			"name": "Client Portal",
+			"short_name": "Portal",
+			"description": "Quick access to client review portal",
+			"url": "/client-portal",
+			"icons": [
+				{
+					"src": "/favicon-32x32.png",
+					"sizes": "192x192"
+				}
+			]
+		},
+		{
+			"name": "New Booking",
+			"short_name": "Book",
+			"description": "Create a new booking",
+			"url": "/bookings/new",
+			"icons": [
+				{
+					"src": "/favicon-32x32.png",
+					"sizes": "192x192"
+				}
+			]
+		}
+	],
+	"screenshots": [
+		{
+			"src": "/favicon-32x32.png",
+			"type": "image/png",
+			"sizes": "1280x720",
+			"form_factor": "wide"
+		},
+		{
+			"src": "/favicon-32x32.png",
+			"type": "image/png",
+			"sizes": "750x1334",
+			"form_factor": "narrow"
+		}
+	]
+}
