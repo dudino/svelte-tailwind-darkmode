@@ -32,7 +32,7 @@
 				};
 				
 				crumbs.push({
-					label: pageNames[segments[1]] || segments[1],
+					label: pageNames[segments[1] as keyof typeof pageNames] || segments[1],
 					href: currentPath,
 					icon: null
 				});

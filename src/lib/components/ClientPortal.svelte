@@ -20,6 +20,33 @@
 		duration: '60 min'
 	};
 	
+	// Helper functions for event handling
+	function handlePinInput(e: Event, index: number) {
+		const target = e.target as HTMLInputElement;
+		if (!target) return;
+		
+		const value = target.value;
+		if (value && index < 3) {
+			// Auto-focus next input
+			const nextInput = target.parentElement?.children[index + 1] as HTMLInputElement;
+			if (nextInput) nextInput.focus();
+		}
+		if (pinCode.length === 4) {
+			handlePinSubmit();
+		}
+	}
+	
+	function handlePinKeydown(e: KeyboardEvent, index: number) {
+		const target = e.target as HTMLInputElement;
+		if (!target) return;
+		
+		if (e.key === 'Backspace' && !target.value && index > 0) {
+			// Auto-focus previous input on backspace
+			const prevInput = target.parentElement?.children[index - 1] as HTMLInputElement;
+			if (prevInput) prevInput.focus();
+		}
+	}
+	
 	function handlePinSubmit() {
 		if (pinCode.length === 4) {
 			isLoading = true;
@@ -93,24 +120,8 @@
 								maxlength="1"
 								class="w-12 h-12 text-center text-2xl font-bold border-2 border-border rounded-lg focus:border-primary focus:outline-none transition-colors"
 								bind:value={pinCode[i]}
-								on:input={(e) => {
-									const value = e.target.value;
-									if (value && i < 3) {
-										// Auto-focus next input
-										const nextInput = e.target.parentElement?.children[i + 1];
-										if (nextInput) nextInput.focus();
-									}
-									if (pinCode.length === 4) {
-										handlePinSubmit();
-									}
-								}}
-								on:keydown={(e) => {
-									if (e.key === 'Backspace' && !e.target.value && i > 0) {
-										// Auto-focus previous input on backspace
-										const prevInput = e.target.parentElement?.children[i - 1];
-										if (prevInput) prevInput.focus();
-									}
-								}}
+								on:input={(e) => handlePinInput(e, i)}
+								on:keydown={(e) => handlePinKeydown(e, i)}
 							/>
 						{/each}
 					</div>

@@ -87,7 +87,7 @@
 					</Button>
 					
 					<div class="text-sm text-foreground">
-						Welcome, <span class="font-semibold">{$authStore.user?.name}</span>
+						Welcome, <span class="font-semibold">{$authStore.user?.firstName}</span>
 					</div>
 				</div>
 			</div>

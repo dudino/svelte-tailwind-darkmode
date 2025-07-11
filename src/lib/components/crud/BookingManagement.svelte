@@ -12,58 +12,82 @@
 		{
 			id: 'booking-1',
 			clientId: 'client-1',
+			clientName: 'John Smith',
+			clientPhone: '+1234567890',
 			masseuseId: 'masseuse-1',
+			masseuseName: 'Anna Johnson',
 			serviceType: 'Deep Tissue Massage',
 			date: '2024-01-20',
 			time: '14:00',
+			startTime: '14:00',
+			endTime: '15:00',
 			duration: 60,
 			price: 3000,
 			status: 'confirmed',
 			notes: 'Client prefers firm pressure',
 			locationId: 'loc-1',
-			roomId: 'room-1'
+			roomId: 'room-1',
+			pinCode: '1234'
 		},
 		{
 			id: 'booking-2',
 			clientId: 'client-2',
+			clientName: 'Sarah Davis',
+			clientPhone: '+1234567891',
 			masseuseId: 'masseuse-2',
+			masseuseName: 'Emma Wilson',
 			serviceType: 'Relaxation Massage',
 			date: '2024-01-20',
 			time: '16:30',
+			startTime: '16:30',
+			endTime: '18:00',
 			duration: 90,
 			price: 4200,
 			status: 'pending',
 			notes: '',
 			locationId: 'loc-1',
-			roomId: 'room-2'
+			roomId: 'room-2',
+			pinCode: '5678'
 		},
 		{
 			id: 'booking-3',
 			clientId: 'client-3',
+			clientName: 'Michael Brown',
+			clientPhone: '+1234567892',
 			masseuseId: 'masseuse-3',
+			masseuseName: 'Lisa Chen',
 			serviceType: 'Swedish Massage',
 			date: '2024-01-21',
 			time: '10:00',
+			startTime: '10:00',
+			endTime: '11:00',
 			duration: 60,
 			price: 2800,
 			status: 'completed',
 			notes: 'Regular client',
 			locationId: 'loc-2',
-			roomId: 'room-4'
+			roomId: 'room-4',
+			pinCode: '9012'
 		},
 		{
 			id: 'booking-4',
 			clientId: 'client-4',
+			clientName: 'Jessica Miller',
+			clientPhone: '+1234567893',
 			masseuseId: 'masseuse-1',
+			masseuseName: 'Anna Johnson',
 			serviceType: 'Hot Stone Massage',
 			date: '2024-01-19',
 			time: '15:00',
+			startTime: '15:00',
+			endTime: '16:15',
 			duration: 75,
 			price: 3800,
 			status: 'cancelled',
 			notes: 'Client requested cancellation',
 			locationId: 'loc-1',
-			roomId: 'room-3'
+			roomId: 'room-3',
+			pinCode: '3456'
 		}
 	];
 	
@@ -73,9 +97,29 @@
 	let showCreateBookingModal = false;
 	let showEditBookingModal = false;
 	let showBookingDetails = false;
-	let selectedBooking: Booking | null = null;
-	let isLoading = false;
+	let selectedBooking: Booking | null = null;	let isLoading = false;
 	
+	// Helper functions for form handling
+	function getInputValue(id: string): string {
+		const element = document.getElementById(id) as HTMLInputElement;
+		return element?.value || '';
+	}
+	
+	function getSelectValue(id: string): string {
+		const element = document.getElementById(id) as HTMLSelectElement;
+		return element?.value || '';
+	}
+	
+	function getTextAreaValue(id: string): string {
+		const element = document.getElementById(id) as HTMLTextAreaElement;
+		return element?.value || '';
+	}
+	
+	function getSelectChangeValue(e: Event): string {
+		const target = e.target as HTMLSelectElement;
+		return target?.value || '';
+	}
+
 	const statusOptions = [
 		{ value: 'all', label: 'All Statuses' },
 		{ value: 'pending', label: 'Pending' },
@@ -206,16 +250,22 @@
 			const newBooking: Booking = {
 				id: `booking-${Date.now()}`,
 				clientId: bookingData.clientId!,
+				clientName: bookingData.clientName || 'New Client',
+				clientPhone: bookingData.clientPhone || '',
 				masseuseId: bookingData.masseuseId!,
+				masseuseName: bookingData.masseuseName || 'Unknown',
 				serviceType: bookingData.serviceType!,
 				date: bookingData.date!,
 				time: bookingData.time!,
+				startTime: bookingData.time!,
+				endTime: bookingData.endTime || bookingData.time!,
 				duration: bookingData.duration!,
 				price: bookingData.price!,
 				status: 'pending',
 				notes: bookingData.notes || '',
 				locationId: bookingData.locationId!,
-				roomId: bookingData.roomId!
+				roomId: bookingData.roomId!,
+				pinCode: Math.floor(Math.random() * 9000 + 1000).toString()
 			};
 			
 			bookings = [...bookings, newBooking];
@@ -235,7 +285,7 @@
 			await new Promise(resolve => setTimeout(resolve, 1000));
 			
 			bookings = bookings.map(booking => 
-				booking.id === selectedBooking!.id 
+				booking.id === selectedBooking?.id 
 					? { ...booking, ...bookingData }
 					: booking
 			);
@@ -268,7 +318,7 @@
 			
 			bookings = bookings.map(booking => 
 				booking.id === bookingId 
-					? { ...booking, status: newStatus }
+					? { ...booking, status: newStatus as Booking['status'] }
 					: booking
 			);
 		} catch (error) {
@@ -404,7 +454,7 @@
 							<td class="p-4">
 								<select
 									value={booking.status}
-									on:change={(e) => updateBookingStatus(booking.id, e.target.value)}
+									on:change={(e) => updateBookingStatus(booking.id, getSelectChangeValue(e))}
 									class={`px-2 py-1 rounded-full text-xs font-medium border ${getStatusColor(booking.status)}`}
 									disabled={isLoading}
 								>
@@ -467,14 +517,14 @@
 				<h2 class="text-2xl font-bold text-foreground">Create New Booking</h2>
 			</div>
 			<form on:submit|preventDefault={() => handleCreateBooking({
-				clientId: document.getElementById('create-booking-client')?.value,
-				masseuseId: document.getElementById('create-booking-masseuse')?.value,
-				serviceType: document.getElementById('create-booking-service')?.value,
-				date: document.getElementById('create-booking-date')?.value,
-				time: document.getElementById('create-booking-time')?.value,
-				duration: parseInt(document.getElementById('create-booking-duration')?.value || '60'),
-				price: parseInt(document.getElementById('create-booking-price')?.value || '0'),
-				notes: document.getElementById('create-booking-notes')?.value,
+				clientId: getInputValue('create-booking-client'),
+				masseuseId: getSelectValue('create-booking-masseuse'),
+				serviceType: getSelectValue('create-booking-service'),
+				date: getInputValue('create-booking-date'),
+				time: getInputValue('create-booking-time'),
+				duration: parseInt(getInputValue('create-booking-duration') || '60'),
+				price: parseInt(getInputValue('create-booking-price') || '0'),
+				notes: getTextAreaValue('create-booking-notes'),
 				locationId: 'loc-1',
 				roomId: 'room-1'
 			})}>
@@ -602,7 +652,7 @@
 
 <!-- Booking Details Modal -->
 {#if showBookingDetails && selectedBooking}
-	{@const masseuse = $masseuseData.find(m => m.id === selectedBooking.masseuseId)}
+	{@const masseuse = $masseuseData.find(m => m.id === selectedBooking?.masseuseId)}
 	<div class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
 		<div class="bg-background border border-border rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
 			<div class="p-6 border-b border-border">
@@ -691,7 +741,7 @@
 				<Button on:click={closeModals} variant="outline" class="glass-button">
 					Close
 				</Button>
-				<Button on:click={() => { closeModals(); openEditBookingModal(selectedBooking!); }} class="glass-button">
+				<Button on:click={() => { closeModals(); if (selectedBooking) openEditBookingModal(selectedBooking); }} class="glass-button">
 					<Edit class="h-4 w-4 mr-2" />
 					Edit Booking
 				</Button>

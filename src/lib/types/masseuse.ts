@@ -5,6 +5,7 @@ export interface MasseuseAvailability {
 }
 
 export interface Masseuse {
+	id?: string;
 	name: string;
 	status: string | null;
 	height_cm: number;
@@ -17,6 +18,7 @@ export interface Masseuse {
 	phone?: string;
 	bio?: string;
 	specializations?: string[];
+	specialties?: string[];
 	languages?: string[];
 	experience?: string;
 	certifications?: string[];
@@ -55,16 +57,22 @@ export interface Schedule {
 
 export interface Booking {
 	id: string;
+	clientId: string;
 	clientName: string;
 	clientPhone: string;
+	masseuseId: string;
 	masseuseName: string;
+	serviceType: string;
 	date: string;
+	time: string;
 	startTime: string;
 	endTime: string;
 	duration: number;
+	price: number;
 	roomId: string;
+	locationId: string;
 	pinCode: string;
-	status: 'upcoming' | 'in-progress' | 'completed' | 'cancelled';
+	status: 'upcoming' | 'in-progress' | 'completed' | 'cancelled' | 'pending' | 'confirmed';
 	notes?: string;
 	actualEndTime?: string;
 	review?: {
@@ -80,8 +88,15 @@ export interface ClientProfile {
 	phone: string;
 	email?: string;
 	notes: string;
+	medicalNotes?: string;
 	bookingHistory: string[]; // booking IDs
-	preferences: string[];
+	preferences: {
+		massageTypes: string[];
+		pressure: string;
+		temperature: string;
+		music: boolean;
+		aromatherapy: boolean;
+	};
 	createdAt: string;
 	lastVisit?: string;
 }

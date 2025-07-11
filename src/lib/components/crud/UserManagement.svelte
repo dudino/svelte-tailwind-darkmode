@@ -6,6 +6,19 @@
 	
 	const dispatch = createEventDispatcher();
 	
+	// Helper functions to get form values
+	function getInputValue(id: string): string {
+		return (document.getElementById(id) as HTMLInputElement)?.value || '';
+	}
+	
+	function getSelectValue(id: string): string {
+		return (document.getElementById(id) as HTMLSelectElement)?.value || '';
+	}
+	
+	function getUserRole(id: string): any {
+		return getSelectValue(id) as any;
+	}
+	
 	let users: User[] = [
 		{
 			id: 'admin-1',
@@ -379,11 +392,11 @@
 				<h2 class="text-2xl font-bold text-foreground">Add New User</h2>
 			</div>
 			<form on:submit|preventDefault={() => handleCreateUser({
-				firstName: document.getElementById('create-firstName')?.value,
-				lastName: document.getElementById('create-lastName')?.value,
-				email: document.getElementById('create-email')?.value,
-				phoneNumber: document.getElementById('create-phone')?.value,
-				role: document.getElementById('create-role')?.value
+				firstName: getInputValue('create-firstName'),
+				lastName: getInputValue('create-lastName'),
+				email: getInputValue('create-email'),
+				phoneNumber: getInputValue('create-phone'),
+				role: getUserRole('create-role')
 			})}>
 				<div class="p-6 space-y-4">
 					<div class="grid grid-cols-2 gap-4">
@@ -466,11 +479,11 @@
 				<h2 class="text-2xl font-bold text-foreground">Edit User</h2>
 			</div>
 			<form on:submit|preventDefault={() => handleUpdateUser({
-				firstName: document.getElementById('edit-firstName')?.value,
-				lastName: document.getElementById('edit-lastName')?.value,
-				email: document.getElementById('edit-email')?.value,
-				phoneNumber: document.getElementById('edit-phone')?.value,
-				role: document.getElementById('edit-role')?.value
+				firstName: getInputValue('edit-firstName'),
+				lastName: getInputValue('edit-lastName'),
+				email: getInputValue('edit-email'),
+				phoneNumber: getInputValue('edit-phone'),
+				role: getUserRole('edit-role')
 			})}>
 				<div class="p-6 space-y-4">
 					<div class="grid grid-cols-2 gap-4">

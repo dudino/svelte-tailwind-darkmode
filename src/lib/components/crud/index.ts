@@ -1,13 +1,5 @@
-import UserManagement from '$lib/components/crud/UserManagement.svelte';
-import LocationManagement from '$lib/components/crud/LocationManagement.svelte';
-import BookingManagement from '$lib/components/crud/BookingManagement.svelte';
-import ClientManagement from '$lib/components/crud/ClientManagement.svelte';
-import ReportsDashboard from '$lib/components/crud/ReportsDashboard.svelte';
-
-export {
-	UserManagement,
-	LocationManagement,
-	BookingManagement,
-	ClientManagement,
-	ReportsDashboard
-};
+export { default as UserManagement } from '$lib/components/crud/UserManagement.svelte';
+export { default as LocationManagement } from '$lib/components/crud/LocationManagement.svelte';
+export { default as BookingManagement } from '$lib/components/crud/BookingManagement.svelte';
+export { default as ClientManagement } from '$lib/components/crud/ClientManagement.svelte';
+export { default as ReportsDashboard } from '$lib/components/crud/ReportsDashboard.svelte';

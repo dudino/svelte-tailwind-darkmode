@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { createEventDispatcher } from 'svelte';
+	import { _ } from 'svelte-i18n';
 	import { masseuseData, getBraSize, isAvailableToday } from '$lib/stores/masseuse';
 	import { Clock, Star, User, Badge, Search, Filter } from 'lucide-svelte';
 	import Button from '$lib/components/ui/button/button.svelte';
@@ -14,8 +15,8 @@
 	let sortBy: 'name' | 'age' | 'availability' = 'name';
 	let filterBy: 'all' | 'available' | 'new' = 'available';
 	
-	$: filteredMasseuses = masseuseData
-		.filter(masseuse => {
+	$: filteredMasseuses = $masseuseData
+		.filter((masseuse: Masseuse) => {
 			// Search filter
 			if (searchQuery && !masseuse.name.toLowerCase().includes(searchQuery.toLowerCase())) {
 				return false;
@@ -33,7 +34,7 @@
 			
 			return true;
 		})
-		.sort((a, b) => {
+		.sort((a: Masseuse, b: Masseuse) => {
 			switch (sortBy) {
 				case 'age':
 					return a.age - b.age;
@@ -53,7 +54,7 @@
 		const today = new Date().toISOString().split('T')[0];
 		const todayAvailability = masseuse.availability.find(a => a.date === today);
 		
-		if (!todayAvailability) return 'Not available today';
+		if (!todayAvailability) return $_('masseuse.notAvailableToday');
 		
 		return `${todayAvailability.start_time} - ${todayAvailability.end_time}`;
 	}
@@ -68,8 +69,8 @@
 	<!-- Header & Controls -->
 	<div class="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
 		<div>
-			<h2 class="text-2xl font-bold text-foreground">Select Masseuse</h2>
-			<p class="text-sm text-muted-foreground">Choose from our available therapists</p>
+			<h2 class="text-2xl font-bold text-foreground">{$_('masseuse.selectMasseuse')}</h2>
+			<p class="text-sm text-muted-foreground">{$_('masseuse.chooseTherapist')}</p>
 		</div>
 		
 		<div class="flex flex-wrap gap-2">
@@ -77,7 +78,7 @@
 				<Search class="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
 				<input
 					type="text"
-					placeholder="Search masseuses..."
+					placeholder="{$_('masseuse.searchMasseuses')}"
 					bind:value={searchQuery}
 					class="pl-10 pr-4 py-2 border border-border rounded-lg bg-background text-foreground placeholder-muted-foreground focus:border-primary focus:outline-none"
 				/>
@@ -87,18 +88,18 @@
 				bind:value={filterBy}
 				class="px-3 py-2 border border-border rounded-lg bg-background text-foreground focus:border-primary focus:outline-none"
 			>
-				<option value="all">All</option>
-				<option value="available">Available Today</option>
-				<option value="new">New Girls</option>
+				<option value="all">{$_('common.all')}</option>
+				<option value="available">{$_('masseuse.availableToday')}</option>
+				<option value="new">{$_('masseuse.newGirls')}</option>
 			</select>
 			
 			<select
 				bind:value={sortBy}
 				class="px-3 py-2 border border-border rounded-lg bg-background text-foreground focus:border-primary focus:outline-none"
 			>
-				<option value="name">Sort by Name</option>
-				<option value="age">Sort by Age</option>
-				<option value="availability">Sort by Availability</option>
+				<option value="name">{$_('masseuse.sortByName')}</option>
+				<option value="age">{$_('masseuse.sortByAge')}</option>
+				<option value="availability">{$_('masseuse.sortByAvailability')}</option>
 			</select>
 		</div>
 	</div>
@@ -134,31 +135,31 @@
 				<!-- Masseuse Details -->
 				<div class="space-y-3">
 					<div class="grid grid-cols-2 gap-3 text-sm">
-						<div class="text-muted-foreground">Age:</div>
+						<div class="text-muted-foreground">{$_('masseuse.age')}:</div>
 						<div class="font-medium text-foreground">{masseuse.age}</div>
 						
-						<div class="text-muted-foreground">Height:</div>
+						<div class="text-muted-foreground">{$_('masseuse.height')}:</div>
 						<div class="font-medium text-foreground">{masseuse.height_cm} cm</div>
 						
-						<div class="text-muted-foreground">Size:</div>
-						<div class="font-medium text-foreground">{getBraSize(masseuse.breasts)} cup</div>
+						<div class="text-muted-foreground">{$_('masseuse.size')}:</div>
+						<div class="font-medium text-foreground">{getBraSize(masseuse.breasts)} {$_('masseuse.cup')}</div>
 					</div>
 					
 					<!-- Availability Status -->
 					<div class="pt-3 border-t border-border/50">
 						<div class="flex items-center justify-between">
-							<span class="text-sm text-muted-foreground">Today:</span>
+							<span class="text-sm text-muted-foreground">{$_('common.today')}:</span>
 							<div class="text-right">
 								{#if isAvailableToday(masseuse)}
 									<div class="flex items-center text-green-600 text-sm font-medium">
 										<Clock class="h-3 w-3 mr-1" />
-										Available
+										{$_('masseuse.available')}
 									</div>
 									<div class="text-xs text-muted-foreground mt-1">
 										{getAvailabilityText(masseuse)}
 									</div>
 								{:else}
-									<div class="text-sm text-muted-foreground">Not available</div>
+									<div class="text-sm text-muted-foreground">{$_('masseuse.notAvailable')}</div>
 								{/if}
 							</div>
 						</div>
@@ -171,7 +172,7 @@
 								<Star class={`h-3 w-3 ${i < 4 ? 'text-yellow-500 fill-current' : 'text-gray-300'}`} />
 							{/each}
 						</div>
-						<span class="text-xs text-muted-foreground">4.8 (23 reviews)</span>
+						<span class="text-xs text-muted-foreground">4.8 (23 {$_('masseuse.reviews')})</span>
 					</div>
 				</div>
 			</div>
@@ -182,8 +183,8 @@
 	{#if filteredMasseuses.length === 0}
 		<div class="text-center py-12">
 			<User class="h-16 w-16 text-muted-foreground mx-auto mb-4" />
-			<h3 class="text-lg font-semibold text-foreground mb-2">No masseuses found</h3>
-			<p class="text-muted-foreground">Try adjusting your search or filter criteria</p>
+			<h3 class="text-lg font-semibold text-foreground mb-2">{$_('masseuse.noMasseusesFound')}</h3>
+			<p class="text-muted-foreground">{$_('masseuse.adjustSearchCriteria')}</p>
 		</div>
 	{/if}
 	
@@ -196,15 +197,15 @@
 						<User class="h-6 w-6 text-primary" />
 					</div>
 					<div>
-						<h4 class="font-semibold text-foreground">Selected: {selectedMasseuse.name}</h4>
+						<h4 class="font-semibold text-foreground">{$_('masseuse.selected')}: {selectedMasseuse.name}</h4>
 						<p class="text-sm text-muted-foreground">
-							{isAvailableToday(selectedMasseuse) ? 'Available today' : 'Not available today'}
+							{isAvailableToday(selectedMasseuse) ? $_('masseuse.isAvailableToday') : $_('masseuse.notAvailableToday')}
 						</p>
 					</div>
 				</div>
 				
 				<Button on:click={() => dispatch('continue')} class="glass-button">
-					Continue with {selectedMasseuse.name}
+					{$_('masseuse.continueWith')} {selectedMasseuse.name}
 				</Button>
 			</div>
 		</div>

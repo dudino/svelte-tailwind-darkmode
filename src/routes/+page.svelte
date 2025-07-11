@@ -23,11 +23,11 @@
 				<span class="gradient-text">Affinity</span>
 			</h1>
 			<p class="text-xl md:text-2xl text-muted-foreground mb-10 max-w-3xl mx-auto leading-relaxed">
-				Professional Massage Parlor Management System
+				{$_('home.subtitle')}
 			</p>
 			<div class="flex gap-6 justify-center flex-wrap">
 				<Button size="lg" class="glass-button px-8 py-4 text-lg font-semibold">
-					Sign In to Access
+					{$_('auth.signInToAccess')}
 				</Button>
 			</div>
 		</section>

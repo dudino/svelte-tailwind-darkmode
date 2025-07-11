@@ -13,6 +13,8 @@
 			name: 'Anna Novakova',
 			email: 'anna.novakova@email.com',
 			phone: '+420 123 456 789',
+			notes: 'Preferred client, very punctual',
+			bookingHistory: ['booking-1', 'booking-5'],
 			preferences: {
 				massageTypes: ['Swedish Massage', 'Relaxation Massage'],
 				pressure: 'medium',
@@ -21,6 +23,7 @@
 				aromatherapy: true
 			},
 			medicalNotes: 'No known allergies. Prefers medium pressure.',
+			createdAt: '2023-12-01',
 			lastVisit: '2024-01-18',
 			totalSpent: 12000,
 			status: 'active'
@@ -30,6 +33,8 @@
 			name: 'Pavel Dvorak',
 			email: 'pavel.dvorak@email.com',
 			phone: '+420 987 654 321',
+			notes: 'Athlete, needs sports massage',
+			bookingHistory: ['booking-2'],
 			preferences: {
 				massageTypes: ['Deep Tissue Massage', 'Sports Massage'],
 				pressure: 'firm',
@@ -38,6 +43,7 @@
 				aromatherapy: false
 			},
 			medicalNotes: 'Lower back issues. Prefers firm pressure on shoulders.',
+			createdAt: '2023-11-15',
 			lastVisit: '2024-01-15',
 			totalSpent: 8400,
 			status: 'active'
@@ -47,6 +53,8 @@
 			name: 'Marie Svoboda',
 			email: 'marie.svoboda@email.com',
 			phone: '+420 555 123 456',
+			notes: 'VIP client, special requirements',
+			bookingHistory: ['booking-3'],
 			preferences: {
 				massageTypes: ['Hot Stone Massage', 'Aromatherapy Massage'],
 				pressure: 'light',
@@ -55,6 +63,7 @@
 				aromatherapy: true
 			},
 			medicalNotes: 'Sensitive skin. Allergic to lavender oil.',
+			createdAt: '2023-10-20',
 			lastVisit: '2024-01-10',
 			totalSpent: 15600,
 			status: 'active'
@@ -64,6 +73,8 @@
 			name: 'Jan Prochazka',
 			email: 'jan.prochazka@email.com',
 			phone: '+420 777 888 999',
+			notes: 'Infrequent visitor',
+			bookingHistory: ['booking-4'],
 			preferences: {
 				massageTypes: ['Swedish Massage'],
 				pressure: 'medium',
@@ -72,6 +83,7 @@
 				aromatherapy: false
 			},
 			medicalNotes: 'Regular client. No special requirements.',
+			createdAt: '2023-09-10',
 			lastVisit: '2023-12-20',
 			totalSpent: 4200,
 			status: 'inactive'
@@ -83,9 +95,34 @@
 	let showCreateClientModal = false;
 	let showEditClientModal = false;
 	let showClientDetails = false;
-	let selectedClient: typeof clients[0] | null = null;
-	let isLoading = false;
+	let selectedClient: typeof clients[0] | null = null;	let isLoading = false;
 	
+	// Helper functions for form handling
+	function getInputValue(id: string): string {
+		const element = document.getElementById(id) as HTMLInputElement;
+		return element?.value || '';
+	}
+	
+	function getSelectValue(id: string): string {
+		const element = document.getElementById(id) as HTMLSelectElement;
+		return element?.value || '';
+	}
+	
+	function getTextAreaValue(id: string): string {
+		const element = document.getElementById(id) as HTMLTextAreaElement;
+		return element?.value || '';
+	}
+	
+	function getCheckboxValue(id: string): boolean {
+		const element = document.getElementById(id) as HTMLInputElement;
+		return element?.checked || false;
+	}
+	
+	function getSelectedMassageTypes(): string[] {
+		const massageTypesInputs = document.querySelectorAll('input[name="create-massage-types"]:checked');
+		return Array.from(massageTypesInputs).map(input => (input as HTMLInputElement).value);
+	}
+
 	const statusOptions = [
 		{ value: 'all', label: 'All Clients' },
 		{ value: 'active', label: 'Active' },
@@ -97,7 +134,7 @@
 		if (searchQuery) {
 			const searchTerm = searchQuery.toLowerCase();
 			if (!client.name.toLowerCase().includes(searchTerm) &&
-				!client.email.toLowerCase().includes(searchTerm) &&
+				!(client.email?.toLowerCase().includes(searchTerm)) &&
 				!client.phone.includes(searchTerm)) {
 				return false;
 			}
@@ -171,6 +208,8 @@
 				name: clientData.name!,
 				email: clientData.email!,
 				phone: clientData.phone!,
+				notes: clientData.notes || '',
+				bookingHistory: [],
 				preferences: clientData.preferences || {
 					massageTypes: [],
 					pressure: 'medium',
@@ -179,6 +218,7 @@
 					aromatherapy: false
 				},
 				medicalNotes: clientData.medicalNotes || '',
+				createdAt: new Date().toISOString(),
 				totalSpent: 0,
 				status: 'active' as const
 			};
@@ -198,12 +238,11 @@
 		isLoading = true;
 		try {
 			await new Promise(resolve => setTimeout(resolve, 1000));
-			
-			clients = clients.map(client => 
-				client.id === selectedClient!.id 
-					? { ...client, ...clientData }
-					: client
-			);
+					clients = clients.map(client =>
+			client.id === selectedClient?.id
+				? { ...client, ...clientData }
+				: client
+		);
 			closeModals();
 		} catch (error) {
 			console.error('Failed to update client:', error);
@@ -435,21 +474,20 @@
 				<h2 class="text-2xl font-bold text-foreground">Add New Client</h2>
 			</div>
 			<form on:submit|preventDefault={() => {
-				const massageTypesInputs = document.querySelectorAll('input[name="create-massage-types"]:checked');
-				const massageTypes = Array.from(massageTypesInputs).map(input => input.value);
+				const massageTypes = getSelectedMassageTypes();
 				
 				handleCreateClient({
-					name: document.getElementById('create-client-name')?.value,
-					email: document.getElementById('create-client-email')?.value,
-					phone: document.getElementById('create-client-phone')?.value,
+					name: getInputValue('create-client-name'),
+					email: getInputValue('create-client-email'),
+					phone: getInputValue('create-client-phone'),
 					preferences: {
 						massageTypes,
-						pressure: document.getElementById('create-client-pressure')?.value || 'medium',
-						temperature: document.getElementById('create-client-temperature')?.value || 'warm',
-						music: document.getElementById('create-client-music')?.checked || false,
-						aromatherapy: document.getElementById('create-client-aromatherapy')?.checked || false
+						pressure: getSelectValue('create-client-pressure') || 'medium',
+						temperature: getSelectValue('create-client-temperature') || 'warm',
+						music: getCheckboxValue('create-client-music'),
+						aromatherapy: getCheckboxValue('create-client-aromatherapy')
 					},
-					medicalNotes: document.getElementById('create-client-notes')?.value
+					medicalNotes: getTextAreaValue('create-client-notes')
 				});
 			}}>
 				<div class="p-6 space-y-4">
@@ -689,7 +727,7 @@
 				<Button on:click={closeModals} variant="outline" class="glass-button">
 					Close
 				</Button>
-				<Button on:click={() => { closeModals(); openEditClientModal(selectedClient!); }} class="glass-button">
+				<Button on:click={() => { closeModals(); if (selectedClient) openEditClientModal(selectedClient); }} class="glass-button">
 					<Edit class="h-4 w-4 mr-2" />
 					Edit Client
 				</Button>

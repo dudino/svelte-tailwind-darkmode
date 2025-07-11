@@ -7,6 +7,19 @@
 	
 	const dispatch = createEventDispatcher();
 	
+	// Helper functions to get form values
+	function getInputValue(id: string): string {
+		return (document.getElementById(id) as HTMLInputElement)?.value || '';
+	}
+	
+	function getSelectValue(id: string): string {
+		return (document.getElementById(id) as HTMLSelectElement)?.value || '';
+	}
+	
+	function getTextAreaValue(id: string): string {
+		return (document.getElementById(id) as HTMLTextAreaElement)?.value || '';
+	}
+	
 	$: currentMasseuse = $masseuseData.find(m => m.email === $authStore.user?.email);
 	
 	// Mock schedule data for the masseuse
@@ -489,11 +502,11 @@
 				<h2 class="text-2xl font-bold text-foreground">Add Custom Time Slot</h2>
 			</div>
 			<form on:submit|preventDefault={() => createCustomSlot({
-				date: document.getElementById('custom-date')?.value,
-				startTime: document.getElementById('custom-start')?.value,
-				endTime: document.getElementById('custom-end')?.value,
-				room: document.getElementById('custom-room')?.value,
-				notes: document.getElementById('custom-notes')?.value
+				date: getInputValue('custom-date'),
+				startTime: getInputValue('custom-start'),
+				endTime: getInputValue('custom-end'),
+				room: getSelectValue('custom-room'),
+				notes: getTextAreaValue('custom-notes')
 			})}>
 				<div class="p-6 space-y-4">
 					<div>
@@ -577,11 +590,11 @@
 				<h2 class="text-2xl font-bold text-foreground">Block Time Period</h2>
 			</div>
 			<form on:submit|preventDefault={() => blockTime({
-				date: document.getElementById('block-date')?.value,
-				startTime: document.getElementById('block-start')?.value,
-				endTime: document.getElementById('block-end')?.value,
-				reason: document.getElementById('block-reason')?.value,
-				type: document.getElementById('block-type')?.value
+				date: getInputValue('block-date'),
+				startTime: getInputValue('block-start'),
+				endTime: getInputValue('block-end'),
+				reason: getInputValue('block-reason'),
+				type: getSelectValue('block-type')
 			})}>
 				<div class="p-6 space-y-4">
 					<div>

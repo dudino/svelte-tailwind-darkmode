@@ -177,7 +177,7 @@
 			<div class="space-y-3">
 				<div class="flex justify-between items-center">
 					<span class="text-sm text-muted-foreground">Total Masseuses:</span>
-					<span class="font-bold text-foreground">{masseuseData.length}</span>
+					<span class="font-bold text-foreground">{$masseuseData.length}</span>
 				</div>
 				<div class="flex justify-between items-center">
 					<span class="text-sm text-muted-foreground">Available Today:</span>
@@ -185,7 +185,7 @@
 				</div>
 				<div class="flex justify-between items-center">
 					<span class="text-sm text-muted-foreground">New Girls:</span>
-					<span class="font-bold text-blue-600">{masseuseData.filter(m => m.status === 'New girl!').length}</span>
+					<span class="font-bold text-blue-600">{$masseuseData.filter(m => m.status === 'New girl!').length}</span>
 				</div>
 				<div class="flex justify-between items-center">
 					<span class="text-sm text-muted-foreground">Currently Available:</span>

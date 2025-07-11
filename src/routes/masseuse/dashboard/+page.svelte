@@ -1,12 +1,13 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
+	import { _ } from 'svelte-i18n';
 	import { goto } from '$app/navigation';
 	import { Button } from '$lib/components/ui/button';
 	import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '$lib/components/ui/card';
 	import { Badge } from '$lib/components/ui/badge';
 	import { masseuses, todaysAvailability } from '$lib/stores/masseuse';
 	
-	let currentMasseuse = null;
+	let currentMasseuse: any = null;
 	let todaysBookings = 3;
 	let upcomingAppointments = 5;
 	let weeklyEarnings = 2450;
@@ -20,31 +21,31 @@
 		});
 	});
 	
-	const quickActions = [
+	$: quickActions = [
 		{ 
-			title: 'Manage Schedule', 
-			description: 'Update availability and time slots',
+			title: $_('dashboard.viewSchedule'), 
+			description: $_('schedule.manageAvailability'),
 			href: '/masseuse/schedule',
 			icon: '📅',
 			color: 'bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400'
 		},
 		{ 
-			title: 'View Bookings', 
-			description: 'Check today\'s appointments',
+			title: $_('dashboard.manageBookings'), 
+			description: $_('bookings.viewAndManage'),
 			href: '/masseuse/bookings',
 			icon: '📋',
 			color: 'bg-green-50 dark:bg-green-900/20 text-green-600 dark:text-green-400'
 		},
 		{ 
-			title: 'Analytics', 
-			description: 'Track performance and earnings',
+			title: $_('dashboard.viewAnalytics'), 
+			description: $_('analytics.overview'),
 			href: '/masseuse/analytics',
 			icon: '📈',
 			color: 'bg-purple-50 dark:bg-purple-900/20 text-purple-600 dark:text-purple-400'
 		},
 		{ 
-			title: 'Update Profile', 
-			description: 'Manage your professional profile',
+			title: $_('dashboard.updateProfile'), 
+			description: $_('masseuse.manageProfile'),
 			href: '/masseuse/profile',
 			icon: '👤',
 			color: 'bg-orange-50 dark:bg-orange-900/20 text-orange-600 dark:text-orange-400'
@@ -56,10 +57,10 @@
 	<!-- Welcome Section -->
 	<div class="bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg p-6 text-white">
 		<h2 class="text-2xl font-bold mb-2">
-			Welcome back, {currentMasseuse?.name || 'Professional'}! 👋
+			{$_('dashboard.welcome')}, {currentMasseuse?.name || $_('masseuse.professional')}! 👋
 		</h2>
 		<p class="text-blue-100">
-			Ready to provide exceptional wellness experiences today?
+			{$_('dashboard.readyToProvide')}
 		</p>
 	</div>
 	
@@ -67,34 +68,34 @@
 	<div class="grid grid-cols-1 md:grid-cols-4 gap-6">
 		<Card>
 			<CardHeader class="flex flex-row items-center justify-between space-y-0 pb-2">
-				<CardTitle class="text-sm font-medium">Today's Bookings</CardTitle>
+				<CardTitle class="text-sm font-medium">{$_('dashboard.todaysBookings')}</CardTitle>
 				<span class="text-2xl">📅</span>
 			</CardHeader>
 			<CardContent>
 				<div class="text-2xl font-bold">{todaysBookings}</div>
-				<p class="text-xs text-muted-foreground">2 confirmed, 1 pending</p>
+				<p class="text-xs text-muted-foreground">2 {$_('bookings.confirmed')}, 1 pending</p>
 			</CardContent>
 		</Card>
 		
 		<Card>
 			<CardHeader class="flex flex-row items-center justify-between space-y-0 pb-2">
-				<CardTitle class="text-sm font-medium">Upcoming</CardTitle>
+				<CardTitle class="text-sm font-medium">{$_('dashboard.upcomingBookings')}</CardTitle>
 				<span class="text-2xl">⏰</span>
 			</CardHeader>
 			<CardContent>
 				<div class="text-2xl font-bold">{upcomingAppointments}</div>
-				<p class="text-xs text-muted-foreground">Next 7 days</p>
+				<p class="text-xs text-muted-foreground">{$_('dashboard.next7Days')}</p>
 			</CardContent>
 		</Card>
 		
 		<Card>
 			<CardHeader class="flex flex-row items-center justify-between space-y-0 pb-2">
-				<CardTitle class="text-sm font-medium">Weekly Earnings</CardTitle>
+				<CardTitle class="text-sm font-medium">{$_('analytics.weeklyEarnings')}</CardTitle>
 				<span class="text-2xl">💰</span>
 			</CardHeader>
 			<CardContent>
 				<div class="text-2xl font-bold">€{weeklyEarnings}</div>
-				<p class="text-xs text-muted-foreground">+12% from last week</p>
+				<p class="text-xs text-muted-foreground">+12% {$_('dashboard.fromLastWeek')}</p>
 			</CardContent>
 		</Card>
 		

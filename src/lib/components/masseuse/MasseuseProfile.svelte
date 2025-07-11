@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { _ } from 'svelte-i18n';
 	import { createEventDispatcher } from 'svelte';
 	import { User, Camera, Edit3, Save, X, Star, Award, Calendar, MapPin, Phone, Mail, Globe, Clock, Users } from 'lucide-svelte';
 	import Button from '$lib/components/ui/button/button.svelte';
@@ -23,7 +24,7 @@
 		languages: currentMasseuse?.languages || [],
 		experience: currentMasseuse?.experience || '',
 		certifications: currentMasseuse?.certifications || [],
-		availability: currentMasseuse?.availability || {},
+		availability: currentMasseuse?.availability || [],
 		hourlyRate: currentMasseuse?.hourlyRate || 0,
 		location: currentMasseuse?.location || '',
 		website: currentMasseuse?.website || '',
@@ -102,7 +103,7 @@
 				languages: currentMasseuse?.languages || [],
 				experience: currentMasseuse?.experience || '',
 				certifications: currentMasseuse?.certifications || [],
-				availability: currentMasseuse?.availability || {},
+				availability: currentMasseuse?.availability || [],
 				hourlyRate: currentMasseuse?.hourlyRate || 0,
 				location: currentMasseuse?.location || '',
 				website: currentMasseuse?.website || '',
@@ -188,8 +189,8 @@
 	<!-- Header -->
 	<div class="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
 		<div>
-			<h1 class="text-3xl font-bold text-foreground">My Profile</h1>
-			<p class="text-sm text-muted-foreground">Manage your professional profile and settings</p>
+			<h1 class="text-3xl font-bold text-foreground">{$_('masseuse.myProfile')}</h1>
+			<p class="text-sm text-muted-foreground">{$_('masseuse.manageProfile')}</p>
 		</div>
 		
 		<div class="flex gap-2">
@@ -200,7 +201,7 @@
 					disabled={isLoading}
 				>
 					<Save class="h-4 w-4 mr-2" />
-					{isLoading ? 'Saving...' : 'Save Changes'}
+					{isLoading ? $_('common.loading') : $_('masseuse.saveChanges')}
 				</Button>
 				<Button
 					on:click={toggleEdit}
@@ -209,7 +210,7 @@
 					disabled={isLoading}
 				>
 					<X class="h-4 w-4 mr-2" />
-					Cancel
+					{$_('common.cancel')}
 				</Button>
 			{:else}
 				<Button
@@ -217,7 +218,7 @@
 					class="glass-button"
 				>
 					<Edit3 class="h-4 w-4 mr-2" />
-					Edit Profile
+					{$_('masseuse.editProfile')}
 				</Button>
 			{/if}
 		</div>
@@ -255,16 +256,18 @@
 				{#if isEditing}
 					<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
 						<div>
-							<label class="block text-sm font-medium text-foreground mb-2">Name</label>
+							<label for="masseuse-name" class="block text-sm font-medium text-foreground mb-2">Name</label>
 							<input
+								id="masseuse-name"
 								bind:value={editableProfile.name}
 								class="w-full p-3 border border-border rounded-lg bg-background text-foreground focus:border-primary focus:outline-none"
 								placeholder="Your full name"
 							/>
 						</div>
 						<div>
-							<label class="block text-sm font-medium text-foreground mb-2">Phone</label>
+							<label for="masseuse-phone" class="block text-sm font-medium text-foreground mb-2">Phone</label>
 							<input
+								id="masseuse-phone"
 								bind:value={editableProfile.phone}
 								class="w-full p-3 border border-border rounded-lg bg-background text-foreground focus:border-primary focus:outline-none"
 								placeholder="Phone number"
@@ -326,11 +329,11 @@
 			
 			<div class="space-y-4">
 				<!-- Bio -->
-				<div>
-					<label class="block text-sm font-medium text-foreground mb-2">Bio</label>
-					{#if isEditing}
-						<textarea
-							bind:value={editableProfile.bio}
+				<div>						<label for="masseuse-bio" class="block text-sm font-medium text-foreground mb-2">Bio</label>
+						{#if isEditing}
+							<textarea
+								id="masseuse-bio"
+								bind:value={editableProfile.bio}
 							rows="4"
 							class="w-full p-3 border border-border rounded-lg bg-background text-foreground focus:border-primary focus:outline-none resize-none"
 							placeholder="Tell clients about yourself..."
@@ -343,11 +346,11 @@
 				</div>
 				
 				<!-- Experience -->
-				<div>
-					<label class="block text-sm font-medium text-foreground mb-2">Experience</label>
-					{#if isEditing}
-						<textarea
-							bind:value={editableProfile.experience}
+				<div>						<label for="masseuse-experience" class="block text-sm font-medium text-foreground mb-2">Experience</label>
+						{#if isEditing}
+							<textarea
+								id="masseuse-experience"
+								bind:value={editableProfile.experience}
 							rows="3"
 							class="w-full p-3 border border-border rounded-lg bg-background text-foreground focus:border-primary focus:outline-none resize-none"
 							placeholder="Describe your professional experience..."

@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
 	import { locale, locales, isLoading } from 'svelte-i18n';
 	import { ChevronDown, Globe } from 'lucide-svelte';
 	import { createEventDispatcher } from 'svelte';
@@ -15,7 +15,7 @@
 
 	$: currentLanguage = languages.find(lang => lang.code === $locale) || languages[0];
 
-	function selectLanguage(langCode) {
+	function selectLanguage(langCode: string) {
 		locale.set(langCode);
 		isOpen = false;
 		dispatch('languageChanged', langCode);
@@ -30,8 +30,9 @@
 		isOpen = !isOpen;
 	}
 
-	function handleClickOutside(event) {
-		if (!event.target.closest('.language-selector')) {
+	function handleClickOutside(event: MouseEvent) {
+		const target = event.target as HTMLElement;
+		if (!target?.closest('.language-selector')) {
 			isOpen = false;
 		}
 	}

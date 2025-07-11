@@ -27,22 +27,21 @@
 			</p>
 		</div>
 	</section>
-</div>
 
-			<h2 class="text-2xl font-semibold mb-4 text-foreground">Technology</h2>
+	<section class="max-w-4xl mx-auto">
+		<div class="enhanced-card p-10 rounded-2xl">
+			<h2 class="text-2xl font-semibold mb-4 text-foreground">{$_('about.technology')}</h2>
 			<p class="text-muted-foreground mb-6">
-				This application is built using cutting-edge web technologies including SvelteKit for the 
-				framework, TailwindCSS for styling, and shadcn/ui for beautiful components. The mobile-first 
-				approach ensures optimal performance on all devices.
+				{$_('about.technologyText')}
 			</p>
 
-			<h2 class="text-2xl font-semibold mb-4 text-foreground">Features</h2>
+			<h2 class="text-2xl font-semibold mb-4 text-foreground">{$_('home.featuresTitle')}</h2>
 			<ul class="text-muted-foreground space-y-2">
-				<li>• Responsive mobile navigation</li>
-				<li>• Dark pink theme with light/dark mode toggle</li>
-				<li>• Modern component library</li>
-				<li>• Accessible design patterns</li>
-				<li>• Fast performance and loading times</li>
+				<li>• {$_('home.features.mobileFirst.description')}</li>
+				<li>• {$_('home.features.darkPinkTheme.description')}</li>
+				<li>• {$_('about.modernComponents')}</li>
+				<li>• {$_('about.accessibleDesign')}</li>
+				<li>• {$_('about.fastPerformance')}</li>
 			</ul>
 		</div>
 	</section>

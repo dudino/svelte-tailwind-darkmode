@@ -6,6 +6,19 @@
 	
 	const dispatch = createEventDispatcher();
 	
+	// Helper functions to get form values
+	function getInputValue(id: string): string {
+		return (document.getElementById(id) as HTMLInputElement)?.value || '';
+	}
+	
+	function getSelectValue(id: string): string {
+		return (document.getElementById(id) as HTMLSelectElement)?.value || '';
+	}
+	
+	function getTextAreaValue(id: string): string {
+		return (document.getElementById(id) as HTMLTextAreaElement)?.value || '';
+	}
+	
 	let locations: Location[] = [
 		{
 			id: 'loc-1',
@@ -372,8 +385,8 @@
 				<h2 class="text-2xl font-bold text-foreground">Add New Location</h2>
 			</div>
 			<form on:submit|preventDefault={() => handleCreateLocation({
-				name: document.getElementById('create-location-name')?.value,
-				address: document.getElementById('create-location-address')?.value
+				name: getInputValue('create-location-name'),
+				address: getInputValue('create-location-address')
 			})}>
 				<div class="p-6 space-y-4">
 					<div>
@@ -423,8 +436,8 @@
 				<h2 class="text-2xl font-bold text-foreground">Edit Location</h2>
 			</div>
 			<form on:submit|preventDefault={() => handleUpdateLocation({
-				name: document.getElementById('edit-location-name')?.value,
-				address: document.getElementById('edit-location-address')?.value
+				name: getInputValue('edit-location-name'),
+				address: getInputValue('edit-location-address')
 			})}>
 				<div class="p-6 space-y-4">
 					<div>
@@ -474,12 +487,12 @@
 				<h2 class="text-2xl font-bold text-foreground">Add New Room</h2>
 			</div>
 			<form on:submit|preventDefault={() => {
-				const amenitiesText = document.getElementById('create-room-amenities')?.value || '';
+				const amenitiesText = getInputValue('create-room-amenities');
 				const amenities = amenitiesText.split(',').map(a => a.trim()).filter(a => a);
 				
 				handleCreateRoom({
-					name: document.getElementById('create-room-name')?.value,
-					capacity: parseInt(document.getElementById('create-room-capacity')?.value || '1'),
+					name: getInputValue('create-room-name'),
+					capacity: parseInt(getInputValue('create-room-capacity') || '1'),
 					amenities
 				});
 			}}>
@@ -560,12 +573,12 @@
 				<h2 class="text-2xl font-bold text-foreground">Edit Room</h2>
 			</div>
 			<form on:submit|preventDefault={() => {
-				const amenitiesText = document.getElementById('edit-room-amenities')?.value || '';
+				const amenitiesText = getInputValue('edit-room-amenities');
 				const amenities = amenitiesText.split(',').map(a => a.trim()).filter(a => a);
 				
 				handleUpdateRoom({
-					name: document.getElementById('edit-room-name')?.value,
-					capacity: parseInt(document.getElementById('edit-room-capacity')?.value || '1'),
+					name: getInputValue('edit-room-name'),
+					capacity: parseInt(getInputValue('edit-room-capacity') || '1'),
 					amenities
 				});
 			}}>

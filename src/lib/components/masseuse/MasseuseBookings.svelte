@@ -1,11 +1,17 @@
 <script lang="ts">
 	import { createEventDispatcher } from 'svelte';
+	import { _ } from 'svelte-i18n';
 	import { Calendar, Clock, Phone, User, MapPin, Star, MessageCircle, CheckCircle, AlertCircle, XCircle } from 'lucide-svelte';
 	import Button from '$lib/components/ui/button/button.svelte';
 	import { authStore } from '$lib/stores/auth';
 	import { masseuseData } from '$lib/stores/masseuse';
 	
 	const dispatch = createEventDispatcher();
+	
+	// Helper function to get textarea values
+	function getTextAreaValue(id: string): string {
+		return (document.getElementById(id) as HTMLTextAreaElement)?.value || '';
+	}
 	
 	$: currentMasseuse = $masseuseData.find(m => m.email === $authStore.user?.email);
 	
@@ -106,15 +112,15 @@
 	let selectedDate = new Date().toISOString().split('T')[0];
 	let statusFilter = 'all';
 	let showBookingDetails = false;
-	let selectedBooking = null;
+	let selectedBooking: any = null;
 	let isLoading = false;
 	
-	const statusOptions = [
-		{ value: 'all', label: 'All Bookings' },
-		{ value: 'upcoming', label: 'Upcoming' },
-		{ value: 'in-progress', label: 'In Progress' },
-		{ value: 'completed', label: 'Completed' },
-		{ value: 'cancelled', label: 'Cancelled' }
+	$: statusOptions = [
+		{ value: 'all', label: $_('bookings.allBookings') },
+		{ value: 'upcoming', label: $_('bookings.upcoming') },
+		{ value: 'in-progress', label: $_('bookings.inProgress') },
+		{ value: 'completed', label: $_('bookings.completed') },
+		{ value: 'cancelled', label: $_('bookings.cancelled') }
 	];
 	
 	$: filteredBookings = bookings.filter(booking => {
@@ -522,7 +528,7 @@
 					></textarea>
 					<div class="mt-2 flex justify-end">
 						<Button
-							on:click={() => addClientNotes(selectedBooking.id, document.getElementById('masseuse-notes')?.value)}
+							on:click={() => addClientNotes(selectedBooking.id, getTextAreaValue('masseuse-notes'))}
 							class="glass-button"
 							disabled={isLoading}
 						>
