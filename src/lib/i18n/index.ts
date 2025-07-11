@@ -1,8 +1,10 @@
 import { browser } from '$app/environment';
-import { init, register, locale, getLocaleFromNavigator } from 'svelte-i18n';
+import { init, register, locale, getLocaleFromNavigator, isLoading } from 'svelte-i18n';
 
 const defaultLocale = 'en';
+const supportedLocales = ['en', 'cs', 'ru'];
 
+// Register all locales
 register('en', () => import('./locales/en.json'));
 register('cs', () => import('./locales/cs.json'));
 register('ru', () => import('./locales/ru.json'));
@@ -12,12 +14,14 @@ function getInitialLocale() {
 	
 	// Check for saved language preference first
 	const savedLanguage = localStorage.getItem('preferred-language');
-	if (savedLanguage && ['en', 'cs', 'ru'].includes(savedLanguage)) {
+	if (savedLanguage && supportedLocales.includes(savedLanguage)) {
+		console.log('Using saved language:', savedLanguage);
 		return savedLanguage;
 	}
 	
 	// Fall back to browser language
 	const browserLanguage = getLocaleFromNavigator() || defaultLocale;
+	console.log('Browser language:', browserLanguage);
 	
 	// Map browser languages to supported locales
 	if (browserLanguage.startsWith('cs')) return 'cs';
@@ -27,7 +31,21 @@ function getInitialLocale() {
 	return defaultLocale;
 }
 
+const initialLocale = getInitialLocale();
+console.log('Initializing i18n with locale:', initialLocale);
+
 init({
 	fallbackLocale: defaultLocale,
-	initialLocale: getInitialLocale(),
+	initialLocale: initialLocale,
+	loadingDelay: 200,
 });
+
+// Listen for locale changes and save to localStorage
+if (browser) {
+	locale.subscribe((currentLocale) => {
+		if (currentLocale && supportedLocales.includes(currentLocale)) {
+			localStorage.setItem('preferred-language', currentLocale);
+			console.log('Locale changed to:', currentLocale);
+		}
+	});
+}

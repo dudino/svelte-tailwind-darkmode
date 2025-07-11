@@ -3,6 +3,13 @@
 	import { isAuthenticated } from '$lib/stores/auth';
 	import DashboardRouter from '$lib/components/dashboard/DashboardRouter.svelte';
 	import Button from '$lib/components/ui/button/button.svelte';
+	
+	// Debug translations
+	$: console.log('Current translations:', {
+		homeSubtitle: $_('home.subtitle'),
+		signIn: $_('auth.signInToAccess'),
+		navHome: $_('nav.home')
+	});
 </script>
 
 <svelte:head>

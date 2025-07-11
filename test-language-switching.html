@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Language Switching Test</title>
+</head>
+<body>
+    <h1>Language Switching Test</h1>
+    <p>Open the browser console and visit your deployed app to test language switching:</p>
+    
+    <ol>
+        <li>Visit: <a href="https://affinity-n6ywnrorf-rudys-projects-f917f7cb.vercel.app" target="_blank">https://affinity-n6ywnrorf-rudys-projects-f917f7cb.vercel.app</a></li>
+        <li>Open browser DevTools (F12)</li>
+        <li>Try switching languages using the language selector</li>
+        <li>Check that the URL, content, and localStorage update correctly</li>
+    </ol>
+    
+    <h2>Manual Test Script</h2>
+    <p>Copy and paste this into the browser console on your deployed app:</p>
+    
+    <pre><code>
+// Test language switching manually
+console.log('Testing language switching...');
+
+// Check current state
+console.log('Current URL:', window.location.href);
+console.log('Current localStorage language:', localStorage.getItem('preferred-language'));
+
+// Test switching to Czech
+localStorage.setItem('preferred-language', 'cs');
+window.location.reload();
+
+// After reload, test Russian
+setTimeout(() => {
+    localStorage.setItem('preferred-language', 'ru');
+    window.location.reload();
+}, 5000);
+
+// After reload, test English  
+setTimeout(() => {
+    localStorage.setItem('preferred-language', 'en');
+    window.location.reload();
+}, 10000);
+    </code></pre>
+    
+    <h2>Expected Results</h2>
+    <ul>
+        <li>✅ Content should change language immediately</li>
+        <li>✅ Language selector should show the correct active language</li>
+        <li>✅ localStorage should store the selected language</li>
+        <li>✅ Page refresh should maintain the selected language</li>
+    </ul>
+</body>
+</html>

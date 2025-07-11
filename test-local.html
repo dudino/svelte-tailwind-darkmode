@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Language Switching</title>
+</head>
+<body>
+    <h1>Language Switching Test</h1>
+    <p>Open browser console and go to: <a href="http://localhost:5177/" target="_blank">http://localhost:5177/</a></p>
+    
+    <h2>Console Commands to Test:</h2>
+    <pre>
+// Check current locale
+console.log('Current locale:', window.location.href);
+
+// Test localStorage
+localStorage.setItem('preferred-language', 'cs');
+location.reload();
+
+// After reload, test Russian
+localStorage.setItem('preferred-language', 'ru');
+location.reload();
+
+// Test English
+localStorage.setItem('preferred-language', 'en');
+location.reload();
+    </pre>
+    
+    <h2>What to Look For:</h2>
+    <ul>
+        <li>Check console for any i18n debug messages</li>
+        <li>Check if translations load properly</li>
+        <li>Check if locale changes are reflected in the UI</li>
+        <li>Check localStorage persistence</li>
+    </ul>
+</body>
+</html>

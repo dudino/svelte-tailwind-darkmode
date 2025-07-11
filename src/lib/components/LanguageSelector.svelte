@@ -22,18 +22,23 @@
 			return;
 		}
 		
-		locale.set(langCode);
-		isOpen = false;
-		dispatch('languageChanged', langCode);
+		console.log('Selecting language:', langCode);
 		
-		// Store language preference
+		// Store language preference first
 		if (typeof window !== 'undefined') {
 			localStorage.setItem('preferred-language', langCode);
 		}
 		
-		// Force a small delay to ensure the locale change is processed
+		// Set the locale
+		locale.set(langCode);
+		isOpen = false;
+		dispatch('languageChanged', langCode);
+		
+		// Debug logging
 		setTimeout(() => {
-			console.log('Language changed to:', langCode);
+			console.log('Language switched to:', langCode);
+			console.log('Current $locale:', $locale);
+			console.log('localStorage:', localStorage.getItem('preferred-language'));
 		}, 100);
 	}
 
