@@ -16,6 +16,12 @@
 	$: currentLanguage = languages.find(lang => lang.code === $locale) || languages[0];
 
 	function selectLanguage(langCode: string) {
+		// Prevent unnecessary updates
+		if ($locale === langCode) {
+			isOpen = false;
+			return;
+		}
+		
 		locale.set(langCode);
 		isOpen = false;
 		dispatch('languageChanged', langCode);
@@ -24,6 +30,11 @@
 		if (typeof window !== 'undefined') {
 			localStorage.setItem('preferred-language', langCode);
 		}
+		
+		// Force a small delay to ensure the locale change is processed
+		setTimeout(() => {
+			console.log('Language changed to:', langCode);
+		}, 100);
 	}
 
 	function toggleDropdown() {

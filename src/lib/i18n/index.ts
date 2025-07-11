@@ -1,5 +1,5 @@
 import { browser } from '$app/environment';
-import { init, register, locale } from 'svelte-i18n';
+import { init, register, locale, getLocaleFromNavigator } from 'svelte-i18n';
 
 const defaultLocale = 'en';
 
@@ -17,7 +17,7 @@ function getInitialLocale() {
 	}
 	
 	// Fall back to browser language
-	const browserLanguage = window.navigator.language.toLowerCase();
+	const browserLanguage = getLocaleFromNavigator() || defaultLocale;
 	
 	// Map browser languages to supported locales
 	if (browserLanguage.startsWith('cs')) return 'cs';
@@ -31,6 +31,3 @@ init({
 	fallbackLocale: defaultLocale,
 	initialLocale: getInitialLocale(),
 });
-
-// Set the initial locale immediately
-locale.set(getInitialLocale());

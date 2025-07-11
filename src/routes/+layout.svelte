@@ -14,13 +14,7 @@
 		// Initialize auth state
 		authStore.init();
 		
-		// Load saved language preference
-		if (typeof window !== 'undefined') {
-			const savedLanguage = localStorage.getItem('preferred-language');
-			if (savedLanguage) {
-				locale.set(savedLanguage);
-			}
-		}
+		// Wait for i18n to be ready
 		await waitLocale();
 		i18nLoaded = true;
 	});
