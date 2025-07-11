@@ -29,6 +29,23 @@
 			localStorage.setItem('preferred-language', langCode);
 		}
 		
+		// Clear service worker cache immediately
+		if ('serviceWorker' in navigator && 'caches' in window) {
+			try {
+				const cacheNames = await caches.keys();
+				await Promise.all(
+					cacheNames.map(cacheName => {
+						if (cacheName.includes('affinity')) {
+							console.log('Clearing cache:', cacheName);
+							return caches.delete(cacheName);
+						}
+					})
+				);
+			} catch (error) {
+				console.warn('Failed to clear cache:', error);
+			}
+		}
+		
 		// Set the locale and wait for it to load
 		locale.set(langCode);
 		await waitLocale(langCode);
@@ -36,11 +53,16 @@
 		isOpen = false;
 		dispatch('languageChanged', langCode);
 		
-		// Debug logging
+		// Debug logging and force UI update
 		setTimeout(() => {
 			console.log('Language switched to:', langCode);
 			console.log('Current $locale:', $locale);
 			console.log('localStorage:', localStorage.getItem('preferred-language'));
+			
+			// Try to force a UI update by dispatching a custom event
+			if (typeof window !== 'undefined') {
+				window.dispatchEvent(new CustomEvent('languageChanged', { detail: langCode }));
+			}
 		}, 100);
 	}
 

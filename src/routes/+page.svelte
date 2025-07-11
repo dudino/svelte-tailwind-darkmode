@@ -6,14 +6,31 @@
 	import { onMount } from 'svelte';
 	
 	let forceUpdate = 0;
+	let previousLocale = '';
 	
 	// Force re-evaluation when locale changes
-	$: if ($locale) {
+	$: if ($locale && $locale !== previousLocale) {
+		previousLocale = $locale;
 		forceUpdate++;
+		console.log('Locale changed, forceUpdate:', forceUpdate, 'from', previousLocale, 'to', $locale);
 	}
 	
-	// Force reactivity by making translations dependent on locale and forceUpdate
-	$: translations = $locale && !$isLoading ? {
+	// Listen for manual language change events
+	onMount(() => {
+		const handleLanguageChange = (event) => {
+			console.log('Custom language change event received:', event.detail);
+			forceUpdate++;
+		};
+		
+		window.addEventListener('languageChanged', handleLanguageChange);
+		
+		return () => {
+			window.removeEventListener('languageChanged', handleLanguageChange);
+		};
+	});
+	
+	// Force reactivity by making translations dependent on locale, loading state, and forceUpdate
+	$: translations = ($locale && !$isLoading && forceUpdate >= 0) ? {
 		homeSubtitle: $_('home.subtitle'),
 		signIn: $_('auth.signInToAccess'),
 		navHome: $_('nav.home')
@@ -36,7 +53,7 @@
 	<DashboardRouter />
 {:else}
 	<!-- Public landing page (if somehow accessed) -->
-	{#key $locale}
+	{#key `${$locale}-${forceUpdate}`}
 	<div class="space-y-12 relative">
 		<!-- Hero Section with enhanced styling -->
 		<section class="text-center py-16 relative">

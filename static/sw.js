@@ -3,19 +3,12 @@ const CACHE_NAME = 'affinity-v1';
 const STATIC_CACHE = 'affinity-static-v1';
 const DYNAMIC_CACHE = 'affinity-dynamic-v1';
 
-// Files to cache immediately
+// Files to cache immediately (excluding dynamic HTML pages)
 const STATIC_FILES = [
-	'/',
-	'/masseuse',
-	'/masseuse/dashboard',
-	'/masseuse/schedule',
-	'/masseuse/bookings',
-	'/masseuse/analytics',
-	'/masseuse/profile',
-	'/client-portal',
 	'/manifest.json',
 	'/icon-192.png',
 	'/icon-512.png'
+	// Removed HTML pages that contain dynamic i18n content
 ];
 
 // Install event - cache static files
@@ -37,16 +30,26 @@ self.addEventListener('install', event => {
 	);
 });
 
-// Fetch event - serve from cache when offline
+// Fetch event - serve from cache when offline, but not for HTML pages with i18n
 self.addEventListener('fetch', (event) => {
-  event.respondWith(
-    caches.match(event.request)
-      .then((response) => {
-        // Return cached version or fetch from network
-        return response || fetch(event.request);
-      }
-    )
-  );
+	const url = new URL(event.request.url);
+	
+	// Don't cache HTML pages that contain dynamic i18n content
+	if (event.request.destination === 'document' || 
+		event.request.headers.get('accept')?.includes('text/html')) {
+		// Always fetch fresh for HTML pages
+		event.respondWith(fetch(event.request));
+		return;
+	}
+	
+	// Cache other resources (CSS, JS, images, etc.)
+	event.respondWith(
+		caches.match(event.request)
+			.then((response) => {
+				// Return cached version or fetch from network
+				return response || fetch(event.request);
+			})
+	);
 });
 
 // Activate event - clean up old caches

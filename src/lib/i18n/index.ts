@@ -47,6 +47,18 @@ if (browser) {
 		if (currentLocale && supportedLocales.includes(currentLocale)) {
 			localStorage.setItem('preferred-language', currentLocale);
 			console.log('Locale changed to:', currentLocale);
+			
+			// Clear service worker cache when locale changes to force fresh content
+			if ('serviceWorker' in navigator && 'caches' in window) {
+				caches.keys().then(cacheNames => {
+					cacheNames.forEach(cacheName => {
+						if (cacheName.includes('affinity')) {
+							caches.delete(cacheName);
+							console.log('Cleared cache:', cacheName);
+						}
+					});
+				});
+			}
 		}
 	});
 }
