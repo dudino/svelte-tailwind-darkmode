@@ -2,21 +2,22 @@
 	import { ModeWatcher } from 'mode-watcher';
 	import { onMount } from 'svelte';
 	import '$styles/app.css';
-	import { authStore } from '$lib/stores/auth';
 	import ProtectedRoute from '$lib/components/auth/ProtectedRoute.svelte';
 	import MobileNavbar from '$lib/components/MobileNavbar.svelte';
+	import { initPocketBase } from '$lib/stores';
 
 	// Get the locale data from the load function
 	let { data, children } = $props();
 	
-	// Use the locale data
-	let currentLocale = $derived(data?.locale || 'en');
-	
 	let appLoaded = $state(false);
 
 	onMount(async () => {
-		// Initialize auth state
-		authStore.init();
+		// Initialize auth state and stores
+		try {
+			await initPocketBase();
+		} catch (err) {
+			console.warn('Failed to initialize PocketBase:', err);
+		}
 		appLoaded = true;
 	});
 </script>
