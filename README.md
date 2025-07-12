@@ -1,4 +1,4 @@
-# Sveltekit + Tailwind CSS + Shadcn svelte Boilerplate with Darkmode & i18n
+# Sveltekit + Tailwind CSS + Shadcn svelte Boilerplate with Darkmode & Wuchale i18n
 
 This is a modern boilerplate project for getting started with a web development project using SvelteKit, Tailwind CSS, and internationalization support, powered by Vite.
 
@@ -8,7 +8,7 @@ This is a modern boilerplate project for getting started with a web development 
 - ✅ **Tailwind CSS**: Utility-first CSS framework for rapid UI development
 - ✅ **Dark Pink Theme**: Beautiful dark pink color scheme with light/dark mode toggle
 - ✅ **Mobile-First Design**: Responsive navigation with mobile hamburger menu
-- ✅ **Internationalization (i18n)**: Multi-language support with svelte-i18n
+- ✅ **Internationalization (i18n)**: Multi-language support with Wuchale
 - ✅ **Language Support**: English, Czech (Čeština), and Russian (Русский)
 - ✅ **Shadcn/ui Components**: Modern, accessible UI components
 - ✅ **Vite**: Fast development experience with hot module replacement
@@ -31,8 +31,9 @@ This project supports multiple languages:
 
 ### Adding New Languages
 
-1. Create a new JSON file in `src/lib/i18n/locales/` (e.g., `fr.json`)
-2. Add the locale registration in `src/lib/i18n/index.ts`
+1. Add the locale to `wuchale.config.js`
+2. Run `pnpm extract` to generate translation files
+3. Translate the strings in the generated `.po` files
 3. Update the language selector in `src/lib/components/LanguageSelector.svelte`
 
 <br><br>

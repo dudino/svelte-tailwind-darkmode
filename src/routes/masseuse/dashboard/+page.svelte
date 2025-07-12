@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import { _ } from 'svelte-i18n';
 	import { goto } from '$app/navigation';
 	import { Button } from '$lib/components/ui/button';
 	import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '$lib/components/ui/card';
@@ -23,29 +22,29 @@
 	
 	$: quickActions = [
 		{ 
-			title: $_('dashboard.viewSchedule'), 
-			description: $_('schedule.manageAvailability'),
+			title: 'View Schedule', 
+			description: 'Manage your availability',
 			href: '/masseuse/schedule',
 			icon: '📅',
 			color: 'bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400'
 		},
 		{ 
-			title: $_('dashboard.manageBookings'), 
-			description: $_('bookings.viewAndManage'),
+			title: 'Manage Bookings', 
+			description: 'View and manage appointments',
 			href: '/masseuse/bookings',
 			icon: '📋',
 			color: 'bg-green-50 dark:bg-green-900/20 text-green-600 dark:text-green-400'
 		},
 		{ 
-			title: $_('dashboard.viewAnalytics'), 
-			description: $_('analytics.overview'),
+			title: 'View Analytics', 
+			description: 'Performance overview',
 			href: '/masseuse/analytics',
 			icon: '📈',
 			color: 'bg-purple-50 dark:bg-purple-900/20 text-purple-600 dark:text-purple-400'
 		},
 		{ 
-			title: $_('dashboard.updateProfile'), 
-			description: $_('masseuse.manageProfile'),
+			title: 'Update Profile', 
+			description: 'Manage your profile',
 			href: '/masseuse/profile',
 			icon: '👤',
 			color: 'bg-orange-50 dark:bg-orange-900/20 text-orange-600 dark:text-orange-400'
@@ -57,10 +56,10 @@
 	<!-- Welcome Section -->
 	<div class="bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg p-6 text-white">
 		<h2 class="text-2xl font-bold mb-2">
-			{$_('dashboard.welcome')}, {currentMasseuse?.name || $_('masseuse.professional')}! 👋
+			Welcome, {currentMasseuse?.name || 'Professional'}! 👋
 		</h2>
 		<p class="text-blue-100">
-			{$_('dashboard.readyToProvide')}
+			Ready to provide excellent service today
 		</p>
 	</div>
 	
@@ -68,34 +67,34 @@
 	<div class="grid grid-cols-1 md:grid-cols-4 gap-6">
 		<Card>
 			<CardHeader class="flex flex-row items-center justify-between space-y-0 pb-2">
-				<CardTitle class="text-sm font-medium">{$_('dashboard.todaysBookings')}</CardTitle>
+				<CardTitle class="text-sm font-medium">Today's Bookings</CardTitle>
 				<span class="text-2xl">📅</span>
 			</CardHeader>
 			<CardContent>
 				<div class="text-2xl font-bold">{todaysBookings}</div>
-				<p class="text-xs text-muted-foreground">2 {$_('bookings.confirmed')}, 1 pending</p>
+				<p class="text-xs text-muted-foreground">2 confirmed, 1 pending</p>
 			</CardContent>
 		</Card>
 		
 		<Card>
 			<CardHeader class="flex flex-row items-center justify-between space-y-0 pb-2">
-				<CardTitle class="text-sm font-medium">{$_('dashboard.upcomingBookings')}</CardTitle>
+				<CardTitle class="text-sm font-medium">Upcoming Bookings</CardTitle>
 				<span class="text-2xl">⏰</span>
 			</CardHeader>
 			<CardContent>
 				<div class="text-2xl font-bold">{upcomingAppointments}</div>
-				<p class="text-xs text-muted-foreground">{$_('dashboard.next7Days')}</p>
+				<p class="text-xs text-muted-foreground">Next 7 days</p>
 			</CardContent>
 		</Card>
 		
 		<Card>
 			<CardHeader class="flex flex-row items-center justify-between space-y-0 pb-2">
-				<CardTitle class="text-sm font-medium">{$_('analytics.weeklyEarnings')}</CardTitle>
+				<CardTitle class="text-sm font-medium">Weekly Earnings</CardTitle>
 				<span class="text-2xl">💰</span>
 			</CardHeader>
 			<CardContent>
 				<div class="text-2xl font-bold">€{weeklyEarnings}</div>
-				<p class="text-xs text-muted-foreground">+12% {$_('dashboard.fromLastWeek')}</p>
+				<p class="text-xs text-muted-foreground">+12% from last week</p>
 			</CardContent>
 		</Card>
 		

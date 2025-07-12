@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { createEventDispatcher } from 'svelte';
-	import { _ } from 'svelte-i18n';
 	import { Calendar, Clock, Phone, User, MapPin, Star, MessageCircle, CheckCircle, AlertCircle, XCircle } from 'lucide-svelte';
 	import Button from '$lib/components/ui/button/button.svelte';
 	import { authStore } from '$lib/stores/auth';
@@ -116,11 +115,11 @@
 	let isLoading = false;
 	
 	$: statusOptions = [
-		{ value: 'all', label: $_('bookings.allBookings') },
-		{ value: 'upcoming', label: $_('bookings.upcoming') },
-		{ value: 'in-progress', label: $_('bookings.inProgress') },
-		{ value: 'completed', label: $_('bookings.completed') },
-		{ value: 'cancelled', label: $_('bookings.cancelled') }
+		{ value: 'all', label: 'All Bookings' },
+		{ value: 'upcoming', label: 'Upcoming' },
+		{ value: 'in-progress', label: 'In Progress' },
+		{ value: 'completed', label: 'Completed' },
+		{ value: 'cancelled', label: 'Cancelled' }
 	];
 	
 	$: filteredBookings = bookings.filter(booking => {

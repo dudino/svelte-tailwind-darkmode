@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import { _, isLoading } from 'svelte-i18n';
+
 	import { currentUser, permissions, isAuthenticated } from '$lib/stores/auth';
 	import Button from '$lib/components/ui/button/button.svelte';
 	import ThemeToggle from './ThemeToggle.svelte';
@@ -55,40 +55,40 @@
 		if (!role) return [];
 
 		const baseItems = [
-			{ href: '/', icon: Home, labelKey: 'nav.dashboard', show: true }
+			{ href: '/', icon: Home, labelKey: 'Dashboard', show: true }
 		];
 
 		switch (role) {
 			case 'Administrator':
 				return [
 					...baseItems,
-					{ href: '/users', icon: Users, labelKey: 'nav.users', show: perms.canManageUsers },
-					{ href: '/locations', icon: MapPin, labelKey: 'nav.locations', show: perms.canManageLocations },
-					{ href: '/schedules', icon: Calendar, labelKey: 'nav.schedules', show: perms.canManageSchedules },
-					{ href: '/bookings', icon: FileText, labelKey: 'nav.bookings', show: perms.canViewAllBookings },
-					{ href: '/reports', icon: BarChart3, labelKey: 'nav.reports', show: perms.canViewReports },
-					{ href: '/clients', icon: User, labelKey: 'nav.clients', show: perms.canManageClients },
-					{ href: '/reviews', icon: Star, labelKey: 'nav.reviews', show: true },
-					{ href: '/settings', icon: Settings, labelKey: 'nav.settings', show: true }
+					{ href: '/users', icon: Users, labelKey: 'Users', show: perms.canManageUsers },
+					{ href: '/locations', icon: MapPin, labelKey: 'Locations', show: perms.canManageLocations },
+					{ href: '/schedules', icon: Calendar, labelKey: 'Schedules', show: perms.canManageSchedules },
+					{ href: '/bookings', icon: FileText, labelKey: 'Bookings', show: perms.canViewAllBookings },
+					{ href: '/reports', icon: BarChart3, labelKey: 'Reports', show: perms.canViewReports },
+					{ href: '/clients', icon: User, labelKey: 'Clients', show: perms.canManageClients },
+					{ href: '/reviews', icon: Star, labelKey: 'Reviews', show: true },
+					{ href: '/settings', icon: Settings, labelKey: 'Settings', show: true }
 				];
 
 			case 'Operator':
 				return [
 					...baseItems,
-					{ href: '/schedules', icon: Calendar, labelKey: 'nav.schedules', show: perms.canManageSchedules },
-					{ href: '/bookings', icon: FileText, labelKey: 'nav.bookings', show: perms.canCreateBookings },
-					{ href: '/clients', icon: User, labelKey: 'nav.clients', show: perms.canManageClients },
-					{ href: '/reviews', icon: Star, labelKey: 'nav.reviews', show: true }
+					{ href: '/schedules', icon: Calendar, labelKey: 'Schedules', show: perms.canManageSchedules },
+					{ href: '/bookings', icon: FileText, labelKey: 'Bookings', show: perms.canCreateBookings },
+					{ href: '/clients', icon: User, labelKey: 'Clients', show: perms.canManageClients },
+					{ href: '/reviews', icon: Star, labelKey: 'Reviews', show: true }
 				];
 
 			case 'Masseuse':
 				return [
 					...baseItems,
-					{ href: '/masseuse/dashboard', icon: Home, labelKey: 'nav.dashboard', show: true },
-					{ href: '/masseuse/schedule', icon: Calendar, labelKey: 'nav.mySchedule', show: true },
-					{ href: '/masseuse/bookings', icon: FileText, labelKey: 'nav.myBookings', show: true },
-					{ href: '/masseuse/analytics', icon: BarChart3, labelKey: 'nav.analytics', show: true },
-					{ href: '/masseuse/profile', icon: User, labelKey: 'nav.profile', show: true }
+					{ href: '/masseuse/dashboard', icon: Home, labelKey: 'Dashboard', show: true },
+					{ href: '/masseuse/schedule', icon: Calendar, labelKey: 'My Schedule', show: true },
+					{ href: '/masseuse/bookings', icon: FileText, labelKey: 'My Bookings', show: true },
+					{ href: '/masseuse/analytics', icon: BarChart3, labelKey: 'Analytics', show: true },
+					{ href: '/masseuse/profile', icon: User, labelKey: 'Profile', show: true }
 				];
 
 			default:
@@ -113,7 +113,7 @@
 			{#each navigationItems.filter(item => item.show) as item}
 				<a href={item.href} class="flex items-center space-x-2 text-foreground/80 hover:text-primary transition-all duration-300 hover:scale-105">
 					<svelte:component this={item.icon} class="h-4 w-4" />
-					<span class="font-medium">{$isLoading ? item.labelKey : $_(item.labelKey)}</span>
+					<span class="font-medium">{item.labelKey}</span>
 				</a>
 			{/each}
 		</div>
@@ -132,7 +132,7 @@
 					{:else}
 						<Menu class="h-5 w-5" />
 					{/if}
-					<span class="sr-only">{$_('menu.toggle')}</span>
+					<span class="sr-only">Toggle menu</span>
 				</Button>
 			{/if}
 		</div>
@@ -150,7 +150,7 @@
 						on:click={closeMenu}
 					>
 						<svelte:component this={item.icon} class="h-5 w-5" />
-						<span class="font-medium text-lg">{$isLoading ? item.labelKey : $_(item.labelKey)}</span>
+						<span class="font-medium text-lg">{item.labelKey}</span>
 					</a>
 				{/each}
 			</div>

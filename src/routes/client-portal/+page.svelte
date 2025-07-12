@@ -1,11 +1,10 @@
 <script>
 	import ClientPortal from '$lib/components/ClientPortal.svelte';
-	import { _ } from 'svelte-i18n';
 </script>
 
 <svelte:head>
-	<title>{$_('pageTitles.clientPortalAffinity')}</title>
-	<meta name="description" content="{$_('meta.clientPortalDescription')}" />
+	<title>Client Portal - Affinity</title>
+	<meta name="description" content="Access your massage session through our convenient client portal" />
 </svelte:head>
 
 <ClientPortal />

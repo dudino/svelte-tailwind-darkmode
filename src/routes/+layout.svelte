@@ -1,41 +1,40 @@
 <script>
 	import { ModeWatcher } from 'mode-watcher';
 	import { onMount } from 'svelte';
-	import { locale, waitLocale, isLoading, _ } from 'svelte-i18n';
-	import '$lib/i18n';
 	import '$styles/app.css';
 	import { authStore } from '$lib/stores/auth';
 	import ProtectedRoute from '$lib/components/auth/ProtectedRoute.svelte';
 	import MobileNavbar from '$lib/components/MobileNavbar.svelte';
 
-	let i18nLoaded = false;
+	// Get the locale data from the load function
+	export let data;
+	
+	// Use the locale data
+	$: currentLocale = data?.locale || 'en';
+	
+	let appLoaded = false;
 
 	onMount(async () => {
 		// Initialize auth state
 		authStore.init();
-		
-		// Wait for i18n to be ready
-		await waitLocale();
-		i18nLoaded = true;
+		appLoaded = true;
 	});
 </script>
 
 <svelte:head>
-	<title>{i18nLoaded ? $_('site.title') : 'Affinity - Massage Parlor Management'}</title>
+	<title>Affinity - Massage Parlor Management</title>
 </svelte:head>
 
 <ModeWatcher />
-{#if i18nLoaded}
-	{#key $locale}
+{#if appLoaded}
 	<ProtectedRoute>
 		<MobileNavbar />
 		<main class="container mx-auto px-4 py-6">
 			<slot />
 		</main>
 	</ProtectedRoute>
-	{/key}
 {:else}
-	<!-- Loading state while i18n initializes -->
+	<!-- Loading state while app initializes -->
 	<div class="fixed inset-0 flex items-center justify-center bg-background">
 		<div class="text-center">
 			<div class="w-16 h-16 bg-gradient-to-br from-primary to-primary/70 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg animate-pulse">

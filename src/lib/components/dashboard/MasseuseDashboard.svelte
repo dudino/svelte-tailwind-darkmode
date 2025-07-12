@@ -8,7 +8,6 @@
 	import MasseuseBookings from '$lib/components/masseuse/MasseuseBookings.svelte';
 	import MasseuseAnalytics from '$lib/components/masseuse/MasseuseAnalytics.svelte';
 	import MasseuseProfile from '$lib/components/masseuse/MasseuseProfile.svelte';
-	import { _ } from 'svelte-i18n';
 	
 	$: currentMasseuse = $masseuseData.find(m => m.email === $authStore.user?.email);
 	
@@ -248,7 +247,7 @@
 								</div>
 								<div>
 									<h3 class="font-semibold text-foreground">Profile</h3>
-									<p class="text-sm text-muted-foreground">{$_('dashboard.updateYourInfo')}</p>
+									<p class="text-sm text-muted-foreground">Update your info</p>
 								</div>
 							</div>
 						</button>
@@ -260,7 +259,7 @@
 							<div class="flex items-center justify-between mb-4">
 								<h3 class="text-lg font-semibold text-foreground flex items-center space-x-2">
 									<Calendar class="h-5 w-5 text-primary" />
-									<span>{$_('dashboard.todaysAppointments')}</span>
+									<span>Today's Appointments</span>
 								</h3>
 								<Button
 									on:click={() => setActiveView('bookings')}
@@ -302,9 +301,9 @@
 							<div class="flex items-center justify-between mb-4">
 								<h3 class="text-lg font-semibold text-foreground flex items-center space-x-2">
 									<Star class="h-5 w-5 text-yellow-500" />
-									<span>{$_('dashboard.recentReviews')}</span>
+									<span>Recent Reviews</span>
 								</h3>
-								<div class="text-sm text-muted-foreground">4.8/5 {$_('dashboard.avgRating')}</div>
+								<div class="text-sm text-muted-foreground">4.8/5 Average Rating</div>
 							</div>
 							
 							<div class="space-y-4">
@@ -347,9 +346,9 @@
 		<div class="bg-background border border-border rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-hidden">
 			<div class="p-6 border-b border-border">
 				<div class="flex items-center justify-between">
-					<h2 class="text-2xl font-bold text-foreground">{$_('clientPortal.title')}</h2>
+					<h2 class="text-2xl font-bold text-foreground">Client Portal</h2>
 					<Button on:click={closeClientPortal} variant="outline" class="glass-button">
-						{$_('common.close')}
+						Close
 					</Button>
 				</div>
 			</div>

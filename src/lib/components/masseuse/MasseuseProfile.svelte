@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { _ } from 'svelte-i18n';
 	import { createEventDispatcher } from 'svelte';
 	import { User, Camera, Edit3, Save, X, Star, Award, Calendar, MapPin, Phone, Mail, Globe, Clock, Users } from 'lucide-svelte';
 	import Button from '$lib/components/ui/button/button.svelte';
@@ -189,8 +188,8 @@
 	<!-- Header -->
 	<div class="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
 		<div>
-			<h1 class="text-3xl font-bold text-foreground">{$_('masseuse.myProfile')}</h1>
-			<p class="text-sm text-muted-foreground">{$_('masseuse.manageProfile')}</p>
+			<h1 class="text-3xl font-bold text-foreground">My Profile</h1>
+			<p class="text-sm text-muted-foreground">Manage your profile</p>
 		</div>
 		
 		<div class="flex gap-2">
@@ -201,7 +200,7 @@
 					disabled={isLoading}
 				>
 					<Save class="h-4 w-4 mr-2" />
-					{isLoading ? $_('common.loading') : $_('masseuse.saveChanges')}
+					{isLoading ? 'Loading...' : 'Save Changes'}
 				</Button>
 				<Button
 					on:click={toggleEdit}
@@ -210,7 +209,7 @@
 					disabled={isLoading}
 				>
 					<X class="h-4 w-4 mr-2" />
-					{$_('common.cancel')}
+					Cancel
 				</Button>
 			{:else}
 				<Button
@@ -218,7 +217,7 @@
 					class="glass-button"
 				>
 					<Edit3 class="h-4 w-4 mr-2" />
-					{$_('masseuse.editProfile')}
+					Edit Profile
 				</Button>
 			{/if}
 		</div>
