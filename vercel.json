@@ -1,6 +1,6 @@
 {
   "framework": null,
-  "buildCommand": "npm run build",
+  "buildCommand": "npx svelte-kit sync && npm run build",
   "installCommand": "npm install",
   "outputDirectory": "build",
   "rewrites": [
