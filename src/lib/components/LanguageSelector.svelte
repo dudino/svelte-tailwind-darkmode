@@ -1,12 +1,13 @@
 <script lang="ts">
+
 	import { ChevronDown, Globe } from 'lucide-svelte';
 	import { createEventDispatcher, onMount } from 'svelte';
 	import { browser } from '$app/environment';
 
 	const dispatch = createEventDispatcher();
 
-	let isOpen = false;
-	let currentLocale = 'en';
+	let isOpen = $state(false);
+	let currentLocale = $state('en');
 
 	const languages = [
 		{ code: 'en', name: 'English', flag: '🇺🇸' },
@@ -14,7 +15,7 @@
 		{ code: 'ru', name: 'Русский', flag: '🇷🇺' }
 	];
 
-	$: currentLanguage = languages.find(lang => lang.code === currentLocale) || languages[0];
+	let currentLanguage = $derived(languages.find(lang => lang.code === currentLocale) || languages[0]);
 
 	onMount(() => {
 		// Get initial locale from localStorage or browser
@@ -63,10 +64,9 @@
 
 <svelte:window on:click={handleClickOutside} />
 
-<div class="language-selector relative">
-	<button
-		on:click={toggleDropdown}
-		class="flex items-center space-x-2 px-3 py-2 rounded-lg bg-card border border-border text-card-foreground hover:bg-accent hover:text-accent-foreground transition-colors"
+<div class="language-selector relative">  <button
+	on:click={toggleDropdown}
+    class="flex items-center space-x-2 px-3 py-2 rounded-lg bg-card border border-border text-card-foreground hover:bg-accent hover:text-accent-foreground transition-colors"
 		aria-label="Select Language"
 	>
 		<Globe class="w-4 h-4" />
@@ -79,10 +79,9 @@
 
 	{#if isOpen}
 		<div class="absolute top-full left-0 mt-1 w-48 bg-popover border border-border rounded-lg shadow-lg z-50">
-			{#each languages as language}
-				<button
-					on:click={() => selectLanguage(language.code)}
-					class="w-full flex items-center space-x-3 px-4 py-3 text-left hover:bg-accent hover:text-accent-foreground transition-colors first:rounded-t-lg last:rounded-b-lg"
+			{#each languages as language}        <button
+		  on:click={() => selectLanguage(language.code)}
+          class="w-full flex items-center space-x-3 px-4 py-3 text-left hover:bg-accent hover:text-accent-foreground transition-colors first:rounded-t-lg last:rounded-b-lg"
 					class:bg-accent={currentLocale === language.code}
 					class:text-accent-foreground={currentLocale === language.code}
 				>

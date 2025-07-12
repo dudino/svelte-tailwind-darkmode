@@ -7,12 +7,12 @@
 	import MobileNavbar from '$lib/components/MobileNavbar.svelte';
 
 	// Get the locale data from the load function
-	export let data;
+	let { data, children } = $props();
 	
 	// Use the locale data
-	$: currentLocale = data?.locale || 'en';
+	let currentLocale = $derived(data?.locale || 'en');
 	
-	let appLoaded = false;
+	let appLoaded = $state(false);
 
 	onMount(async () => {
 		// Initialize auth state
@@ -30,7 +30,7 @@
 	<ProtectedRoute>
 		<MobileNavbar />
 		<main class="container mx-auto px-4 py-6">
-			<slot />
+			{@render children()}
 		</main>
 	</ProtectedRoute>
 {:else}

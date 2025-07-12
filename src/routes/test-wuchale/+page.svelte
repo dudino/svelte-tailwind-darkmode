@@ -1,5 +1,5 @@
 <script>
-  import ExactExample from '../exact-example.svelte'
+  import ExactExample from '../../exact-example.svelte'
 </script>
 
 <h1>Wuchale Test Page</h1>

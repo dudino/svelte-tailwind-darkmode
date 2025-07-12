@@ -5,7 +5,7 @@
 	import Button from '$lib/components/ui/button/button.svelte';
 	import { onMount } from 'svelte';
 
-	let isDark = false;
+	let isDark = $state(false);
 
 	onMount(() => {
 		// Check if dark mode is currently active
