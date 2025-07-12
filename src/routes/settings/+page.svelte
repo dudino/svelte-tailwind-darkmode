@@ -33,15 +33,15 @@
 				<div class="space-y-3">
 					<label class="flex items-center space-x-3">
 						<input type="radio" name="theme" value="light" class="text-primary" />
-						<span class="text-foreground">Light Mode</span>
+						<span class="text-foreground">{$_('theme.lightMode')}</span>
 					</label>
 					<label class="flex items-center space-x-3">
 						<input type="radio" name="theme" value="dark" class="text-primary" />
-						<span class="text-foreground">Dark Mode</span>
+						<span class="text-foreground">{$_('theme.darkMode')}</span>
 					</label>
 					<label class="flex items-center space-x-3">
 						<input type="radio" name="theme" value="system" class="text-primary" />
-						<span class="text-foreground">System Default</span>
+						<span class="text-foreground">{$_('theme.systemDefault')}</span>
 					</label>
 				</div>
 			</div>
@@ -71,15 +71,15 @@
 				</p>
 				<div class="space-y-3">
 					<label class="flex items-center justify-between">
-						<span class="text-foreground">Email Notifications</span>
+						<span class="text-foreground">{$_('notifications.email')}</span>
 						<input type="checkbox" class="text-primary" checked />
 					</label>
 					<label class="flex items-center justify-between">
-						<span class="text-foreground">Push Notifications</span>
+						<span class="text-foreground">{$_('notifications.push')}</span>
 						<input type="checkbox" class="text-primary" />
 					</label>
 					<label class="flex items-center justify-between">
-						<span class="text-foreground">SMS Notifications</span>
+						<span class="text-foreground">{$_('notifications.sms')}</span>
 						<input type="checkbox" class="text-primary" />
 					</label>
 				</div>
@@ -96,15 +96,15 @@
 				</p>
 				<div class="space-y-3">
 					<label class="flex items-center justify-between">
-						<span class="text-foreground">Profile Visibility</span>
+						<span class="text-foreground">{$_('privacy.profileVisibility')}</span>
 						<input type="checkbox" class="text-primary" checked />
 					</label>
 					<label class="flex items-center justify-between">
-						<span class="text-foreground">Data Collection</span>
+						<span class="text-foreground">{$_('privacy.dataCollection')}</span>
 						<input type="checkbox" class="text-primary" />
 					</label>
 					<label class="flex items-center justify-between">
-						<span class="text-foreground">Analytics</span>
+						<span class="text-foreground">{$_('privacy.analytics')}</span>
 						<input type="checkbox" class="text-primary" checked />
 					</label>
 				</div>
@@ -145,7 +145,7 @@
 		<!-- Save Button -->
 		<div class="flex justify-center mt-8">
 			<Button size="lg" class="px-8">
-				Save Settings
+				{$_('settings.save')}
 			</Button>
 		</div>
 	</section>

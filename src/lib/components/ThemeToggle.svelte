@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { _ } from 'svelte-i18n';
 	import Sun from 'lucide-svelte/icons/sun';
 	import Moon from 'lucide-svelte/icons/moon';
 	import { setMode } from 'mode-watcher';
@@ -40,5 +41,5 @@
 	<Moon
 		class="absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100"
 	/>
-	<span class="sr-only">Toggle theme</span>
+	<span class="sr-only">{$_('theme.toggle')}</span>
 </Button>

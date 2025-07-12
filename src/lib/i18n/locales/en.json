@@ -58,18 +58,16 @@
     "namePlaceholder": "John Doe",
     "emailPlaceholder": "john@example.com",
     "bioPlaceholder": "Tell us about yourself...",
-    "saveChanges": "Save Changes"
+    "saveChanges": "Save Changes",
+    "editProfile": "Edit Profile",
+    "changePassword": "Change Password"
   },
   "settings": {
-    "title": "Settings",
-    "appearance": "Appearance",
+    "pageTitle": "Settings",
+    "save": "Save Settings",
+    "theme": "Theme",
     "language": "Language",
-    "notifications": "Notifications",
-    "privacy": "Privacy",
-    "themeToggle": "Toggle between light and dark mode",
-    "selectLanguage": "Select your preferred language",
-    "notificationSettings": "Manage your notification preferences",
-    "privacySettings": "Control your privacy and data settings"
+    "notifications": "Notifications"
   },
   "common": {
     "darkPink": "Dark Pink",
@@ -206,7 +204,12 @@
     "recentActivity": "Recent Activity",
     "readyToProvide": "Ready to provide exceptional wellness experiences today?",
     "next7Days": "Next 7 days",
-    "fromLastWeek": "from last week"
+    "fromLastWeek": "from last week",
+    "todaysAppointments": "Today's Appointments",
+    "recentReviews": "Recent Reviews",
+    "avgRating": "avg rating",
+    "updateYourInfo": "Update your info",
+    "viewToday": "View Today"
   },
   "schedule": {
     "title": "Schedule",
@@ -307,5 +310,80 @@
     "dimLighting": "Dim lighting",
     "essentialOils": "Essential oils",
     "heatedTable": "Heated table"
+  },
+  "pageHeaders": {
+    "scheduleManagement": "Schedule Management",
+    "scheduleManagementDescription": "Manage your availability, time slots, and schedule preferences",
+    "professionalProfile": "Professional Profile", 
+    "professionalProfileDescription": "Manage your professional information, specializations, and public profile"
+  },
+  "pageTitles": {
+    "scheduleManagementPortal": "Schedule Management - Masseuse Portal",
+    "professionalProfilePortal": "Professional Profile - Masseuse Portal",
+    "clientPortalAffinity": "Client Portal - Affinity"
+  },
+  "meta": {
+    "clientPortalDescription": "Client review and feedback portal for Affinity massage services"
+  },
+  "userManagement": {
+    "title": "User Management",
+    "description": "Manage administrators, operators, and masseuses",
+    "addNewUser": "Add New User",
+    "searchUsers": "Search users...",
+    "allRoles": "All Roles",
+    "allStatus": "All Status",
+    "administrator": "Administrator",
+    "operator": "Operator",
+    "masseuse": "Masseuse",
+    "active": "Active",
+    "inactive": "Inactive",
+    "totalUsers": "Total Users",
+    "administrators": "Administrators",
+    "operators": "Operators",
+    "masseuses": "Masseuses",
+    "user": "User",
+    "role": "Role",
+    "contact": "Contact",
+    "status": "Status",
+    "created": "Created",
+    "actions": "Actions",
+    "firstName": "First Name",
+    "lastName": "Last Name",
+    "phoneNumber": "Phone Number",
+    "selectRole": "Select Role",
+    "noUsersFound": "No users found",
+    "tryAdjustingFilters": "Try adjusting your search or filter criteria",
+    "deleteConfirm": "Are you sure you want to delete this user?"
+  },
+  "clientPortal": {
+    "title": "Client Portal"
+  },
+  "theme": {
+    "lightMode": "Light Mode",
+    "darkMode": "Dark Mode",
+    "systemDefault": "System Default",
+    "toggle": "Toggle theme"
+  },
+  "notifications": {
+    "email": "Email Notifications",
+    "push": "Push Notifications",
+    "sms": "SMS Notifications"
+  },
+  "privacy": {
+    "profileVisibility": "Profile Visibility",
+    "dataCollection": "Data Collection",
+    "analytics": "Analytics"
+  },
+  "menu": {
+    "toggle": "Toggle menu"
+  },
+  "site": {
+    "title": "Affinity - Massage Parlor Management"
+  },
+  "demo": {
+    "userName": "John Doe",
+    "userRole": "Software Developer",
+    "userEmail": "john.doe@example.com",
+    "userPhone": "+1 (555) 123-4567"
   }
 }

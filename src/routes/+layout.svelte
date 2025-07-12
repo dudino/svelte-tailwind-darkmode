@@ -1,7 +1,7 @@
 <script>
 	import { ModeWatcher } from 'mode-watcher';
 	import { onMount } from 'svelte';
-	import { locale, waitLocale, isLoading } from 'svelte-i18n';
+	import { locale, waitLocale, isLoading, _ } from 'svelte-i18n';
 	import '$lib/i18n';
 	import '$styles/app.css';
 	import { authStore } from '$lib/stores/auth';
@@ -21,7 +21,7 @@
 </script>
 
 <svelte:head>
-	<title>Affinity - Massage Parlor Management</title>
+	<title>{i18nLoaded ? $_('site.title') : 'Affinity - Massage Parlor Management'}</title>
 </svelte:head>
 
 <ModeWatcher />

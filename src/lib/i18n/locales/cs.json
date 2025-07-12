@@ -56,7 +56,9 @@
     "namePlaceholder": "Jan Novák",
     "emailPlaceholder": "jan@priklad.cz",
     "bioPlaceholder": "Řekněte nám něco o sobě...",
-    "saveChanges": "Uložit změny"
+    "saveChanges": "Uložit změny",
+    "editProfile": "Upravit profil",
+    "changePassword": "Změnit heslo"
   },
   "settings": {
     "title": "Nastavení",
@@ -67,7 +69,10 @@
     "themeToggle": "Přepínání mezi světlým a tmavým režimem",
     "selectLanguage": "Vyberte váš preferovaný jazyk",
     "notificationSettings": "Spravujte nastavení oznámení",
-    "privacySettings": "Kontrolujte nastavení soukromí a dat"
+    "privacySettings": "Kontrolujte nastavení soukromí a dat",
+    "pageTitle": "Nastavení",
+    "save": "Uložit nastavení",
+    "theme": "Téma"
   },
   "common": {
     "darkPink": "Tmavě růžová",
@@ -204,7 +209,12 @@
     "recentActivity": "Nedávná aktivita",
     "readyToProvide": "Připraveni poskytnout výjimečné wellness zážitky dnes?",
     "next7Days": "Příštích 7 dní",
-    "fromLastWeek": "z minulého týdne"
+    "fromLastWeek": "z minulého týdne",
+    "todaysAppointments": "Dnešní schůzky",
+    "recentReviews": "Nedávné recenze",
+    "avgRating": "průměrné hodnocení",
+    "updateYourInfo": "Aktualizujte své informace",
+    "viewToday": "Zobrazit dnes"
   },
   "schedule": {
     "title": "Rozvrh",
@@ -305,5 +315,80 @@
     "dimLighting": "Tlumené osvětlení",
     "essentialOils": "Esenciální oleje",
     "heatedTable": "Vyhřívaný stůl"
+  },
+  "pageHeaders": {
+    "scheduleManagement": "Správa rozvrhu",
+    "scheduleManagementDescription": "Spravujte svou dostupnost, časové sloty a nastavení rozvrhu",
+    "professionalProfile": "Profesionální profil", 
+    "professionalProfileDescription": "Spravujte své profesionální informace, specializace a veřejný profil"
+  },
+  "pageTitles": {
+    "scheduleManagementPortal": "Správa rozvrhu - Portál masérky",
+    "professionalProfilePortal": "Profesionální profil - Portál masérky",
+    "clientPortalAffinity": "Klientský portál - Affinity"
+  },
+  "meta": {
+    "clientPortalDescription": "Portál pro recenze a zpětnou vazbu klientů služeb Affinity"
+  },
+  "userManagement": {
+    "title": "Správa uživatelů",
+    "description": "Spravujte administrátory, operátory a masérky",
+    "addNewUser": "Přidat nového uživatele",
+    "searchUsers": "Hledat uživatele...",
+    "allRoles": "Všechny role",
+    "allStatus": "Všechny stavy",
+    "administrator": "Administrátor",
+    "operator": "Operátor",
+    "masseuse": "Masérka",
+    "active": "Aktivní",
+    "inactive": "Neaktivní",
+    "totalUsers": "Celkem uživatelů",
+    "administrators": "Administrátoři",
+    "operators": "Operátoři",
+    "masseuses": "Masérky",
+    "user": "Uživatel",
+    "role": "Role",
+    "contact": "Kontakt",
+    "status": "Stav",
+    "created": "Vytvořeno",
+    "actions": "Akce",
+    "firstName": "Jméno",
+    "lastName": "Příjmení",
+    "phoneNumber": "Telefonní číslo",
+    "selectRole": "Vyberte roli",
+    "noUsersFound": "Žádní uživatelé nebyli nalezeni",
+    "tryAdjustingFilters": "Zkuste upravit vyhledávací nebo filtrační kritéria",
+    "deleteConfirm": "Opravdu chcete smazat tohoto uživatele?"
+  },
+  "clientPortal": {
+    "title": "Klientský portál"
+  },
+  "theme": {
+    "lightMode": "Světlý režim",
+    "darkMode": "Tmavý režim",
+    "systemDefault": "Systémové výchozí",
+    "toggle": "Přepnout téma"
+  },
+  "notifications": {
+    "email": "E-mailová upozornění",
+    "push": "Push upozornění",
+    "sms": "SMS upozornění"
+  },
+  "privacy": {
+    "profileVisibility": "Viditelnost profilu",
+    "dataCollection": "Sběr dat",
+    "analytics": "Analytika"
+  },
+  "menu": {
+    "toggle": "Přepnout menu"
+  },
+  "site": {
+    "title": "Affinity - Správa masážního salonu"
+  },
+  "demo": {
+    "userName": "Jan Novák",
+    "userRole": "Vývojář softwaru",
+    "userEmail": "jan.novak@priklad.cz",
+    "userPhone": "+420 777 123 456"
   }
 }

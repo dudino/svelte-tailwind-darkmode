@@ -132,7 +132,7 @@
 					{:else}
 						<Menu class="h-5 w-5" />
 					{/if}
-					<span class="sr-only">Toggle menu</span>
+					<span class="sr-only">{$_('menu.toggle')}</span>
 				</Button>
 			{/if}
 		</div>

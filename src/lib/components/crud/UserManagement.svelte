@@ -3,6 +3,7 @@
 	import { Plus, Search, Filter, Edit, Trash2, Users, Shield, UserCheck } from 'lucide-svelte';
 	import Button from '$lib/components/ui/button/button.svelte';
 	import type { User } from '$lib/types/user';
+	import { _ } from 'svelte-i18n';
 	
 	const dispatch = createEventDispatcher();
 	
@@ -190,7 +191,7 @@
 	}
 	
 	async function handleDeleteUser(userId: string) {
-		if (!confirm('Are you sure you want to delete this user?')) return;
+		if (!confirm($_('userManagement.deleteConfirm'))) return;
 		
 		isLoading = true;
 		try {
@@ -228,13 +229,13 @@
 	<!-- Header & Controls -->
 	<div class="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
 		<div>
-			<h1 class="text-3xl font-bold text-foreground">User Management</h1>
-			<p class="text-sm text-muted-foreground">Manage administrators, operators, and masseuses</p>
+			<h1 class="text-3xl font-bold text-foreground">{$_('userManagement.title')}</h1>
+			<p class="text-sm text-muted-foreground">{$_('userManagement.description')}</p>
 		</div>
 		
 		<Button on:click={openCreateModal} class="glass-button">
 			<Plus class="h-4 w-4 mr-2" />
-			Add New User
+			{$_('userManagement.addNewUser')}
 		</Button>
 	</div>
 	
@@ -244,7 +245,7 @@
 			<Search class="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
 			<input
 				type="text"
-				placeholder="Search users..."
+				placeholder={$_('userManagement.searchUsers')}
 				bind:value={searchQuery}
 				class="pl-10 pr-4 py-2 w-full border border-border rounded-lg bg-background text-foreground placeholder-muted-foreground focus:border-primary focus:outline-none"
 			/>
@@ -254,19 +255,19 @@
 			bind:value={filterRole}
 			class="px-3 py-2 border border-border rounded-lg bg-background text-foreground focus:border-primary focus:outline-none"
 		>
-			<option value="All">All Roles</option>
-			<option value="Administrator">Administrator</option>
-			<option value="Operator">Operator</option>
-			<option value="Masseuse">Masseuse</option>
+			<option value="All">{$_('userManagement.allRoles')}</option>
+			<option value="Administrator">{$_('userManagement.administrator')}</option>
+			<option value="Operator">{$_('userManagement.operator')}</option>
+			<option value="Masseuse">{$_('userManagement.masseuse')}</option>
 		</select>
 		
 		<select
 			bind:value={filterStatus}
 			class="px-3 py-2 border border-border rounded-lg bg-background text-foreground focus:border-primary focus:outline-none"
 		>
-			<option value="All">All Status</option>
-			<option value="Active">Active</option>
-			<option value="Inactive">Inactive</option>
+			<option value="All">{$_('userManagement.allStatus')}</option>
+			<option value="Active">{$_('userManagement.active')}</option>
+			<option value="Inactive">{$_('userManagement.inactive')}</option>
 		</select>
 	</div>
 	
@@ -274,19 +275,19 @@
 	<div class="grid grid-cols-1 md:grid-cols-4 gap-4">
 		<div class="enhanced-card p-4 rounded-lg text-center">
 			<div class="text-2xl font-bold text-foreground">{users.length}</div>
-			<div class="text-sm text-muted-foreground">Total Users</div>
+			<div class="text-sm text-muted-foreground">{$_('userManagement.totalUsers')}</div>
 		</div>
 		<div class="enhanced-card p-4 rounded-lg text-center">
 			<div class="text-2xl font-bold text-red-600">{users.filter(u => u.role === 'Administrator').length}</div>
-			<div class="text-sm text-muted-foreground">Administrators</div>
+			<div class="text-sm text-muted-foreground">{$_('userManagement.administrators')}</div>
 		</div>
 		<div class="enhanced-card p-4 rounded-lg text-center">
 			<div class="text-2xl font-bold text-blue-600">{users.filter(u => u.role === 'Operator').length}</div>
-			<div class="text-sm text-muted-foreground">Operators</div>
+			<div class="text-sm text-muted-foreground">{$_('userManagement.operators')}</div>
 		</div>
 		<div class="enhanced-card p-4 rounded-lg text-center">
 			<div class="text-2xl font-bold text-green-600">{users.filter(u => u.role === 'Masseuse').length}</div>
-			<div class="text-sm text-muted-foreground">Masseuses</div>
+			<div class="text-sm text-muted-foreground">{$_('userManagement.masseuses')}</div>
 		</div>
 	</div>
 	
@@ -296,12 +297,12 @@
 			<table class="w-full">
 				<thead class="bg-accent/50">
 					<tr>
-						<th class="text-left p-4 font-medium text-foreground">User</th>
-						<th class="text-left p-4 font-medium text-foreground">Role</th>
-						<th class="text-left p-4 font-medium text-foreground">Contact</th>
-						<th class="text-left p-4 font-medium text-foreground">Status</th>
-						<th class="text-left p-4 font-medium text-foreground">Created</th>
-						<th class="text-right p-4 font-medium text-foreground">Actions</th>
+						<th class="text-left p-4 font-medium text-foreground">{$_('userManagement.user')}</th>
+						<th class="text-left p-4 font-medium text-foreground">{$_('userManagement.role')}</th>
+						<th class="text-left p-4 font-medium text-foreground">{$_('userManagement.contact')}</th>
+						<th class="text-left p-4 font-medium text-foreground">{$_('userManagement.status')}</th>
+						<th class="text-left p-4 font-medium text-foreground">{$_('userManagement.created')}</th>
+						<th class="text-right p-4 font-medium text-foreground">{$_('userManagement.actions')}</th>
 					</tr>
 				</thead>
 				<tbody>
@@ -377,8 +378,8 @@
 		{#if filteredUsers.length === 0}
 			<div class="text-center py-12">
 				<Users class="h-16 w-16 text-muted-foreground mx-auto mb-4" />
-				<h3 class="text-lg font-semibold text-foreground mb-2">No users found</h3>
-				<p class="text-muted-foreground">Try adjusting your search or filter criteria</p>
+				<h3 class="text-lg font-semibold text-foreground mb-2">{$_('userManagement.noUsersFound')}</h3>
+				<p class="text-muted-foreground">{$_('userManagement.tryAdjustingFilters')}</p>
 			</div>
 		{/if}
 	</div>
@@ -389,7 +390,7 @@
 	<div class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
 		<div class="bg-background border border-border rounded-2xl max-w-md w-full max-h-[90vh] overflow-y-auto">
 			<div class="p-6 border-b border-border">
-				<h2 class="text-2xl font-bold text-foreground">Add New User</h2>
+				<h2 class="text-2xl font-bold text-foreground">{$_('userManagement.addNewUser')}</h2>
 			</div>
 			<form on:submit|preventDefault={() => handleCreateUser({
 				firstName: getInputValue('create-firstName'),
@@ -401,7 +402,7 @@
 				<div class="p-6 space-y-4">
 					<div class="grid grid-cols-2 gap-4">
 						<div>
-							<label for="create-firstName" class="block text-sm font-medium text-foreground mb-2">First Name</label>
+							<label for="create-firstName" class="block text-sm font-medium text-foreground mb-2">{$_('userManagement.firstName')}</label>
 							<input
 								id="create-firstName"
 								type="text"
@@ -410,7 +411,7 @@
 							/>
 						</div>
 						<div>
-							<label for="create-lastName" class="block text-sm font-medium text-foreground mb-2">Last Name</label>
+							<label for="create-lastName" class="block text-sm font-medium text-foreground mb-2">{$_('userManagement.lastName')}</label>
 							<input
 								id="create-lastName"
 								type="text"
@@ -421,7 +422,7 @@
 					</div>
 					
 					<div>
-						<label for="create-email" class="block text-sm font-medium text-foreground mb-2">Email</label>
+						<label for="create-email" class="block text-sm font-medium text-foreground mb-2">{$_('common.email')}</label>
 						<input
 							id="create-email"
 							type="email"
@@ -431,7 +432,7 @@
 					</div>
 					
 					<div>
-						<label for="create-phone" class="block text-sm font-medium text-foreground mb-2">Phone Number</label>
+						<label for="create-phone" class="block text-sm font-medium text-foreground mb-2">{$_('userManagement.phoneNumber')}</label>
 						<input
 							id="create-phone"
 							type="tel"
@@ -441,29 +442,29 @@
 					</div>
 					
 					<div>
-						<label for="create-role" class="block text-sm font-medium text-foreground mb-2">Role</label>
+						<label for="create-role" class="block text-sm font-medium text-foreground mb-2">{$_('userManagement.role')}</label>
 						<select
 							id="create-role"
 							required
 							class="w-full p-3 border border-border rounded-lg bg-background text-foreground focus:border-primary focus:outline-none"
 						>
-							<option value="">Select Role</option>
-							<option value="Administrator">Administrator</option>
-							<option value="Operator">Operator</option>
-							<option value="Masseuse">Masseuse</option>
+							<option value="">{$_('userManagement.selectRole')}</option>
+							<option value="Administrator">{$_('userManagement.administrator')}</option>
+							<option value="Operator">{$_('userManagement.operator')}</option>
+							<option value="Masseuse">{$_('userManagement.masseuse')}</option>
 						</select>
 					</div>
 				</div>
 				
 				<div class="p-6 border-t border-border flex justify-end space-x-3">
 					<Button on:click={closeModals} variant="outline" class="glass-button">
-						Cancel
+						{$_('common.cancel')}
 					</Button>
 					<Button type="submit" disabled={isLoading} class="glass-button">
 						{#if isLoading}
 							<div class="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
 						{/if}
-						Create User
+						{$_('userManagement.addNewUser')}
 					</Button>
 				</div>
 			</form>

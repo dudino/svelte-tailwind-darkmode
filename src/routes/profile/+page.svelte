@@ -1,6 +1,9 @@
 <script>
 	import { _ } from 'svelte-i18n';
-	import Button from '$lib/components/ui/button/button.svelte';
+	import Button			<div class="flex gap-4">
+				<Button class="flex-1">{$_('profile.editProfile')}</Button>
+				<Button variant="outline" class="flex-1">{$_('profile.changePassword')}</Button>
+			</div>m '$lib/components/ui/button/button.svelte';
 	import { User, Mail, Phone, MapPin } from 'lucide-svelte';
 </script>
 
@@ -25,8 +28,8 @@
 				<div class="w-24 h-24 bg-primary rounded-full flex items-center justify-center mb-4">
 					<User class="w-12 h-12 text-primary-foreground" />
 				</div>
-				<h2 class="text-2xl font-semibold text-foreground">John Doe</h2>
-				<p class="text-muted-foreground">Software Developer</p>
+				<h2 class="text-2xl font-semibold text-foreground">{$_('demo.userName')}</h2>
+				<p class="text-muted-foreground">{$_('demo.userRole')}</p>
 			</div>
 
 			<!-- Profile Information -->
@@ -35,15 +38,15 @@
 					<Mail class="w-5 h-5 text-primary" />
 					<div>
 						<p class="font-medium text-foreground">{$_('profile.email')}</p>
-						<p class="text-muted-foreground">john.doe@example.com</p>
+						<p class="text-muted-foreground">{$_('demo.userEmail')}</p>
 					</div>
 				</div>
 
 				<div class="flex items-center space-x-3 p-4 bg-accent rounded-lg">
 					<Phone class="w-5 h-5 text-primary" />
 					<div>
-						<p class="font-medium text-foreground">Phone</p>
-						<p class="text-muted-foreground">+1 (555) 123-4567</p>
+						<p class="font-medium text-foreground">{$_('profile.phone')}</p>
+						<p class="text-muted-foreground">{$_('demo.userPhone')}</p>
 					</div>
 				</div>
 

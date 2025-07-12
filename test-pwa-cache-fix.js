@@ -1,49 +1,63 @@
-// Quick test script for PWA cache clearing and i18n fix
-// Paste this in browser console to test language switching
+// UPDATED: Test script for direct translation approach
+// Paste this in browser console to test the new aggressive fix
 
-console.log('🔧 Testing PWA cache clearing and i18n fix...');
+console.log('🔧 Testing DIRECT translation approach...');
 
-// Test 1: Check current cache
-caches.keys().then(cacheNames => {
-    console.log('Current caches:', cacheNames);
-});
+// Test 1: Check if direct translations are working
+console.log('Testing direct translation access...');
 
-// Test 2: Clear all affinity caches
-async function clearAffinityCaches() {
-    const cacheNames = await caches.keys();
-    const affinityCaches = cacheNames.filter(name => name.includes('affinity'));
+// Test 2: Force refresh function test
+function testDirectTranslations() {
+    console.log('🌍 Testing direct translation functions...');
     
-    console.log('Clearing affinity caches:', affinityCaches);
+    // Check if our custom event dispatch works
+    window.dispatchEvent(new CustomEvent('languageChanged', { detail: 'cs' }));
     
-    await Promise.all(affinityCaches.map(name => caches.delete(name)));
-    console.log('✅ All affinity caches cleared');
-    
-    // Force a hard reload
-    window.location.reload(true);
+    setTimeout(() => {
+        console.log('Check if UI updated to Czech');
+        
+        window.dispatchEvent(new CustomEvent('languageChanged', { detail: 'ru' }));
+        
+        setTimeout(() => {
+            console.log('Check if UI updated to Russian');
+            
+            window.dispatchEvent(new CustomEvent('languageChanged', { detail: 'en' }));
+            
+            setTimeout(() => {
+                console.log('Check if UI updated to English');
+            }, 2000);
+        }, 2000);
+    }, 2000);
 }
 
-// Test 3: Manual language change with cache clear
-async function testLanguageChange(locale) {
-    console.log(`🌍 Testing language change to: ${locale}`);
+// Test 3: Manual storage and refresh test
+function aggressiveLanguageTest(locale) {
+    console.log(`🚀 AGGRESSIVE test for locale: ${locale}`);
     
-    // Clear caches first
-    await clearAffinityCaches();
-    
-    // Set language
+    // Set everything manually
     localStorage.setItem('preferred-language', locale);
     
-    // Reload page
-    window.location.reload();
+    // Dispatch multiple events
+    window.dispatchEvent(new CustomEvent('languageChanged', { detail: locale }));
+    
+    // Try to trigger svelte reactivity
+    document.dispatchEvent(new CustomEvent('localechange', { detail: locale }));
+    
+    // Force a component update
+    const event = new CustomEvent('forceupdate', { detail: { locale, timestamp: Date.now() } });
+    window.dispatchEvent(event);
+    
+    console.log(`Set language to ${locale}, check UI now!`);
 }
 
-console.log('Available test functions:');
-console.log('- clearAffinityCaches() - Clear all PWA caches');
-console.log('- testLanguageChange("cs") - Test Czech');
-console.log('- testLanguageChange("ru") - Test Russian');
-console.log('- testLanguageChange("en") - Test English');
+console.log('🎯 Available test functions:');
+console.log('- testDirectTranslations() - Test event dispatching');
+console.log('- aggressiveLanguageTest("cs") - Aggressive Czech test');
+console.log('- aggressiveLanguageTest("ru") - Aggressive Russian test');
+console.log('- aggressiveLanguageTest("en") - Aggressive English test');
 
-// Auto-clear cache and test
-console.log('🚀 Auto-clearing cache in 3 seconds...');
+// Auto-run test
+console.log('🚀 Auto-testing in 3 seconds...');
 setTimeout(() => {
-    clearAffinityCaches();
+    testDirectTranslations();
 }, 3000);

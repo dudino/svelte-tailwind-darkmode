@@ -56,7 +56,9 @@
     "namePlaceholder": "Иван Иванов",
     "emailPlaceholder": "ivan@example.ru",
     "bioPlaceholder": "Расскажите о себе...",
-    "saveChanges": "Сохранить изменения"
+    "saveChanges": "Сохранить изменения",
+    "editProfile": "Редактировать профиль",
+    "changePassword": "Изменить пароль"
   },
   "settings": {
     "title": "Настройки",
@@ -67,7 +69,10 @@
     "themeToggle": "Переключение между светлой и темной темой",
     "selectLanguage": "Выберите предпочтительный язык",
     "notificationSettings": "Управление настройками уведомлений",
-    "privacySettings": "Контроль настроек конфиденциальности и данных"
+    "privacySettings": "Контроль настроек конфиденциальности и данных",
+    "pageTitle": "Настройки",
+    "save": "Сохранить настройки",
+    "theme": "Тема"
   },
   "common": {
     "darkPink": "Темно-розовый",
@@ -204,7 +209,12 @@
     "recentActivity": "Недавняя активность",
     "readyToProvide": "Готовы предоставить исключительные оздоровительные услуги сегодня?",
     "next7Days": "Следующие 7 дней",
-    "fromLastWeek": "с прошлой недели"
+    "fromLastWeek": "с прошлой недели",
+    "todaysAppointments": "Сегодняшние встречи",
+    "recentReviews": "Недавние отзывы",
+    "avgRating": "средний рейтинг",
+    "updateYourInfo": "Обновите свою информацию",
+    "viewToday": "Просмотр сегодня"
   },
   "schedule": {
     "title": "Расписание",
@@ -305,5 +315,80 @@
     "dimLighting": "Приглушенное освещение",
     "essentialOils": "Эфирные масла",
     "heatedTable": "Подогреваемый стол"
+  },
+  "pageHeaders": {
+    "scheduleManagement": "Управление расписанием",
+    "scheduleManagementDescription": "Управляйте своей доступностью, временными слотами и настройками расписания",
+    "professionalProfile": "Профессиональный профиль", 
+    "professionalProfileDescription": "Управляйте своей профессиональной информацией, специализациями и публичным профилем"
+  },
+  "pageTitles": {
+    "scheduleManagementPortal": "Управление расписанием - Портал массажистки",
+    "professionalProfilePortal": "Профессиональный профиль - Портал массажистки",
+    "clientPortalAffinity": "Клиентский портал - Affinity"
+  },
+  "meta": {
+    "clientPortalDescription": "Портал отзывов и обратной связи клиентов массажных услуг Affinity"
+  },
+  "userManagement": {
+    "title": "Управление пользователями",
+    "description": "Управляйте администраторами, операторами и массажистками",
+    "addNewUser": "Добавить нового пользователя",
+    "searchUsers": "Поиск пользователей...",
+    "allRoles": "Все роли",
+    "allStatus": "Все статусы",
+    "administrator": "Администратор",
+    "operator": "Оператор",
+    "masseuse": "Массажистка",
+    "active": "Активный",
+    "inactive": "Неактивный",
+    "totalUsers": "Всего пользователей",
+    "administrators": "Администраторы",
+    "operators": "Операторы",
+    "masseuses": "Массажистки",
+    "user": "Пользователь",
+    "role": "Роль",
+    "contact": "Контакт",
+    "status": "Статус",
+    "created": "Создан",
+    "actions": "Действия",
+    "firstName": "Имя",
+    "lastName": "Фамилия",
+    "phoneNumber": "Номер телефона",
+    "selectRole": "Выберите роль",
+    "noUsersFound": "Пользователи не найдены",
+    "tryAdjustingFilters": "Попробуйте изменить поисковые или фильтрующие критерии",
+    "deleteConfirm": "Вы уверены, что хотите удалить этого пользователя?"
+  },
+  "clientPortal": {
+    "title": "Клиентский портал"
+  },
+  "theme": {
+    "lightMode": "Светлый режим",
+    "darkMode": "Темный режим",
+    "systemDefault": "Системный по умолчанию",
+    "toggle": "Переключить тему"
+  },
+  "notifications": {
+    "email": "Email уведомления",
+    "push": "Push уведомления",
+    "sms": "SMS уведомления"
+  },
+  "privacy": {
+    "profileVisibility": "Видимость профиля",
+    "dataCollection": "Сбор данных",
+    "analytics": "Аналитика"
+  },
+  "menu": {
+    "toggle": "Переключить меню"
+  },
+  "site": {
+    "title": "Affinity - Управление массажным салоном"
+  },
+  "demo": {
+    "userName": "Иван Петров",
+    "userRole": "Разработчик ПО",
+    "userEmail": "ivan.petrov@example.ru",
+    "userPhone": "+7 (999) 123-45-67"
   }
 }
