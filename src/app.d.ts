@@ -10,4 +10,12 @@ declare global {
 	}
 }
 
+// Vite environment variables
+interface ImportMeta {
+	readonly env: {
+		readonly VITE_POCKETBASE_URL?: string;
+		[key: string]: any;
+	};
+}
+
 export {};

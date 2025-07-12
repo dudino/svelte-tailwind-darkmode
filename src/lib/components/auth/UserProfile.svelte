@@ -1,10 +1,10 @@
 <script lang="ts">
-	import { authStore, currentUser, userRole } from '$lib/stores/auth';
+	import { currentUser, userRole, logout } from '$lib/stores';
 	import Button from '$lib/components/ui/button/button.svelte';
 	import { LogOut, User, Settings } from 'lucide-svelte';
 	
 	function handleLogout() {
-		authStore.logout();
+		logout();
 	}
 	
 	$: user = $currentUser;
@@ -12,11 +12,11 @@
 	
 	function getRoleBadgeColor(role: string) {
 		switch (role) {
-			case 'Administrator':
+			case 'administrator':
 				return 'bg-red-500/10 text-red-600 border-red-500/20';
-			case 'Operator':
+			case 'operator':
 				return 'bg-blue-500/10 text-blue-600 border-blue-500/20';
-			case 'Masseuse':
+			case 'user':
 				return 'bg-green-500/10 text-green-600 border-green-500/20';
 			default:
 				return 'bg-gray-500/10 text-gray-600 border-gray-500/20';
@@ -30,7 +30,7 @@
 		<div class="hidden md:flex md:items-center md:space-x-3">
 			<div class="text-right">
 				<div class="text-sm font-medium text-foreground">
-					{user.firstName} {user.lastName}
+					{user.contactDetails?.firstName || user.nickname} {user.contactDetails?.lastName || ''}
 				</div>
 				<div class="flex items-center space-x-2">
 					<span class={`text-xs px-2 py-1 rounded-full border ${getRoleBadgeColor(user.role)}`}>

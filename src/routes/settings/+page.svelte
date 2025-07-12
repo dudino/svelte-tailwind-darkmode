@@ -1,22 +1,53 @@
 <script>
-	import Button from '$lib/components/ui/button/button.svelte';
-	import LanguageSelector from '$lib/components/LanguageSelector.svelte';
-	import { Palette, Bell, Shield, Globe, Smartphone } from 'lucide-svelte';
+    import Button from '$lib/components/ui/button/button.svelte';
+    import LanguageSelector from '$lib/components/LanguageSelector.svelte';
+    import ThemeToggle from '$lib/components/ThemeToggle.svelte';
+    import { Palette, Globe } from 'lucide-svelte';
 </script>
 
 <svelte:head>
-	<title>Settings - Affinity</title>
+	<title>Settings - Wuchale i18n Test</title>
 </svelte:head>
 
-<div class="space-y-8">
-	<section class="text-center py-8">
-		<h1 class="text-4xl font-bold text-foreground mb-4">
-			Settings
-		</h1>
-		<p class="text-xl text-muted-foreground mb-8">
-			Customize your application preferences and settings.
-		</p>
-	</section>
+<div class="container mx-auto px-4 py-8">
+    <h1 class="text-3xl font-bold mb-4">Settings</h1>
+    
+    <div class="card p-6 bg-card rounded-lg">
+        <div class="grid gap-8 md:grid-cols-2">
+            <div>
+                <div class="flex items-center space-x-3 mb-4">
+                    <Palette class="w-5 h-5 text-primary" />
+                    <h2 class="text-xl font-semibold">Appearance</h2>
+                </div>
+                
+                <div class="space-y-4">
+                    <div class="flex items-center justify-between">
+                        <label class="text-sm font-medium">Theme</label>
+                        <ThemeToggle />
+                    </div>
+                </div>
+            </div>
+            
+            <div>
+                <div class="flex items-center space-x-3 mb-4">
+                    <Globe class="w-5 h-5 text-primary" />
+                    <h2 class="text-xl font-semibold">Language</h2>
+                </div>
+                
+                <div class="space-y-4">
+                    <div class="flex items-center justify-between">
+                        <label class="text-sm font-medium">Select Language</label>
+                        <LanguageSelector />
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="mt-6">
+            <a href="/" class="text-primary hover:underline">← Back to Home</a>
+        </div>
+    </div>
+</div>
 
 	<section class="max-w-4xl mx-auto">
 		<div class="grid md:grid-cols-2 gap-6">
@@ -108,13 +139,12 @@
 					</label>
 				</div>
 			</div>
-		</div>
+	</div>
 
-		<!-- Save Button -->
-		<div class="flex justify-center mt-8">
-			<Button size="lg" class="px-8">
-				Save Settings
-			</Button>
-		</div>
-	</section>
-</div>
+	<!-- Save Button -->
+	<div class="flex justify-center mt-8">
+		<Button size="lg" class="px-8">
+			Save Settings
+		</Button>
+	</div>
+</section>

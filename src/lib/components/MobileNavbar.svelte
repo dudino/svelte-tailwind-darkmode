@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 
-	import { currentUser, permissions, isAuthenticated } from '$lib/stores/auth';
+	import { currentUser, isAuthenticated } from '$lib/stores';
 	import Button from '$lib/components/ui/button/button.svelte';
 	import ThemeToggle from './ThemeToggle.svelte';
 	import LanguageSelector from './LanguageSelector.svelte';
@@ -49,9 +49,9 @@
 	});
 
 	// Navigation items based on user role
-	$: navigationItems = $isAuthenticated ? getNavigationItems($currentUser?.role, $permissions) : [];
+	$: navigationItems = $isAuthenticated ? getNavigationItems($currentUser?.role) : [];
 
-	function getNavigationItems(role: string | undefined, perms: any) {
+	function getNavigationItems(role: string | undefined) {
 		if (!role) return [];
 
 		const baseItems = [

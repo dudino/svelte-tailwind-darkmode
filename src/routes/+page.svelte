@@ -1,6 +1,4 @@
 <script>
-	import { isAuthenticated } from '$lib/stores/auth';
-	import DashboardRouter from '$lib/components/dashboard/DashboardRouter.svelte';
 	import WelcomeSection from '$lib/components/WelcomeSection.svelte';
 	import Button from '$lib/components/ui/button/button.svelte';
 </script>
@@ -9,9 +7,7 @@
 	<title>Affinity - Massage Parlor Management</title>
 </svelte:head>
 
-{#if $isAuthenticated}
-	<DashboardRouter />
-{:else}
+
 	<!-- Public landing page with welcome section -->
 	<div class="space-y-12 relative">
 		<!-- Welcome Section for Translation Demo -->
@@ -35,4 +31,3 @@
 			</div>
 		</section>
 	</div>
-{/if}

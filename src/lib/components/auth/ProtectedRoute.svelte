@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { isAuthenticated } from '$lib/stores/auth';
+	import { isAuthenticated } from '$lib/stores';
 	import LoginForm from '$lib/components/auth/LoginForm.svelte';
 </script>
 
