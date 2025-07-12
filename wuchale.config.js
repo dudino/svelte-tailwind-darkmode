@@ -11,7 +11,7 @@ export default defineConfig({
     },
     // Configure the directory where translations are stored
     localesDir: './src/locales',
-     files: ['src/**/*.svelte', 'src/**/*.svelte.{js,ts}'],
+     files: ['./src/**/*.svelte', './src/**/*.svelte.{js,ts}'],
     hmr: true,
     // Enable Gemini AI auto-translation
     // Set to 'env' to use GEMINI_API_KEY environment variable

@@ -41,9 +41,11 @@
 			localStorage.setItem('wuchale-locale', langCode);
 		}
 		
-		// Trigger Wuchale locale change
-		if (browser && window.wuchale) {
-			window.wuchale.setLocale(langCode);
+		// Navigate to the same page with the new locale parameter
+		if (browser) {
+			const url = new URL(window.location.href);
+			url.searchParams.set('locale', langCode);
+			window.location.href = url.toString();
 		}
 		
 		isOpen = false;
