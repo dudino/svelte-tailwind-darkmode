@@ -58,7 +58,9 @@
     "bioPlaceholder": "Расскажите о себе...",
     "saveChanges": "Сохранить изменения",
     "editProfile": "Редактировать профиль",
-    "changePassword": "Изменить пароль"
+    "changePassword": "Изменить пароль",
+    "location": "Местоположение",
+    "description": "Управляйте информацией вашего аккаунта и настройками."
   },
   "settings": {
     "title": "Настройки",
@@ -389,6 +391,7 @@
     "userName": "Иван Петров",
     "userRole": "Разработчик ПО",
     "userEmail": "ivan.petrov@example.ru",
-    "userPhone": "+7 (999) 123-45-67"
+    "userPhone": "+7 (999) 123-45-67",
+    "userLocation": "Москва, Россия"
   }
 }

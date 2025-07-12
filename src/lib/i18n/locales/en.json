@@ -60,7 +60,9 @@
     "bioPlaceholder": "Tell us about yourself...",
     "saveChanges": "Save Changes",
     "editProfile": "Edit Profile",
-    "changePassword": "Change Password"
+    "changePassword": "Change Password",
+    "location": "Location",
+    "description": "Manage your account information and preferences."
   },
   "settings": {
     "pageTitle": "Settings",
@@ -384,6 +386,7 @@
     "userName": "John Doe",
     "userRole": "Software Developer",
     "userEmail": "john.doe@example.com",
-    "userPhone": "+1 (555) 123-4567"
+    "userPhone": "+1 (555) 123-4567",
+    "userLocation": "San Francisco, CA"
   }
 }

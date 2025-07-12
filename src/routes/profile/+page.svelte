@@ -1,9 +1,6 @@
 <script>
 	import { _ } from 'svelte-i18n';
-	import Button			<div class="flex gap-4">
-				<Button class="flex-1">{$_('profile.editProfile')}</Button>
-				<Button variant="outline" class="flex-1">{$_('profile.changePassword')}</Button>
-			</div>m '$lib/components/ui/button/button.svelte';
+	import Button from '$lib/components/ui/button/button.svelte';
 	import { User, Mail, Phone, MapPin } from 'lucide-svelte';
 </script>
 
@@ -17,7 +14,7 @@
 			{$_('profile.title')}
 		</h1>
 		<p class="text-xl text-muted-foreground mb-8">
-			Manage your account information and preferences.
+			{$_('profile.description')}
 		</p>
 	</section>
 
@@ -53,16 +50,16 @@
 				<div class="flex items-center space-x-3 p-4 bg-accent rounded-lg">
 					<MapPin class="w-5 h-5 text-primary" />
 					<div>
-						<p class="font-medium text-foreground">Location</p>
-						<p class="text-muted-foreground">San Francisco, CA</p>
+						<p class="font-medium text-foreground">{$_('profile.location')}</p>
+						<p class="text-muted-foreground">{$_('demo.userLocation')}</p>
 					</div>
 				</div>
 			</div>
 
 			<!-- Action Buttons -->
 			<div class="flex gap-4 mt-8">
-				<Button class="flex-1">Edit Profile</Button>
-				<Button variant="outline" class="flex-1">Change Password</Button>
+				<Button class="flex-1">{$_('profile.editProfile')}</Button>
+				<Button variant="outline" class="flex-1">{$_('profile.changePassword')}</Button>
 			</div>
 		</div>
 	</section>

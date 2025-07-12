@@ -58,7 +58,9 @@
     "bioPlaceholder": "Řekněte nám něco o sobě...",
     "saveChanges": "Uložit změny",
     "editProfile": "Upravit profil",
-    "changePassword": "Změnit heslo"
+    "changePassword": "Změnit heslo",
+    "location": "Poloha",
+    "description": "Spravujte informace o svém účtu a preferencích."
   },
   "settings": {
     "title": "Nastavení",
@@ -306,7 +308,9 @@
     "amenities": "Vybavení",
     "roseRoom": "Růžová místnost",
     "lotusRoom": "Lotosová místnost",
-    "zenRoom": "Zen místnost"
+    "zenRoom": "Zen místnost",
+    "demoLocation": "Ukázková lokace",
+    "userLocation": "Praha, Česká republika"
   },
   "amenities": {
     "aromatherapy": "Aromaterapie",
