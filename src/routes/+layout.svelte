@@ -16,9 +16,9 @@
 	// Routes that don't require authentication
 	const publicRoutes = ['/', '/about', '/login'];
 	
-	$: currentPath = $page?.url?.pathname || '/';
-	$: isPublicRoute = publicRoutes.includes(currentPath);
-	$: shouldShowProtected = !isPublicRoute || $isAuthenticated;
+	const currentPath = $derived($page?.url?.pathname || '/');
+	const isPublicRoute = $derived(publicRoutes.includes(currentPath));
+	const shouldShowProtected = $derived($isAuthenticated && !isPublicRoute);
 
 	onMount(async () => {
 		// Initialize auth state and stores
