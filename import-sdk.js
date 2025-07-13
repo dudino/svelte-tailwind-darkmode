@@ -11,6 +11,7 @@ const pb = new PocketBase('http://127.0.0.1:8090');
 
 class PocketBaseSDKImporter {
   constructor() {
+    this.adminToken = null;
     this.createdRecords = {
       users: [],
       locations: [],
@@ -28,12 +29,33 @@ class PocketBaseSDKImporter {
     console.log('🔐 Authenticating as admin...');
     
     try {
-      // Try to authenticate with existing admin
-      await pb.admins.authWithPassword('admin@example.com', 'admin123456');
-      console.log('✅ Admin authenticated successfully');
+      // Use direct API call for authentication (more reliable)
+      const response = await fetch('http://127.0.0.1:8090/api/admins/auth-with-password', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          identity: 'admin@example.com',
+          password: 'admin123456'
+        })
+      });
+      
+      if (response.ok) {
+        const data = await response.json();
+        this.adminToken = data.token;
+        
+        // Set the auth token for the PocketBase instance
+        pb.authStore.save(data.token, data.admin);
+        
+        console.log('✅ Admin authenticated successfully');
+        console.log(`   Admin: ${data.admin.email}`);
+      } else {
+        const errorData = await response.text();
+        throw new Error(`Authentication failed: ${response.status} - ${errorData}`);
+      }
     } catch (error) {
-      console.log('ℹ️  Admin not found, you may need to create one first');
+      console.log('ℹ️  Admin authentication failed');
       console.log('   Visit http://127.0.0.1:8090/_/ to create an admin account');
+      console.log('   Use credentials: admin@example.com / admin123456');
       throw error;
     }
   }

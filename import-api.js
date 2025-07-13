@@ -7,7 +7,7 @@ import path from 'path';
 // This script imports demo data via PocketBase REST API
 
 const POCKETBASE_URL = 'http://127.0.0.1:8090';
-const ADMIN_EMAIL = 'admin@pocketbase.com';
+const ADMIN_EMAIL = 'admin@example.com';
 const ADMIN_PASSWORD = 'admin123456';
 
 class PocketBaseImporter {
