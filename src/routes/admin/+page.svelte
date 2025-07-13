@@ -20,10 +20,21 @@
     BarChart3
   } from 'lucide-svelte';
   import Button from '$lib/components/ui/button/button.svelte';
-  import { getPocketBaseClient } from '$lib/stores/authStore';
+  import { 
+    dashboardStats, 
+    dashboardActions,
+    dashboardLoading,
+    dashboardError,
+    usersCount,
+    locationsCount,
+    servicesCount,
+    clientsCount,
+    bookingsCount,
+    reviewsCount
+  } from '$lib/stores/admin';
 
-  // Stats data loaded from PocketBase
-  let stats = {
+  // Initialize with safe default values to prevent undefined errors
+  let localStats = {
     users: 0,
     locations: 0,
     rooms: 0,
@@ -34,28 +45,33 @@
     schedules: 0
   };
 
-  let loading = true;
-  let error = '';
-  let debugInfo = {
-    usersCount: 0,
-    locationsCount: 0,
-    roomsCount: 0,
-    bookingsCount: 0,
-    clientsCount: 0,
-    reviewsCount: 0,
-    servicesCount: 0,
-    schedulesCount: 0,
-    errors: []
-  };
+  // Reactive stats based on store values with safe defaults and null checks
+  $: {
+    localStats = {
+      users: $usersCount ?? 0,
+      locations: $locationsCount ?? 0,
+      rooms: $dashboardStats?.rooms ?? 0,
+      bookings: $bookingsCount ?? 0,
+      clients: $clientsCount ?? 0,
+      reviews: $reviewsCount ?? 0,
+      services: $servicesCount ?? 0,
+      schedules: $dashboardStats?.schedules ?? 0
+    };
+  }
 
-  const adminSections = [
+  // Loading and error states from dashboard store with safe defaults
+  $: loading = $dashboardLoading ?? false;
+  $: error = $dashboardError ?? null;
+
+  // Reactive admin sections that update when stats change
+  $: adminSections = [
     {
       title: 'User Management',
       description: 'Manage users, roles, and permissions',
       icon: Users,
       href: '/admin/users',
       color: 'from-blue-500 to-blue-600',
-      stat: stats.users,
+      stat: localStats.users,
       statLabel: 'Total Users'
     },
     {
@@ -64,7 +80,7 @@
       icon: MapPin,
       href: '/admin/locations',
       color: 'from-green-500 to-green-600',
-      stat: stats.locations,
+      stat: localStats.locations,
       statLabel: 'Locations'
     },
     {
@@ -73,7 +89,7 @@
       icon: Building,
       href: '/admin/rooms',
       color: 'from-purple-500 to-purple-600',
-      stat: stats.rooms,
+      stat: localStats.rooms,
       statLabel: 'Total Rooms'
     },
     {
@@ -82,7 +98,7 @@
       icon: Settings,
       href: '/admin/services',
       color: 'from-orange-500 to-orange-600',
-      stat: stats.services,
+      stat: localStats.services,
       statLabel: 'Services'
     },
     {
@@ -91,7 +107,7 @@
       icon: Calendar,
       href: '/admin/schedules',
       color: 'from-indigo-500 to-indigo-600',
-      stat: stats.schedules,
+      stat: localStats.schedules,
       statLabel: 'Schedules'
     },
     {
@@ -100,7 +116,7 @@
       icon: FileText,
       href: '/admin/bookings',
       color: 'from-red-500 to-red-600',
-      stat: stats.bookings,
+      stat: localStats.bookings,
       statLabel: 'Bookings'
     },
     {
@@ -109,7 +125,7 @@
       icon: Users,
       href: '/admin/clients',
       color: 'from-teal-500 to-teal-600',
-      stat: stats.clients,
+      stat: localStats.clients,
       statLabel: 'Clients'
     },
     {
@@ -118,107 +134,19 @@
       icon: Star,
       href: '/admin/reviews',
       color: 'from-yellow-500 to-yellow-600',
-      stat: stats.reviews,
+      stat: localStats.reviews,
       statLabel: 'Reviews'
     }
   ];
 
-  onMount(() => {
-    // Load dashboard stats from PocketBase
-    loadDashboardStats();
-  });
-
-  async function loadDashboardStats() {
-    loading = true;
-    error = '';
-    debugInfo.errors = [];
-    
+  onMount(async () => {
+    // Load dashboard stats using the dashboard store
     try {
-      const pb = getPocketBaseClient();
-      if (!pb) {
-        error = 'PocketBase client not available';
-        throw new Error('PocketBase client not available');
-      }
-
-      console.log('Loading dashboard stats...');
-
-      // Load counts from each collection individually with better error handling
-      const collections = [
-        { name: 'users', key: 'usersCount' },
-        { name: 'locations', key: 'locationsCount' },
-        { name: 'rooms', key: 'roomsCount' },
-        { name: 'services', key: 'servicesCount' },
-        { name: 'bookings', key: 'bookingsCount' },
-        { name: 'clients', key: 'clientsCount' },
-        { name: 'reviews', key: 'reviewsCount' },
-        { name: 'schedules', key: 'schedulesCount' }
-      ];
-
-      const results = await Promise.allSettled(
-        collections.map(async (collection) => {
-          try {
-            console.log(`Loading ${collection.name}...`);
-            const result = await pb.collection(collection.name).getList(1, 1, { fields: 'id' });
-            console.log(`${collection.name}: ${result.totalItems} items`);
-            return { collection: collection.name, count: result.totalItems, key: collection.key };
-          } catch (err) {
-            console.error(`Error loading ${collection.name}:`, err);
-            debugInfo.errors.push(`${collection.name}: ${err.message}`);
-            return { collection: collection.name, count: 0, key: collection.key, error: err.message };
-          }
-        })
-      );
-
-      // Process results
-      results.forEach((result) => {
-        if (result.status === 'fulfilled') {
-          const data = result.value;
-          debugInfo[data.key] = data.count;
-          
-          // Update stats based on collection name
-          switch (data.collection) {
-            case 'users':
-              stats.users = data.count;
-              break;
-            case 'locations':
-              stats.locations = data.count;
-              break;
-            case 'rooms':
-              stats.rooms = data.count;
-              break;
-            case 'services':
-              stats.services = data.count;
-              break;
-            case 'bookings':
-              stats.bookings = data.count;
-              break;
-            case 'clients':
-              stats.clients = data.count;
-              break;
-            case 'reviews':
-              stats.reviews = data.count;
-              break;
-            case 'schedules':
-              stats.schedules = data.count;
-              break;
-          }
-        } else {
-          console.error('Promise rejected:', result.reason);
-          debugInfo.errors.push(`Promise failed: ${result.reason}`);
-        }
-      });
-
-      console.log('Final stats:', stats);
-      console.log('Debug info:', debugInfo);
-
+      await dashboardActions.loadDashboardStats();
     } catch (err) {
-      console.error('Error loading dashboard stats:', err);
-      error = `Failed to load dashboard data: ${err.message}`;
-      debugInfo.errors.push(`Main error: ${err.message}`);
-    } finally {
-      loading = false;
+      console.error('Failed to load dashboard stats:', err);
     }
-  }
+  });
 </script>
 
 <svelte:head>
@@ -249,31 +177,6 @@
     </div>
   {/if}
 
-  <!-- Debug Info (only show in development) -->
-  {#if debugInfo.errors.length > 0}
-    <div class="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg p-4">
-      <p class="text-yellow-800 dark:text-yellow-200 font-medium mb-2">Debug Information:</p>
-      <div class="text-sm space-y-1">
-        <p>Users: {debugInfo.usersCount}</p>
-        <p>Locations: {debugInfo.locationsCount}</p>
-        <p>Rooms: {debugInfo.roomsCount}</p>
-        <p>Services: {debugInfo.servicesCount}</p>
-        <p>Bookings: {debugInfo.bookingsCount}</p>
-        <p>Clients: {debugInfo.clientsCount}</p>
-        <p>Reviews: {debugInfo.reviewsCount}</p>
-        <p>Schedules: {debugInfo.schedulesCount}</p>
-        {#if debugInfo.errors.length > 0}
-          <div class="mt-3">
-            <p class="font-medium">Errors:</p>
-            {#each debugInfo.errors as errorMsg}
-              <p class="text-xs text-yellow-700 dark:text-yellow-300">• {errorMsg}</p>
-            {/each}
-          </div>
-        {/if}
-      </div>
-    </div>
-  {/if}
-
   <!-- Quick Stats -->
   <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
     <div class="bg-card rounded-lg p-4 border">
@@ -283,7 +186,7 @@
           {#if loading}
             <div class="h-8 bg-muted animate-pulse rounded"></div>
           {:else}
-            <p class="text-2xl font-bold">{stats.users}</p>
+            <p class="text-2xl font-bold">{localStats.users}</p>
           {/if}
         </div>
         <Users class="h-8 w-8 text-blue-500" />
@@ -296,7 +199,7 @@
           {#if loading}
             <div class="h-8 bg-muted animate-pulse rounded"></div>
           {:else}
-            <p class="text-2xl font-bold">{stats.bookings}</p>
+            <p class="text-2xl font-bold">{localStats.bookings}</p>
           {/if}
         </div>
         <FileText class="h-8 w-8 text-red-500" />
@@ -309,7 +212,7 @@
           {#if loading}
             <div class="h-8 bg-muted animate-pulse rounded"></div>
           {:else}
-            <p class="text-2xl font-bold">{stats.clients}</p>
+            <p class="text-2xl font-bold">{localStats.clients}</p>
           {/if}
         </div>
         <Users class="h-8 w-8 text-teal-500" />
@@ -322,7 +225,7 @@
           {#if loading}
             <div class="h-8 bg-muted animate-pulse rounded"></div>
           {:else}
-            <p class="text-2xl font-bold">{stats.reviews}</p>
+            <p class="text-2xl font-bold">{localStats.reviews}</p>
           {/if}
         </div>
         <Star class="h-8 w-8 text-yellow-500" />

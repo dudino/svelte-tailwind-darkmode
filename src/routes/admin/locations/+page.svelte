@@ -18,13 +18,17 @@
   import Button from '$lib/components/ui/button/button.svelte';
   import Input from '$lib/components/ui/input/input.svelte';
   import { getPocketBaseClient } from '$lib/stores/authStore';
+  import { 
+    locations,
+    locationsActions,
+    locationsState,
+    filteredLocations
+  } from '$lib/stores/admin';
   import LocationFormModal from '$lib/components/admin/LocationFormModal.svelte';
   import LocationDetailModal from '$lib/components/admin/LocationDetailModal.svelte';
   import ConfirmDialog from '$lib/components/ui/ConfirmDialog.svelte';
 
-  // Local state
-  let locations: any[] = [];
-  let filteredLocations: any[] = [];
+  // Local state for UI
   let searchTerm = '';
   let filterStatus = '';
   let selectedLocations: string[] = [];
@@ -34,12 +38,28 @@
   let editingLocation: any = null;
   let viewingLocation: any = null;
   let locationToDelete: any = null;
-  let loading = false;
-  let error = '';
+
+  // State from store
+  $: loading = $locationsState.loading;
+  $: error = $locationsState.error;
+
+  // Set up filters in the store
+  $: {
+    locationsActions.setFilters({
+      search: searchTerm,
+      status: filterStatus
+    });
+  }
 
   // Pagination
   let currentPage = 1;
   let itemsPerPage = 10;
+
+  $: totalPages = Math.ceil($filteredLocations.length / itemsPerPage);
+  $: paginatedLocations = $filteredLocations.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
 
   // Status options
   const statusOptions = [
@@ -48,50 +68,10 @@
     { value: 'false', label: 'Inactive' }
   ];
 
-  // Reactive filtering
-  $: {
-    filteredLocations = locations.filter(location => {
-      const matchesSearch = !searchTerm || 
-        location.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        location.address?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        location.city?.toLowerCase().includes(searchTerm.toLowerCase());
-      
-      const matchesStatus = !filterStatus || String(location.is_active) === filterStatus;
-      
-      return matchesSearch && matchesStatus;
-    });
-  }
-
-  // Pagination
-  $: totalPages = Math.ceil(filteredLocations.length / itemsPerPage);
-  $: paginatedLocations = filteredLocations.slice(
-    (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage
-  );
-
   onMount(() => {
-    loadLocations();
+    // Load locations using the locations store
+    locationsActions.loadLocations();
   });
-
-  async function loadLocations() {
-    loading = true;
-    error = '';
-    try {
-      const pb = getPocketBaseClient();
-      if (!pb) throw new Error('PocketBase client not available');
-
-      const records = await pb.collection('locations').getFullList({
-        sort: '-created'
-      });
-      
-      locations = records;
-    } catch (err) {
-      error = err instanceof Error ? err.message : 'Failed to load locations';
-      console.error('Error loading locations:', err);
-    } finally {
-      loading = false;
-    }
-  }
 
   function handleCreateLocation() {
     editingLocation = null;
@@ -116,21 +96,12 @@
   async function confirmDeleteLocation() {
     if (!locationToDelete) return;
     
-    loading = true;
     try {
-      const pb = getPocketBaseClient();
-      if (!pb) throw new Error('PocketBase client not available');
-
-      await pb.collection('locations').delete(locationToDelete.id);
-      
+      await locationsActions.deleteLocation(locationToDelete.id);
       showDeleteConfirm = false;
       locationToDelete = null;
-      await loadLocations(); // Refresh the list
     } catch (err) {
-      error = err instanceof Error ? err.message : 'Failed to delete location';
       console.error('Error deleting location:', err);
-    } finally {
-      loading = false;
     }
   }
 

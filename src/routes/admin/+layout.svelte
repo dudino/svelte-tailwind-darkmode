@@ -40,7 +40,7 @@
       <p class="text-muted-foreground mt-1">Manage all system entities and configurations</p>
     </div>
 
-    {@render children()}
+    {@render children?.()}
   </div>
 {:else}
   <div class="flex items-center justify-center min-h-[400px]">

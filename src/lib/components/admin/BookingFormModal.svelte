@@ -262,7 +262,7 @@
                 >
                   <option value="">Select client...</option>
                   {#each clients as client}
-                    <option value={client.id}>{client.name || client.email}</option>
+                    <option value={client.id}>{client.nickname || client.first_name || client.email}</option>
                   {/each}
                 </select>
               </div>

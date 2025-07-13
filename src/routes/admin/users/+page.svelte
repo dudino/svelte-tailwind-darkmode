@@ -20,16 +20,17 @@
   import Button from '$lib/components/ui/button/button.svelte';
   import Input from '$lib/components/ui/input/input.svelte';
   import { 
-    users as usersStore, 
-    fetchUsersFromServer,
-    deleteUser 
-  } from '$lib/stores/userManagementStore';
+    users,
+    usersActions,
+    usersState,
+    filteredUsers
+  } from '$lib/stores/admin';
   import { getPocketBaseClient } from '$lib/stores/authStore';
   import UserFormModal from '$lib/components/admin/UserFormModal.svelte';
   import UserDetailModal from '$lib/components/admin/UserDetailModal.svelte';
   import ConfirmDialog from '$lib/components/ui/ConfirmDialog.svelte';
 
-  // Local state
+  // Local state for UI
   let searchTerm = '';
   let filterRole = '';
   let filterStatus = '';
@@ -40,12 +41,29 @@
   let editingUser: any = null;
   let viewingUser: any = null;
   let userToDelete: any = null;
-  let loading = false;
-  let error = '';
+
+  // State from store
+  $: loading = $usersState.loading;
+  $: error = $usersState.error;
+
+  // Set up filters in the store
+  $: {
+    usersActions.setFilters({
+      search: searchTerm,
+      role: filterRole,
+      status: filterStatus
+    });
+  }
 
   // Pagination
   let currentPage = 1;
   let itemsPerPage = 10;
+
+  $: totalPages = Math.ceil($filteredUsers.length / itemsPerPage);
+  $: paginatedUsers = $filteredUsers.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
 
   // Role options
   const roleOptions = [
@@ -62,41 +80,12 @@
     { value: 'false', label: 'Inactive' }
   ];
 
-  // Filtered and paginated users
-  $: filteredUsers = $usersStore.filter(user => {
-    const matchesSearch = !searchTerm || 
-      user.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      user.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      user.phone?.includes(searchTerm);
-    
-    const matchesRole = !filterRole || user.role === filterRole;
-    const matchesStatus = !filterStatus || String(user.is_active) === filterStatus;
-    
-    return matchesSearch && matchesRole && matchesStatus;
-  });
-
-  $: totalPages = Math.ceil(filteredUsers.length / itemsPerPage);
-  $: paginatedUsers = filteredUsers.slice(
-    (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage
-  );
+  // Filtered and paginated users - remove this section since we're using the store's filteredUsers
 
   onMount(() => {
-    loadUsers();
+    // Load users using the users store
+    usersActions.loadUsers();
   });
-
-  async function loadUsers() {
-    loading = true;
-    error = '';
-    try {
-      await fetchUsersFromServer();
-    } catch (err) {
-      error = err instanceof Error ? err.message : 'Failed to load users';
-      console.error('Error loading users:', err);
-    } finally {
-      loading = false;
-    }
-  }
 
   function handleCreateUser() {
     editingUser = null;
@@ -121,17 +110,12 @@
   async function confirmDeleteUser() {
     if (!userToDelete) return;
     
-    loading = true;
     try {
-      await deleteUser(userToDelete.id);
+      await usersActions.deleteUser(userToDelete.id);
       showDeleteConfirm = false;
       userToDelete = null;
-      await loadUsers(); // Refresh the list
     } catch (err) {
-      error = err instanceof Error ? err.message : 'Failed to delete user';
       console.error('Error deleting user:', err);
-    } finally {
-      loading = false;
     }
   }
 
