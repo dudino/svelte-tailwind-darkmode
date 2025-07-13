@@ -1,9 +1,9 @@
 <script>
-	import { ModeWatcher } from 'mode-watcher';
 	import { onMount } from 'svelte';
 	import '$styles/app.css';
 	import ProtectedRoute from '$lib/components/auth/ProtectedRoute.svelte';
 	import MobileNavbar from '$lib/components/MobileNavbar.svelte';
+	import ThemeToggle from '$lib/components/ThemeToggle.svelte';
 	import { initPocketBase } from '$lib/stores';
 
 	// Get the locale data from the load function
@@ -26,10 +26,10 @@
 	<title>Affinity - Massage Parlor Management</title>
 </svelte:head>
 
-<ModeWatcher />
 {#if appLoaded}
 	<ProtectedRoute>
 		<MobileNavbar />
+		<ThemeToggle />
 		<main class="container mx-auto px-4 py-6">
 			{@render children()}
 		</main>

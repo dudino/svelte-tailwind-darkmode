@@ -39,11 +39,22 @@ export async function initPocketBase() {
       try {
         pb.authStore.save(authData.token, authData.user);
         
-        // Verify the token is still valid
-        if (pb.authStore.isValid) {
-          await pb.collection(COLLECTIONS.USERS).authRefresh();
-          currentUser.set(pb.authStore.model);
-          setSyncStatus('online');
+        // Verify the token is still valid (only if online)
+        if (pb.authStore.isValid && navigator.onLine) {
+          try {
+            await pb.collection(COLLECTIONS.USERS).authRefresh();
+            currentUser.set(pb.authStore.model);
+            setSyncStatus('online');
+            return pb;
+          } catch (refreshErr) {
+            console.warn('Token refresh failed, clearing auth:', refreshErr);
+            await storage.clearAuthData();
+            pb.authStore.clear();
+          }
+        } else if (pb.authStore.isValid) {
+          // Offline but token exists - trust it for now
+          currentUser.set(authData.user);
+          setSyncStatus('offline');
           return pb;
         }
       } catch (err) {

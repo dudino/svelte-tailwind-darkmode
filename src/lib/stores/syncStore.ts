@@ -84,7 +84,7 @@ export async function syncData(): Promise<{ success: boolean; message?: string }
     // Fetch fresh data from server
     try {
       const pb = getPocketBaseClient();
-      if (pb) {
+      if (pb && navigator.onLine) {
         const response = await pb.collection('users').getList(1, 200);
         const serverUsers = response.items;
         
@@ -94,7 +94,8 @@ export async function syncData(): Promise<{ success: boolean; message?: string }
         }
       }
     } catch (fetchErr) {
-      console.warn('Failed to fetch fresh data after sync:', fetchErr);
+      console.warn('Failed to fetch fresh data after sync (PocketBase may not be running):', fetchErr);
+      // Don't treat this as a critical error - the app can work offline
     }
     
     setSyncStatus('online');
