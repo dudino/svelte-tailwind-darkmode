@@ -8,6 +8,11 @@ import { setError, setSyncStatus } from './appStateStore';
 import { getPocketBaseClient } from './authStore';
 import type { SyncQueueItem } from '$lib/types/user';
 
+// Prevent concurrent sync operations
+let syncInProgress = false;
+let lastSyncTime = 0;
+const SYNC_DEBOUNCE_MS = 2000; // Wait 2 seconds between syncs
+
 /**
  * Add item to sync queue
  */
@@ -47,6 +52,19 @@ export async function getSyncQueue(): Promise<SyncQueueItem[]> {
  * Synchronize data with server
  */
 export async function syncData(): Promise<{ success: boolean; message?: string }> {
+  // Prevent concurrent sync operations
+  if (syncInProgress) {
+    console.log('Sync already in progress, skipping...');
+    return { success: false, message: 'Sync already in progress' };
+  }
+  
+  // Debounce sync calls
+  const now = Date.now();
+  if (now - lastSyncTime < SYNC_DEBOUNCE_MS) {
+    console.log('Sync called too recently, debouncing...');
+    return { success: false, message: 'Sync debounced' };
+  }
+  
   if (!navigator.onLine) {
     return { success: false, message: 'Device is offline' };
   }
@@ -57,11 +75,14 @@ export async function syncData(): Promise<{ success: boolean; message?: string }
   }
   
   try {
+    syncInProgress = true;
+    lastSyncTime = now;
     setSyncStatus('syncing');
     
     // Process sync queue
     const queue = await getSyncQueue();
     let errors = 0;
+    const processedUserIds = new Set<string>();
     
     for (const item of queue) {
       try {
@@ -69,6 +90,10 @@ export async function syncData(): Promise<{ success: boolean; message?: string }
           await pb.collection(item.collection).create(item.data);
         } else if (item.operation === 'update') {
           await pb.collection(item.collection).update(item.recordId, item.data);
+          // Track user IDs that were successfully synced
+          if (item.collection === 'users' && item.recordId) {
+            processedUserIds.add(item.recordId);
+          }
         } else if (item.operation === 'delete') {
           await pb.collection(item.collection).delete(item.recordId);
         }
@@ -93,26 +118,62 @@ export async function syncData(): Promise<{ success: boolean; message?: string }
       }
     }
     
-    // Fetch fresh data from server
-    try {
-      const pb = getPocketBaseClient();
-      if (pb && navigator.onLine) {
-        const response = await pb.collection('users').getList(1, 200);
-        const serverUsers = response.items;
-        
-        // Save all users locally, handling duplicates properly
-        for (const user of serverUsers) {
-          try {
-            // Use the improved save method that handles constraints
-            await storage.saveOrUpdateUser(user);
-          } catch (userSaveErr) {
-            console.warn(`Failed to save user ${user.email}:`, userSaveErr);
+    // Clear syncPending flag for successfully synced users
+    if (processedUserIds.size > 0) {
+      for (const userId of processedUserIds) {
+        try {
+          const user = await storage.getUser(userId);
+          if (user && user.syncPending) {
+            const updatedUser = { ...user };
+            delete updatedUser.syncPending; // Remove the syncPending flag
+            await storage.saveOrUpdateUser(updatedUser);
           }
+        } catch (userUpdateErr) {
+          console.warn(`Failed to clear syncPending for user ${userId}:`, userUpdateErr);
         }
       }
-    } catch (fetchErr) {
-      console.warn('Failed to fetch fresh data after sync (PocketBase may not be running):', fetchErr);
-      // Don't treat this as a critical error - the app can work offline
+      
+      // Refresh the users store to reflect changes
+      const { loadUsersFromStorage } = await import('./userManagementStore');
+      loadUsersFromStorage();
+    }
+    
+    // Only fetch fresh data if we processed items or if there are no items in queue
+    if (processedUserIds.size > 0 || queue.length === 0) {
+      try {
+        const pb = getPocketBaseClient();
+        if (pb && navigator.onLine) {
+          console.log('Fetching fresh data from server...');
+          const response = await pb.collection('users').getList(1, 200);
+          const serverUsers = response.items;
+          
+          // Save all users locally, handling duplicates properly
+          for (const user of serverUsers) {
+            try {
+              // Clear syncPending flag for server users since they're now in sync
+              const cleanUser = { ...user };
+              delete cleanUser.syncPending;
+              // Use the improved save method that handles constraints
+              await storage.saveOrUpdateUser(cleanUser);
+            } catch (userSaveErr) {
+              console.warn(`Failed to save user ${user.email}:`, userSaveErr);
+            }
+          }
+          
+          // Refresh the users store after fetching fresh data
+          const { loadUsersFromStorage } = await import('./userManagementStore');
+          loadUsersFromStorage();
+          console.log('Fresh data fetched and stored successfully');
+        }
+      } catch (fetchErr: any) {
+        // Handle auto-cancellation gracefully
+        if (fetchErr.name === 'AbortError' || fetchErr.message?.includes('autocancelled')) {
+          console.log('Fetch request was cancelled (likely due to concurrent request)');
+        } else {
+          console.warn('Failed to fetch fresh data after sync (PocketBase may not be running):', fetchErr);
+        }
+        // Don't treat this as a critical error - the app can work offline
+      }
     }
     
     setSyncStatus('online');
@@ -127,6 +188,8 @@ export async function syncData(): Promise<{ success: boolean; message?: string }
     const message = err instanceof Error ? err.message : 'Sync failed';
     setError(message);
     return { success: false, message };
+  } finally {
+    syncInProgress = false;
   }
 }
 
@@ -150,6 +213,35 @@ export async function clearSyncQueue(): Promise<void> {
   } catch (err) {
     console.error('Failed to clear sync queue:', err);
     setError('Failed to clear sync queue');
+  }
+}
+
+/**
+ * Clear syncPending flags for all users (useful for fixing stuck sync states)
+ */
+export async function clearAllSyncPendingFlags(): Promise<void> {
+  try {
+    // Get all users and clear their syncPending flags
+    const { users } = await import('./userManagementStore');
+    const { get } = await import('svelte/store');
+    const currentUsers = get(users);
+    
+    for (const user of currentUsers) {
+      if (user.syncPending) {
+        const updatedUser = { ...user };
+        delete updatedUser.syncPending;
+        await storage.saveOrUpdateUser(updatedUser);
+      }
+    }
+    
+    // Refresh the users store
+    const { loadUsersFromStorage } = await import('./userManagementStore');
+    loadUsersFromStorage();
+    
+    console.log('Cleared all syncPending flags');
+  } catch (err) {
+    console.error('Failed to clear syncPending flags:', err);
+    setError('Failed to clear sync pending flags');
   }
 }
 

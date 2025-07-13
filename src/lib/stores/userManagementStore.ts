@@ -13,6 +13,11 @@ import { COLLECTIONS } from '$lib/types/user';
 // Check if we're in browser environment
 const browser = typeof window !== 'undefined';
 
+// Prevent concurrent fetch operations
+let fetchInProgress = false;
+let lastFetchTime = 0;
+const FETCH_DEBOUNCE_MS = 1000; // Wait 1 second between fetches
+
 // User management stores
 export const users = writable<User[]>([]);
 export const selectedUser = writable<User | null>(null);
@@ -195,6 +200,19 @@ export async function deleteUser(userId: string): Promise<{ success: boolean; me
  * Fetch users from server
  */
 export async function fetchUsersFromServer(): Promise<{ success: boolean; message?: string }> {
+  // Prevent concurrent fetch operations
+  if (fetchInProgress) {
+    console.log('Fetch already in progress, skipping...');
+    return { success: false, message: 'Fetch already in progress' };
+  }
+  
+  // Debounce fetch calls
+  const now = Date.now();
+  if (now - lastFetchTime < FETCH_DEBOUNCE_MS) {
+    console.log('Fetch called too recently, debouncing...');
+    return { success: false, message: 'Fetch debounced' };
+  }
+  
   const pb = getPocketBaseClient();
   
   if (!navigator.onLine || !pb) {
@@ -202,7 +220,11 @@ export async function fetchUsersFromServer(): Promise<{ success: boolean; messag
   }
   
   try {
+    fetchInProgress = true;
+    lastFetchTime = now;
     setLoading(true);
+    
+    console.log('Fetching users from server...');
     const response = await pb.collection(COLLECTIONS.USERS).getList(1, 200);
     const serverUsers = response.items as User[];
     
@@ -213,14 +235,22 @@ export async function fetchUsersFromServer(): Promise<{ success: boolean; messag
     
     // Update store
     users.set(serverUsers);
+    console.log(`Successfully fetched ${serverUsers.length} users from server`);
     
     return { success: true };
-  } catch (err) {
+  } catch (err: any) {
+    // Handle auto-cancellation gracefully
+    if (err.name === 'AbortError' || err.message?.includes('autocancelled')) {
+      console.log('Fetch request was cancelled (likely due to concurrent request)');
+      return { success: false, message: 'Request cancelled' };
+    }
+    
     const message = err instanceof Error ? err.message : 'Failed to fetch users';
     setError(message);
     return { success: false, message };
   } finally {
     setLoading(false);
+    fetchInProgress = false;
   }
 }
 

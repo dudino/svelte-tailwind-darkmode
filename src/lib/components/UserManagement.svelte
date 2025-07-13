@@ -11,13 +11,11 @@
     users, 
     isLoading, 
     error,
-    syncStatus,
     login, 
     register, 
     logout,
     updateUser,
     deleteUser,
-    fetchUsersFromServer,
     syncData,
     loadUsersFromStorage,
     selectUser,
@@ -78,6 +76,11 @@
 
   onMount(() => {
     loadUsersFromStorage();
+    
+    // If user is authenticated, automatically sync data from server
+    if ($isAuthenticated) {
+      syncData();
+    }
   });
 
   // Authentication functions
@@ -208,7 +211,7 @@
   }
 </script>
 
-<div class="min-h-screen bg-gradient-to-br from-background via-muted/20 to-primary/10 dark:from-background dark:via-muted/30 dark:to-primary/20">
+<div class="min-h-screen bg-gradient-to-br from-muted/40 via-muted/60 to-primary/20 dark:from-muted/60 dark:via-muted/80 dark:to-primary/30">
   <div class="container mx-auto p-6 max-w-7xl">
     <!-- Header Section -->
     <div class="mb-8">
@@ -218,39 +221,11 @@
         </h1>
       <p class="text-muted-foreground text-lg">Manage users, roles, and permissions</p>
     </div>
-    
-    <!-- Status Bar -->
-    <div class="flex items-center justify-center gap-6 p-4 bg-card border border-border rounded-xl shadow-lg backdrop-blur-sm">
-      <div class="flex items-center gap-3">
-        <span class="text-sm font-medium text-foreground">Status:</span>
-        <span class="px-3 py-1 rounded-full text-xs font-semibold border shadow-sm transition-all {
-          $syncStatus === 'online' 
-            ? 'bg-green-100 text-green-700 border-green-200 dark:bg-green-900/30 dark:text-green-400 dark:border-green-700'
-            : $syncStatus === 'syncing'
-            ? 'bg-yellow-100 text-yellow-700 border-yellow-200 dark:bg-yellow-900/30 dark:text-yellow-400 dark:border-yellow-700'
-            : 'bg-red-100 text-red-700 border-red-200 dark:bg-red-900/30 dark:text-red-400 dark:border-red-700'
-        }">
-          {$syncStatus}
-        </span>
-      </div>
-      
-      {#if $syncStatus === 'online'}
-        <button 
-          onclick={() => syncData()} 
-          class="px-4 py-2 bg-primary text-primary-foreground text-sm rounded-lg hover:bg-primary/90 transition-colors shadow-sm font-medium"
-          disabled={$isLoading}>
-          <svg class="w-4 h-4 mr-2 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-          </svg>
-          Sync Data
-        </button>
-      {/if}
-    </div>
   </div>
 
   <!-- Error Display -->
   {#if $error}
-    <div class="mb-6 p-4 bg-destructive/10 border border-destructive/20 text-destructive rounded-xl backdrop-blur-sm">
+    <div class="mb-6 p-4 bg-background border-2 border-destructive/40 text-destructive rounded-xl backdrop-blur-md shadow-xl">
       <div class="flex items-center justify-between">
         <div class="flex items-center gap-2">
           <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
@@ -266,7 +241,7 @@
   <!-- Authentication Section -->
   {#if !$isAuthenticated}
     <div class="max-w-2xl mx-auto">
-      <div class="bg-card border border-border rounded-2xl shadow-xl backdrop-blur-sm p-8">
+      <div class="bg-background border-2 border-border rounded-2xl shadow-2xl backdrop-blur-md p-8">
         <div class="text-center mb-6">
           <h2 class="text-2xl font-bold text-foreground mb-2">Authentication Required</h2>
           <p class="text-muted-foreground">Please sign in to access the user management system</p>
@@ -294,7 +269,7 @@
 
         <!-- Login Form -->
         {#if showLoginForm}
-          <div class="mt-6 p-6 bg-muted/30 border border-border rounded-xl shadow-sm">
+          <div class="mt-6 p-6 bg-card border-2 border-border rounded-xl shadow-xl backdrop-blur-sm">
             <h3 class="text-lg font-semibold text-foreground mb-4 flex items-center gap-2">
               <svg class="w-5 h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
@@ -328,19 +303,13 @@
                 class="w-full px-4 py-3 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-sm font-medium">
                 {$isLoading ? 'Signing in...' : 'Sign In'}
               </button>
-              
-              <!-- Demo Credentials Helper -->
-              <div class="mt-4 p-3 bg-muted/50 rounded-lg text-sm">
-                <p class="text-muted-foreground font-medium mb-1">Demo Credentials:</p>
-                <p class="text-xs text-muted-foreground">Admin: admin@massage.com / password</p>
-              </div>
             </div>
         </div>
       {/if}
 
       <!-- Register Form -->
       {#if showRegisterForm}
-        <div class="mt-6 p-6 bg-muted/30 border border-border rounded-xl shadow-sm">
+        <div class="mt-6 p-6 bg-card border-2 border-border rounded-xl shadow-xl backdrop-blur-sm">
           <h3 class="text-lg font-semibold text-foreground mb-4 flex items-center gap-2">
             <svg class="w-5 h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
@@ -441,45 +410,12 @@
   </div>
   {:else}
     <!-- User Dashboard -->
-    <div class="bg-card border border-border rounded-xl shadow-xl p-6 mb-6">
-      <div class="flex justify-between items-start mb-4">
-        <div class="space-y-2">
-          <h2 class="text-xl font-bold bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
-            Welcome, {$currentUser?.nickname}
-          </h2>
-          <div class="flex items-center gap-4 text-sm">
-            <span class="text-muted-foreground">Role:</span>
-            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
-              {$currentUser?.role === 'administrator' 
-                ? 'bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-300' 
-                : $currentUser?.role === 'operator'
-                ? 'bg-blue-100 text-blue-800 dark:bg-blue-900/20 dark:text-blue-300'
-                : 'bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-300'}">
-              {$currentUser?.role}
-            </span>
-            <span class="text-muted-foreground">Status:</span>
-            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
-              {$currentUser?.isActive 
-                ? 'bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-300'
-                : 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-300'}">
-              {$currentUser?.isActive ? 'Active' : 'Inactive'}
-            </span>
-          </div>
-        </div>
-        
-        <button 
-          onclick={logout}
-          class="px-4 py-2 bg-destructive text-destructive-foreground rounded-lg hover:bg-destructive/90 transition-all shadow-sm font-medium flex items-center gap-2">
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-          </svg>
-          Sign Out
-        </button>
-      </div>
-    </div>
+   
 
-    <!-- User Management Section -->
-    <div class="bg-card border border-border rounded-xl shadow-xl p-6">
+    <div class="bg-background border-2 border-border rounded-xl shadow-2xl backdrop-blur-md p-6">
+                <h2 class="text-xl text-center mb-12 font-bold bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
+            Welcome, {$currentUser?.name}
+          </h2>
       <div class="flex justify-between items-center mb-6">
         <h2 class="text-xl font-bold bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
           User Management
@@ -487,13 +423,13 @@
         
         <div class="flex gap-3">
           <button 
-            onclick={() => fetchUsersFromServer()}
-            disabled={$isLoading || $syncStatus === 'offline'}
+            onclick={() => syncData()}
+            disabled={$isLoading}
             class="px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-sm font-medium flex items-center gap-2">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
             </svg>
-            Refresh from Server
+            Sync Data
           </button>
         </div>
       </div>
@@ -539,7 +475,7 @@
       <div class="space-y-3">
         {#each filteredUsers as user (user.id)}
           {@const isActive = user.is_active ?? user.isActive ?? true}
-          <div class="border border-border rounded-xl p-6 flex justify-between items-start transition-all bg-card shadow-md hover:shadow-lg {!isActive ? 'opacity-70 border-destructive/20' : ''}">>
+          <div class="border-2 border-border rounded-xl p-6 flex justify-between items-start transition-all bg-background shadow-xl hover:shadow-2xl backdrop-blur-sm {!isActive ? 'opacity-70 border-destructive/40' : ''}">>
             <div class="flex-1 space-y-3">
               <div class="flex items-center gap-3 flex-wrap">
                 <h3 class="font-semibold text-foreground" class:text-muted-foreground={!isActive}>
@@ -668,8 +604,8 @@
 
 <!-- User Edit Modal -->
 {#if showUserForm && editingUser}
-  <div class="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-    <div class="bg-card border border-border rounded-2xl shadow-2xl p-6 max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+  <div class="fixed inset-0 bg-black/60 backdrop-blur-md flex items-center justify-center p-4 z-50">
+    <div class="bg-background border-2 border-border rounded-2xl shadow-2xl backdrop-blur-md p-6 max-w-4xl w-full max-h-[90vh] overflow-y-auto">
       <div class="flex items-center justify-between mb-6">
         <h2 class="text-2xl font-bold bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
           Edit User: {editingUser.name || editingUser.nickname || 'Unnamed'}
@@ -685,7 +621,7 @@
       
       <div class="space-y-6">
         <!-- Basic Info -->
-        <div class="bg-muted/20 rounded-xl p-4">
+        <div class="bg-card/80 backdrop-blur-sm border border-border rounded-xl p-4 shadow-lg">
           <h3 class="text-lg font-semibold text-foreground mb-4">Basic Information</h3>
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
@@ -737,7 +673,7 @@
         </div>
 
         <!-- Languages -->
-        <div class="bg-muted/20 rounded-xl p-4">
+        <div class="bg-card/80 backdrop-blur-sm border border-border rounded-xl p-4 shadow-lg">
           <h3 class="text-lg font-semibold text-foreground mb-4">Languages</h3>
           <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
             {#each AVAILABLE_LANGUAGES as lang}
@@ -754,7 +690,7 @@
         </div>
 
         <!-- Services -->
-        <div class="bg-muted/20 rounded-xl p-4">
+        <div class="bg-card/80 backdrop-blur-sm border border-border rounded-xl p-4 shadow-lg">
           <h3 class="text-lg font-semibold text-foreground mb-4">Services</h3>
           <div class="grid grid-cols-2 md:grid-cols-3 gap-3">
             {#each AVAILABLE_SERVICES as service}
@@ -771,7 +707,7 @@
         </div>
 
         <!-- Contact Details -->
-        <div class="bg-muted/20 rounded-xl p-4">
+        <div class="bg-card/80 backdrop-blur-sm border border-border rounded-xl p-4 shadow-lg">
           <h3 class="text-lg font-semibold text-foreground mb-4">Contact Details</h3>
           <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             <div>

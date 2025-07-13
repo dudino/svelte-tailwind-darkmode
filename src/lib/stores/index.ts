@@ -60,5 +60,6 @@ export {
   getSyncQueue,
   syncData,
   hasPendingSyncOperations,
-  clearSyncQueue
+  clearSyncQueue,
+  clearAllSyncPendingFlags
 } from './syncStore';

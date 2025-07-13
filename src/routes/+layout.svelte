@@ -6,6 +6,7 @@
 	import MobileNavbar from '$lib/components/MobileNavbar.svelte';
 	import PublicHeader from '$lib/components/PublicHeader.svelte';
 	import ThemeToggle from '$lib/components/ThemeToggle.svelte';
+	import StatusFooter from '$lib/components/StatusFooter.svelte';
 	import { initPocketBase, isAuthenticated } from '$lib/stores';
 
 	// Import debug utilities in development
@@ -43,17 +44,20 @@
 	{#if shouldShowProtected}
 		<ProtectedRoute>
 			<MobileNavbar />
-			<main class="container mx-auto px-4 py-6">
+			<main class="container mx-auto px-4 py-6 pb-20">
 				{@render children()}
 			</main>
 		</ProtectedRoute>
 	{:else}
 		<!-- Public pages -->
 		<PublicHeader />
-		<main class="min-h-screen">
+		<main class="min-h-screen pb-20">
 			{@render children()}
 		</main>
 	{/if}
+	
+	<!-- Status Footer - shown on all pages when authenticated -->
+	<StatusFooter />
 {:else}
 	<!-- Loading state while app initializes -->
 	<div class="fixed inset-0 flex items-center justify-center bg-background">
