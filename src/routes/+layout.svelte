@@ -1,15 +1,24 @@
 <script>
 	import { onMount } from 'svelte';
+	import { page } from '$app/stores';
 	import '$styles/app.css';
 	import ProtectedRoute from '$lib/components/auth/ProtectedRoute.svelte';
 	import MobileNavbar from '$lib/components/MobileNavbar.svelte';
+	import PublicHeader from '$lib/components/PublicHeader.svelte';
 	import ThemeToggle from '$lib/components/ThemeToggle.svelte';
-	import { initPocketBase } from '$lib/stores';
+	import { initPocketBase, isAuthenticated } from '$lib/stores';
 
 	// Get the locale data from the load function
 	let { data, children } = $props();
 	
 	let appLoaded = $state(false);
+
+	// Routes that don't require authentication
+	const publicRoutes = ['/', '/about', '/login'];
+	
+	$: currentPath = $page?.url?.pathname || '/';
+	$: isPublicRoute = publicRoutes.includes(currentPath);
+	$: shouldShowProtected = !isPublicRoute || $isAuthenticated;
 
 	onMount(async () => {
 		// Initialize auth state and stores
@@ -27,13 +36,21 @@
 </svelte:head>
 
 {#if appLoaded}
-	<ProtectedRoute>
-		<MobileNavbar />
-		<ThemeToggle />
-		<main class="container mx-auto px-4 py-6">
+	<ThemeToggle />
+	{#if shouldShowProtected}
+		<ProtectedRoute>
+			<MobileNavbar />
+			<main class="container mx-auto px-4 py-6">
+				{@render children()}
+			</main>
+		</ProtectedRoute>
+	{:else}
+		<!-- Public pages -->
+		<PublicHeader />
+		<main class="min-h-screen">
 			{@render children()}
 		</main>
-	</ProtectedRoute>
+	{/if}
 {:else}
 	<!-- Loading state while app initializes -->
 	<div class="fixed inset-0 flex items-center justify-center bg-background">

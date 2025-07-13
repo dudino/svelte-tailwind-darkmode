@@ -1,6 +1,16 @@
 <script>
 	import WelcomeSection from '$lib/components/WelcomeSection.svelte';
 	import Button from '$lib/components/ui/button/button.svelte';
+	import { isAuthenticated } from '$lib/stores';
+	import { goto } from '$app/navigation';
+	
+	function handleLogin() {
+		goto('/login');
+	}
+	
+	function handleDashboard() {
+		goto('/user-management');
+	}
 </script>
 
 <svelte:head>
@@ -9,7 +19,7 @@
 
 
 	<!-- Public landing page with welcome section -->
-	<div class="space-y-12 relative">
+	<div class="space-y-12 relative container mx-auto px-4 py-8">
 		<!-- Welcome Section for Translation Demo -->
 		<WelcomeSection />
 		
@@ -25,9 +35,15 @@
 				Professional massage parlor management system
 			</p>
 			<div class="flex gap-6 justify-center flex-wrap">
-				<Button size="lg" class="glass-button px-8 py-4 text-lg font-semibold">
-					Sign in to access your dashboard
-				</Button>
+				{#if $isAuthenticated}
+					<Button size="lg" class="glass-button px-8 py-4 text-lg font-semibold" on:click={handleDashboard}>
+						Go to Dashboard
+					</Button>
+				{:else}
+					<Button size="lg" class="glass-button px-8 py-4 text-lg font-semibold" on:click={handleLogin}>
+						Sign in to access your dashboard
+					</Button>
+				{/if}
 			</div>
 		</section>
 	</div>
