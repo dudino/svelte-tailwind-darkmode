@@ -300,6 +300,70 @@ export function getSelectedUser(): User | null {
   return get(selectedUser);
 }
 
+/**
+ * Create a new user (admin only)
+ */
+export async function createUser(userData: any): Promise<AuthResponse> {
+  setLoading(true);
+  clearError();
+  
+  try {
+    const pb = getPocketBaseClient();
+    if (!pb) {
+      throw new Error('PocketBase client not available');
+    }
+    
+    const currentUser = getCurrentUser();
+    if (!currentUser || currentUser.role !== 'administrator') {
+      throw new Error('Only administrators can create users');
+    }
+
+    // Validate required fields
+    if (!userData.email) {
+      throw new Error('Email is required');
+    }
+    if (!userData.password) {
+      throw new Error('Password is required');
+    }
+    if (!userData.role) {
+      throw new Error('Role is required');
+    }
+
+    // Online creation
+    if (navigator.onLine && pb) {
+      try {
+        const newUser = await pb.collection(COLLECTIONS.USERS).create({
+          ...userData,
+          username: userData.email, // Use email as username
+          emailVisibility: true,
+          verified: false,
+          created_by: currentUser.id
+        });
+        
+        // Save user locally using the constraint-aware method
+        await storage.saveOrUpdateUser(newUser);
+        
+        // Update users store
+        users.update(list => [newUser, ...list]);
+        
+        return { success: true, user: newUser };
+      } catch (onlineErr) {
+        console.error('Online user creation failed:', onlineErr);
+        throw onlineErr;
+      }
+    }
+    
+    throw new Error('User creation requires internet connection');
+    
+  } catch (err) {
+    const message = err instanceof Error ? err.message : 'User creation failed';
+    setError(message);
+    return { success: false, message };
+  } finally {
+    setLoading(false);
+  }
+}
+
 // Initialize on browser load
 if (browser) {
   loadUsersFromStorage();

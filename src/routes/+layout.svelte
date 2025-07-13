@@ -40,24 +40,26 @@
 </svelte:head>
 
 {#if appLoaded}
-	<ThemeToggle />
-	{#if shouldShowProtected}
-		<ProtectedRoute>
-			<MobileNavbar />
-			<main class="container mx-auto px-4 py-6 pb-20">
+	<div class="min-h-screen bg-gradient-to-br from-muted/40 via-muted/60 to-primary/20 dark:from-muted/60 dark:via-muted/80 dark:to-primary/30">
+		<ThemeToggle />
+		{#if shouldShowProtected}
+			<ProtectedRoute>
+				<MobileNavbar />
+				<main class="container mx-auto px-4 py-6 pb-20">
+					{@render children()}
+				</main>
+			</ProtectedRoute>
+		{:else}
+			<!-- Public pages -->
+			<PublicHeader />
+			<main class="min-h-screen pb-20">
 				{@render children()}
 			</main>
-		</ProtectedRoute>
-	{:else}
-		<!-- Public pages -->
-		<PublicHeader />
-		<main class="min-h-screen pb-20">
-			{@render children()}
-		</main>
-	{/if}
-	
-	<!-- Status Footer - shown on all pages when authenticated -->
-	<StatusFooter />
+		{/if}
+		
+		<!-- Status Footer - shown on all pages when authenticated -->
+		<StatusFooter />
+	</div>
 {:else}
 	<!-- Loading state while app initializes -->
 	<div class="fixed inset-0 flex items-center justify-center bg-background">

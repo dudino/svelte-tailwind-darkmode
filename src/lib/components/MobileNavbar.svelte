@@ -8,7 +8,7 @@
 	import UserProfile from './auth/UserProfile.svelte';
 	import { 
 		Menu, X, Home, User, Settings, Info, Calendar, 
-		Users, MapPin, FileText, Star, BarChart3 
+		Users, MapPin, FileText, Star, BarChart3, Building
 	} from 'lucide-svelte';
 
 	let isOpen = false;
@@ -59,36 +59,35 @@
 		];
 
 		switch (role) {
-			case 'Administrator':
+			case 'administrator':
 				return [
 					...baseItems,
-					{ href: '/users', icon: Users, labelKey: 'Users', show: perms.canManageUsers },
-					{ href: '/locations', icon: MapPin, labelKey: 'Locations', show: perms.canManageLocations },
-					{ href: '/schedules', icon: Calendar, labelKey: 'Schedules', show: perms.canManageSchedules },
-					{ href: '/bookings', icon: FileText, labelKey: 'Bookings', show: perms.canViewAllBookings },
-					{ href: '/reports', icon: BarChart3, labelKey: 'Reports', show: perms.canViewReports },
-					{ href: '/clients', icon: User, labelKey: 'Clients', show: perms.canManageClients },
-					{ href: '/reviews', icon: Star, labelKey: 'Reviews', show: true },
-					{ href: '/settings', icon: Settings, labelKey: 'Settings', show: true }
+					{ href: '/admin', icon: Settings, labelKey: 'Admin Panel', show: true },
+					{ href: '/admin/users', icon: Users, labelKey: 'Users', show: true },
+					{ href: '/admin/locations', icon: MapPin, labelKey: 'Locations', show: true },
+					{ href: '/admin/rooms', icon: Building, labelKey: 'Rooms', show: true },
+					{ href: '/admin/services', icon: Settings, labelKey: 'Services', show: true },
+					{ href: '/admin/schedules', icon: Calendar, labelKey: 'Schedules', show: true },
+					{ href: '/admin/bookings', icon: FileText, labelKey: 'Bookings', show: true },
+					{ href: '/admin/clients', icon: User, labelKey: 'Clients', show: true },
+					{ href: '/admin/reviews', icon: Star, labelKey: 'Reviews', show: true }
 				];
 
-			case 'Operator':
+			case 'operator':
 				return [
 					...baseItems,
-					{ href: '/schedules', icon: Calendar, labelKey: 'Schedules', show: perms.canManageSchedules },
-					{ href: '/bookings', icon: FileText, labelKey: 'Bookings', show: perms.canCreateBookings },
-					{ href: '/clients', icon: User, labelKey: 'Clients', show: perms.canManageClients },
-					{ href: '/reviews', icon: Star, labelKey: 'Reviews', show: true }
+					{ href: '/operator/schedules', icon: Calendar, labelKey: 'Schedules', show: true },
+					{ href: '/operator/bookings', icon: FileText, labelKey: 'Bookings', show: true },
+					{ href: '/operator/clients', icon: User, labelKey: 'Clients', show: true },
+					{ href: '/operator/reviews', icon: Star, labelKey: 'Reviews', show: true }
 				];
 
-			case 'Masseuse':
+			case 'user':
 				return [
 					...baseItems,
-					{ href: '/masseuse/dashboard', icon: Home, labelKey: 'Dashboard', show: true },
-					{ href: '/masseuse/schedule', icon: Calendar, labelKey: 'My Schedule', show: true },
-					{ href: '/masseuse/bookings', icon: FileText, labelKey: 'My Bookings', show: true },
-					{ href: '/masseuse/analytics', icon: BarChart3, labelKey: 'Analytics', show: true },
-					{ href: '/masseuse/profile', icon: User, labelKey: 'Profile', show: true }
+					{ href: '/user/schedule', icon: Calendar, labelKey: 'My Schedule', show: true },
+					{ href: '/user/bookings', icon: FileText, labelKey: 'My Bookings', show: true },
+					{ href: '/user/profile', icon: User, labelKey: 'Profile', show: true }
 				];
 
 			default:
