@@ -1,0 +1,512 @@
+{
+  "users": [
+    {
+      "email": "admin@massage.com",
+      "username": "admin",
+      "password": "admin123456",
+      "passwordConfirm": "admin123456",
+      "name": "Sarah Admin",
+      "role": "administrator",
+      "languages": ["en", "cz"],
+      "phone": "+420123456789",
+      "contact_details": {
+        "whatsapp": "+420123456789",
+        "telegram": "@sarah_admin",
+        "emergency_contact": "+420987654321"
+      },
+      "services": [],
+      "is_active": true,
+      "has_accommodation": false,
+      "verified": true
+    },
+    {
+      "email": "operator@massage.com",
+      "username": "operator1",
+      "password": "operator123456",
+      "passwordConfirm": "operator123456",
+      "name": "Mark Operator",
+      "role": "operator",
+      "languages": ["en", "cz", "de"],
+      "phone": "+420234567890",
+      "contact_details": {
+        "whatsapp": "+420234567890",
+        "shift_start": "08:00",
+        "shift_end": "16:00"
+      },
+      "services": [],
+      "is_active": true,
+      "has_accommodation": false,
+      "verified": true
+    },
+    {
+      "email": "massage1@massage.com",
+      "username": "anna_massage",
+      "password": "user123456",
+      "passwordConfirm": "user123456",
+      "name": "Anna Relaxing",
+      "role": "user",
+      "languages": ["cz", "en", "ru"],
+      "phone": "+420345678901",
+      "contact_details": {
+        "whatsapp": "+420345678901",
+        "telegram": "@anna_massage",
+        "specialties": ["swedish", "deep_tissue", "aromatherapy"]
+      },
+      "services": [],
+      "is_active": true,
+      "has_accommodation": true,
+      "verified": true
+    },
+    {
+      "email": "massage2@massage.com",
+      "username": "petra_wellness",
+      "password": "user123456",
+      "passwordConfirm": "user123456",
+      "name": "Petra Wellness",
+      "role": "user",
+      "languages": ["cz", "de", "sk"],
+      "phone": "+420456789012",
+      "contact_details": {
+        "whatsapp": "+420456789012",
+        "specialties": ["thai", "hot_stone", "reflexology"]
+      },
+      "services": [],
+      "is_active": true,
+      "has_accommodation": false,
+      "verified": true
+    },
+    {
+      "email": "massage3@massage.com",
+      "username": "maria_therapy",
+      "password": "user123456",
+      "passwordConfirm": "user123456",
+      "name": "Maria Therapy",
+      "role": "user",
+      "languages": ["en", "ru", "cz"],
+      "phone": "+420567890123",
+      "contact_details": {
+        "whatsapp": "+420567890123",
+        "telegram": "@maria_therapy",
+        "specialties": ["sports", "medical", "prenatal"]
+      },
+      "services": [],
+      "is_active": true,
+      "has_accommodation": true,
+      "verified": true
+    }
+  ],
+  "locations": [
+    {
+      "name": "Prague Center Spa",
+      "address": "Wenceslas Square 15",
+      "city": "Prague",
+      "postal_code": "11000",
+      "country": "Czech Republic",
+      "is_active": true
+    },
+    {
+      "name": "Brno Wellness Center",
+      "address": "Svobody Square 8",
+      "city": "Brno",
+      "postal_code": "60200",
+      "country": "Czech Republic",
+      "is_active": true
+    },
+    {
+      "name": "Ostrava Relaxation Hub",
+      "address": "Stodolní Street 22",
+      "city": "Ostrava",
+      "postal_code": "70200",
+      "country": "Czech Republic",
+      "is_active": true
+    }
+  ],
+  "rooms": [
+    {
+      "name": "Serenity Suite",
+      "type": "regular",
+      "capacity": 2,
+      "amenities": ["shower", "sauna", "air_conditioning", "music_system", "wifi"],
+      "hourly_rate": 150,
+      "is_active": true
+    },
+    {
+      "name": "Harmony Room",
+      "type": "regular",
+      "capacity": 1,
+      "amenities": ["shower", "private_bathroom", "heating", "music_system"],
+      "hourly_rate": 120,
+      "is_active": true
+    },
+    {
+      "name": "Zen Chamber",
+      "type": "dynamic",
+      "capacity": 3,
+      "amenities": ["jacuzzi", "sauna", "air_conditioning", "tv", "mini_bar", "wifi"],
+      "hourly_rate": 200,
+      "is_active": true
+    },
+    {
+      "name": "Tranquil Space",
+      "type": "regular",
+      "capacity": 1,
+      "amenities": ["shower", "heating", "music_system"],
+      "hourly_rate": 100,
+      "is_active": true
+    },
+    {
+      "name": "Luxury Oasis",
+      "type": "dynamic",
+      "capacity": 2,
+      "amenities": ["shower", "jacuzzi", "air_conditioning", "tv", "mini_bar", "wifi"],
+      "hourly_rate": 250,
+      "is_active": true
+    },
+    {
+      "name": "Basic Therapy Room",
+      "type": "regular",
+      "capacity": 1,
+      "amenities": ["shower", "heating"],
+      "hourly_rate": 80,
+      "is_active": false
+    }
+  ],
+  "services": [
+    {
+      "name": "Swedish Massage",
+      "description": "Classic relaxing massage with long, flowing strokes",
+      "duration_minutes": 60,
+      "price": 80,
+      "category": "massage",
+      "is_active": true
+    },
+    {
+      "name": "Deep Tissue Massage",
+      "description": "Intensive massage targeting muscle tension and knots",
+      "duration_minutes": 90,
+      "price": 120,
+      "category": "therapy",
+      "is_active": true
+    },
+    {
+      "name": "Hot Stone Therapy",
+      "description": "Relaxing massage using heated volcanic stones",
+      "duration_minutes": 75,
+      "price": 100,
+      "category": "relaxation",
+      "is_active": true
+    },
+    {
+      "name": "Thai Massage",
+      "description": "Traditional Thai massage with stretching and pressure points",
+      "duration_minutes": 120,
+      "price": 150,
+      "category": "massage",
+      "is_active": true
+    },
+    {
+      "name": "Aromatherapy Massage",
+      "description": "Gentle massage with essential oils for relaxation",
+      "duration_minutes": 60,
+      "price": 90,
+      "category": "wellness",
+      "is_active": true
+    },
+    {
+      "name": "Sports Massage",
+      "description": "Targeted massage for athletes and active individuals",
+      "duration_minutes": 60,
+      "price": 110,
+      "category": "therapy",
+      "is_active": true
+    },
+    {
+      "name": "Reflexology",
+      "description": "Foot massage targeting pressure points",
+      "duration_minutes": 45,
+      "price": 70,
+      "category": "wellness",
+      "is_active": true
+    },
+    {
+      "name": "Couples Massage",
+      "description": "Simultaneous massage for two people",
+      "duration_minutes": 90,
+      "price": 200,
+      "category": "special",
+      "is_active": true
+    },
+    {
+      "name": "Prenatal Massage",
+      "description": "Gentle massage designed for pregnant women",
+      "duration_minutes": 60,
+      "price": 95,
+      "category": "therapy",
+      "is_active": true
+    },
+    {
+      "name": "Facial Treatment",
+      "description": "Rejuvenating facial with organic products",
+      "duration_minutes": 90,
+      "price": 85,
+      "category": "beauty",
+      "is_active": true
+    }
+  ],
+  "clients": [
+    {
+      "phone_number": "+420111222333",
+      "channel": "whatsapp",
+      "nickname": "John R.",
+      "first_name": "John",
+      "last_name": "Robinson",
+      "email": "john.robinson@email.com",
+      "date_of_birth": "1985-06-15",
+      "preferred_language": "en",
+      "description": "Regular client, prefers deep tissue massage",
+      "is_blocked": false,
+      "total_visits": 12
+    },
+    {
+      "phone_number": "+420222333444",
+      "channel": "telegram",
+      "nickname": "Marie K.",
+      "first_name": "Marie",
+      "last_name": "Kratochvílová",
+      "email": "marie.k@email.cz",
+      "date_of_birth": "1990-03-22",
+      "preferred_language": "cz",
+      "description": "Enjoys aromatherapy sessions, very punctual",
+      "is_blocked": false,
+      "total_visits": 8
+    },
+    {
+      "phone_number": "+420333444555",
+      "channel": "phone",
+      "nickname": "Hans M.",
+      "first_name": "Hans",
+      "last_name": "Mueller",
+      "email": "hans.mueller@email.de",
+      "date_of_birth": "1978-11-08",
+      "preferred_language": "de",
+      "description": "Business traveler, books last minute",
+      "is_blocked": false,
+      "total_visits": 5
+    },
+    {
+      "phone_number": "+420444555666",
+      "channel": "whatsapp",
+      "nickname": "Anna P.",
+      "first_name": "Anna",
+      "last_name": "Petrova",
+      "email": "anna.petrova@email.ru",
+      "date_of_birth": "1992-08-30",
+      "preferred_language": "ru",
+      "description": "Prefers hot stone therapy, allergic to lavender oil",
+      "is_blocked": false,
+      "total_visits": 15
+    },
+    {
+      "phone_number": "+420555666777",
+      "channel": "walk_in",
+      "nickname": "Peter N.",
+      "first_name": "Peter",
+      "last_name": "Novák",
+      "email": "peter.novak@email.cz",
+      "date_of_birth": "1982-12-03",
+      "preferred_language": "cz",
+      "description": "Local client, usually walks in without appointment",
+      "is_blocked": false,
+      "total_visits": 3
+    },
+    {
+      "phone_number": "+420666777888",
+      "channel": "whatsapp",
+      "nickname": "Blocked Client",
+      "first_name": "Troublesome",
+      "last_name": "Customer",
+      "email": "trouble@email.com",
+      "date_of_birth": "1975-05-20",
+      "preferred_language": "en",
+      "description": "Previously problematic behavior",
+      "is_blocked": true,
+      "blocked_reason": "Inappropriate behavior during session",
+      "blocked_at": "2024-12-15T10:30:00Z",
+      "total_visits": 2
+    }
+  ],
+  "schedules": [
+    {
+      "date": "2025-07-14",
+      "timeslot": "morning",
+      "start_time": "08:00",
+      "end_time": "12:00",
+      "is_confirmed": true,
+      "is_available": true,
+      "notes": "Available for morning appointments",
+      "confirmed_at": "2025-07-13T15:00:00Z"
+    },
+    {
+      "date": "2025-07-14",
+      "timeslot": "evening",
+      "start_time": "14:00",
+      "end_time": "18:00",
+      "is_confirmed": true,
+      "is_available": true,
+      "notes": "Afternoon shift",
+      "confirmed_at": "2025-07-13T15:00:00Z"
+    },
+    {
+      "date": "2025-07-15",
+      "timeslot": "full_day",
+      "start_time": "09:00",
+      "end_time": "17:00",
+      "is_confirmed": true,
+      "is_available": true,
+      "notes": "Full day availability",
+      "confirmed_at": "2025-07-13T16:00:00Z"
+    },
+    {
+      "date": "2025-07-16",
+      "timeslot": "custom",
+      "start_time": "10:00",
+      "end_time": "15:00",
+      "is_confirmed": false,
+      "is_available": true,
+      "notes": "Tentative schedule, waiting for confirmation"
+    },
+    {
+      "date": "2025-07-17",
+      "timeslot": "evening",
+      "start_time": "15:00",
+      "end_time": "19:00",
+      "is_confirmed": true,
+      "is_available": false,
+      "notes": "Fully booked for evening",
+      "confirmed_at": "2025-07-13T17:00:00Z"
+    }
+  ],
+  "bookings": [
+    {
+      "booking_number": "BK001-2025-001",
+      "date": "2025-07-14",
+      "start_time": "09:00",
+      "end_time": "10:00",
+      "duration_minutes": 60,
+      "is_confirmed": true,
+      "pin_code": "1234",
+      "special_requests": "Please use eucalyptus oil",
+      "confirmed_at": "2025-07-13T10:00:00Z"
+    },
+    {
+      "booking_number": "BK001-2025-002",
+      "date": "2025-07-14",
+      "start_time": "11:00",
+      "end_time": "12:30",
+      "duration_minutes": 90,
+      "is_confirmed": true,
+      "pin_code": "5678",
+      "special_requests": "First time client, please be gentle",
+      "confirmed_at": "2025-07-13T12:00:00Z"
+    },
+    {
+      "booking_number": "BK001-2025-003",
+      "date": "2025-07-15",
+      "start_time": "14:00",
+      "end_time": "15:15",
+      "duration_minutes": 75,
+      "is_confirmed": false,
+      "pin_code": "9012",
+      "special_requests": "Heated stones preferred"
+    },
+    {
+      "booking_number": "BK001-2025-004",
+      "date": "2025-07-16",
+      "start_time": "16:00",
+      "end_time": "18:00",
+      "duration_minutes": 120,
+      "is_confirmed": true,
+      "pin_code": "3456",
+      "special_requests": "Couples massage, anniversary celebration",
+      "confirmed_at": "2025-07-13T14:00:00Z"
+    },
+    {
+      "booking_number": "BK001-2025-005",
+      "date": "2025-07-12",
+      "start_time": "10:00",
+      "end_time": "11:00",
+      "duration_minutes": 60,
+      "is_confirmed": false,
+      "cancellation_reason": "Client couldn't make it due to traffic",
+      "cancelled_at": "2025-07-12T09:45:00Z"
+    }
+  ],
+  "notes": [
+    {
+      "type": "general",
+      "content": "Client mentioned they have a new job with more stress. Recommended deep tissue massage for next visit.",
+      "is_private": false
+    },
+    {
+      "type": "compliment",
+      "content": "Client was very happy with the aromatherapy session. Said it was the most relaxing experience they've had.",
+      "is_private": false
+    },
+    {
+      "type": "complaint",
+      "content": "Client felt the room was too cold during the session. Adjusted temperature controls for future visits.",
+      "is_private": true
+    },
+    {
+      "type": "general",
+      "content": "Client has sensitive skin - avoid citrus-based oils. Lavender and chamomile work well.",
+      "is_private": false
+    },
+    {
+      "type": "general",
+      "content": "Regular client, very reliable. Prefers appointment reminders via WhatsApp.",
+      "is_private": false
+    }
+  ],
+  "reviews": [
+    {
+      "rating": 5,
+      "title": "Amazing Swedish Massage",
+      "content": "Anna provided an excellent Swedish massage. Very professional and relaxing atmosphere. Will definitely return!",
+      "is_anonymous": false,
+      "is_published": true
+    },
+    {
+      "rating": 4,
+      "title": "Great Deep Tissue Work",
+      "content": "Petra really knows how to work out muscle tension. The session was intense but very effective.",
+      "is_anonymous": false,
+      "is_published": true,
+      "response": "Thank you for the feedback! We're glad you found the deep tissue massage helpful.",
+      "responded_at": "2025-07-13T11:00:00Z"
+    },
+    {
+      "rating": 5,
+      "title": "Perfect Hot Stone Therapy",
+      "content": "The hot stone massage was incredible. Maria has magic hands! The heated stones were perfectly temperature.",
+      "is_anonymous": true,
+      "is_published": true
+    },
+    {
+      "rating": 3,
+      "title": "Good but room was cold",
+      "content": "The massage itself was good, but the room temperature could have been warmer. Otherwise satisfied.",
+      "is_anonymous": false,
+      "is_published": true,
+      "response": "Thank you for the feedback. We've adjusted our room temperature controls to ensure better comfort.",
+      "responded_at": "2025-07-13T13:30:00Z"
+    },
+    {
+      "rating": 5,
+      "title": "Couples massage was perfect",
+      "content": "Celebrated our anniversary with a couples massage. Both therapists were synchronized and professional. Highly recommend!",
+      "is_anonymous": false,
+      "is_published": true
+    }
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "name": "pocketbase-demo-import",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Import demo data into PocketBase",
+  "scripts": {
+    "import": "node import-sdk.js",
+    "import-api": "node import-api.js"
+  },
+  "dependencies": {
+    "pocketbase": "^0.21.1"
+  },
+  "devDependencies": {}
+}
