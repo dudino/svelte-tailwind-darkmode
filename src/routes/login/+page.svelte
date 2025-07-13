@@ -2,7 +2,7 @@
 	import LoginForm from '$lib/components/auth/LoginForm.svelte';
 	import { isAuthenticated } from '$lib/stores';
 	import { goto } from '$app/navigation';
-	import { onMount, $effect } from 'svelte';
+	import { onMount } from 'svelte';
 	
 	// Redirect to dashboard if already authenticated
 	onMount(() => {
@@ -11,7 +11,7 @@
 		}
 	});
 	
-	// Watch for authentication changes using $effect
+	// Watch for authentication changes using $effect rune
 	$effect(() => {
 		if ($isAuthenticated) {
 			goto('/user-management');

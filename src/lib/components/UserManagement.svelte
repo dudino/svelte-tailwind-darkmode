@@ -39,18 +39,17 @@
   };
 
   let registerForm: CreateUserData = {
-    userId: '',
     email: '',
-    nickname: '',
+    name: '',
     phone: '',
     password: '',
     passwordConfirm: '',
     role: 'user' as UserRole,
-    isActive: true,
-    hasAccommodation: false,
+    is_active: true,
+    has_accommodation: false,
     languages: [],
     services: [],
-    contactDetails: {}
+    contact_details: {}
   };
 
   // Search and filter
@@ -59,8 +58,12 @@
 
   // Computed values
   $: filteredUsers = $users.filter(user => {
-    const matchesSearch = user.nickname.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                         user.email.toLowerCase().includes(searchQuery.toLowerCase());
+    const searchLower = searchQuery.toLowerCase();
+    const matchesSearch = (user.name?.toLowerCase() || '').includes(searchLower) ||
+                         (user.email?.toLowerCase() || '').includes(searchLower) ||
+                         (user.phone?.toLowerCase() || '').includes(searchLower) ||
+                         // Backwards compatibility with old field names
+                         (user.nickname?.toLowerCase() || '').includes(searchLower);
     const matchesRole = roleFilter === 'all' || user.role === roleFilter;
     return matchesSearch && matchesRole;
   });
@@ -71,8 +74,8 @@
 
   // Authentication functions
   async function handleLogin() {
-    const result = await login(loginForm.email, loginForm.password);
-    if (result.success) {
+    const success = await login(loginForm.email, loginForm.password);
+    if (success) {
       showLoginForm = false;
       loginForm = { email: '', password: '' };
     }
@@ -84,8 +87,8 @@
       return;
     }
 
-    const result = await register(registerForm);
-    if (result.success) {
+    const newUser = await register(registerForm);
+    if (newUser) {
       showRegisterForm = false;
       resetRegisterForm();
     }
@@ -93,18 +96,17 @@
 
   function resetRegisterForm() {
     registerForm = {
-      userId: '',
       email: '',
-      nickname: '',
+      name: '',
       phone: '',
       password: '',
       passwordConfirm: '',
       role: 'user',
-      isActive: true,
-      hasAccommodation: false,
+      is_active: true,
+      has_accommodation: false,
       languages: [],
       services: [],
-      contactDetails: {}
+      contact_details: {}
     };
   }
 
@@ -118,18 +120,23 @@
     if (!editingUser) return;
 
     const updateData: UpdateUserData = {
-      nickname: editingUser.nickname,
+      name: editingUser.name,
       phone: editingUser.phone,
       role: editingUser.role,
-      isActive: editingUser.isActive,
-      hasAccommodation: editingUser.hasAccommodation,
+      is_active: editingUser.is_active,
+      has_accommodation: editingUser.has_accommodation,
       languages: editingUser.languages,
       services: editingUser.services,
-      contactDetails: editingUser.contactDetails
+      contact_details: editingUser.contact_details,
+      // Backwards compatibility
+      nickname: editingUser.name, // map name to nickname for backwards compatibility
+      isActive: editingUser.is_active,
+      hasAccommodation: editingUser.has_accommodation,
+      contactDetails: editingUser.contact_details
     };
 
-    const result = await updateUser(editingUser.id, updateData);
-    if (result.success) {
+    const updatedData = await updateUser(editingUser.id, updateData);
+    if (updatedData) {
       showUserForm = false;
       editingUser = null;
     }
@@ -197,7 +204,7 @@
   {#if $error}
     <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
       {$error}
-      <button onclick={() => error.set(null)} class="float-right font-bold">×</button>
+      <button onclick={() => error.set('')} class="float-right font-bold">×</button>
     </div>
   {/if}
 
@@ -253,8 +260,8 @@
           <h3 class="font-semibold mb-3">Register New User</h3>
           <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
             <input 
-              bind:value={registerForm.userId}
-              placeholder="User ID*"
+              bind:value={registerForm.name}
+              placeholder="Name*"
               class="p-2 border rounded">
             
             <input 
@@ -264,13 +271,8 @@
               class="p-2 border rounded">
             
             <input 
-              bind:value={registerForm.nickname}
-              placeholder="Nickname*"
-              class="p-2 border rounded">
-            
-            <input 
               bind:value={registerForm.phone}
-              placeholder="Phone*"
+              placeholder="Phone"
               class="p-2 border rounded">
             
             <input 
@@ -294,14 +296,14 @@
             <div class="flex items-center gap-4">
               <label class="flex items-center gap-1">
                 <input 
-                  bind:checked={registerForm.isActive}
+                  bind:checked={registerForm.is_active}
                   type="checkbox">
                 Active
               </label>
               
               <label class="flex items-center gap-1">
                 <input 
-                  bind:checked={registerForm.hasAccommodation}
+                  bind:checked={registerForm.has_accommodation}
                   type="checkbox">
                 Has Accommodation
               </label>
@@ -370,14 +372,14 @@
           <div class="border rounded p-4 flex justify-between items-center">
             <div class="flex-1">
               <div class="flex items-center gap-3">
-                <h3 class="font-semibold">{user.nickname}</h3>
+                <h3 class="font-semibold">{user.name || user.nickname || 'Unnamed'}</h3>
                 <span class="px-2 py-1 text-xs rounded" 
                       class:bg-blue-100={user.role === 'user'}
                       class:bg-green-100={user.role === 'operator'}
                       class:bg-purple-100={user.role === 'administrator'}>
                   {user.role}
                 </span>
-                {#if !user.isActive}
+                {#if !(user.is_active ?? user.isActive ?? true)}
                   <span class="px-2 py-1 text-xs bg-red-100 text-red-800 rounded">Inactive</span>
                 {/if}
                 {#if user.syncPending}
@@ -385,7 +387,7 @@
                 {/if}
               </div>
               <p class="text-sm text-gray-600">{user.email} | {user.phone}</p>
-              {#if user.languages?.length > 0}
+              {#if user.languages && user.languages.length > 0}
                 <p class="text-xs text-gray-500">Languages: {user.languages.join(', ')}</p>
               {/if}
             </div>
@@ -422,14 +424,14 @@
 {#if showUserForm && editingUser}
   <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
     <div class="bg-white rounded-lg p-6 max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-      <h2 class="text-xl font-semibold mb-4">Edit User: {editingUser.nickname}</h2>
+      <h2 class="text-xl font-semibold mb-4">Edit User: {editingUser.name || editingUser.nickname || 'Unnamed'}</h2>
       
       <div class="space-y-4">
         <!-- Basic Info -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
           <div>
-            <label class="block text-sm font-medium mb-1">Nickname</label>
-            <input bind:value={editingUser.nickname} class="w-full p-2 border rounded">
+            <label class="block text-sm font-medium mb-1">Name</label>
+            <input bind:value={editingUser.name} class="w-full p-2 border rounded">
           </div>
           
           <div>
@@ -448,12 +450,12 @@
           
           <div class="flex items-center gap-4 pt-6">
             <label class="flex items-center gap-1">
-              <input bind:checked={editingUser.isActive} type="checkbox">
+              <input bind:checked={editingUser.is_active} type="checkbox">
               Active
             </label>
             
             <label class="flex items-center gap-1">
-              <input bind:checked={editingUser.hasAccommodation} type="checkbox">
+              <input bind:checked={editingUser.has_accommodation} type="checkbox">
               Has Accommodation
             </label>
           </div>

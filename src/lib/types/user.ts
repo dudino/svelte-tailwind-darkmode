@@ -24,64 +24,76 @@ export interface User {
   created?: string;
   updated?: string;
   
-  // Required fields (marked with * in your spec)
-  userId: string;
+  // PocketBase auth collection fields
   email: string;
-  nickname: string;
-  phone: string;
-  
-  // User management fields
-  role: UserRole;
-  isActive: boolean;
-  hasAccommodation: boolean;
-  
-  // Optional arrays
-  languages: string[];
-  services: string[];
-  
-  // Contact details object
-  contactDetails?: ContactDetails;
-  
-  // Authentication fields (for PocketBase)
   username?: string;
   emailVisibility?: boolean;
   verified?: boolean;
   
-  // Additional profile fields
-  avatar?: string;
+  // Custom fields from schema
+  name?: string; // corresponds to 'name' field in schema
+  role: UserRole; // corresponds to 'role' field in schema (required)
+  languages?: string[]; // corresponds to 'languages' field (multi-select)
+  phone?: string; // corresponds to 'phone' field
+  contact_details?: ContactDetails; // corresponds to 'contact_details' json field
+  services?: string[]; // corresponds to 'services' relation field (array of service IDs)
+  is_active?: boolean; // corresponds to 'is_active' bool field
+  has_accommodation?: boolean; // corresponds to 'has_accommodation' bool field
+  avatar?: string | File; // corresponds to 'avatar' file field (string URL or File object)
+  last_login_at?: string; // corresponds to 'last_login_at' date field
+  created_by?: string; // corresponds to 'created_by' relation field
+  
+  // Backwards compatibility fields (deprecated - will be mapped to schema fields)
+  userId?: string; // will map to 'name' or generate from email
+  nickname?: string; // will map to 'name'
+  isActive?: boolean; // will map to 'is_active'
+  hasAccommodation?: boolean; // will map to 'has_accommodation'
   
   // PWA sync fields
   lastSyncAt?: string;
   syncPending?: boolean;
 }
 
-// For user creation/registration
+// For user creation/registration (PocketBase schema based)
 export interface CreateUserData {
-  userId: string;
   email: string;
-  nickname: string;
-  phone: string;
   password: string;
   passwordConfirm: string;
-  role?: UserRole;
-  isActive?: boolean;
-  hasAccommodation?: boolean;
-  languages?: string[];
-  services?: string[];
-  contactDetails?: ContactDetails;
+  name?: string; // corresponds to 'name' field
+  role?: UserRole; // corresponds to 'role' field
+  languages?: string[]; // corresponds to 'languages' field
+  phone?: string; // corresponds to 'phone' field
+  contact_details?: ContactDetails; // corresponds to 'contact_details' field
+  services?: string[]; // corresponds to 'services' field (array of service IDs)
+  is_active?: boolean; // corresponds to 'is_active' field
+  has_accommodation?: boolean; // corresponds to 'has_accommodation' field
+  avatar?: string | File; // corresponds to 'avatar' field (string URL or File for upload)
+  
+  // Backwards compatibility (will be mapped to schema fields)
+  userId?: string; // will map to 'name'
+  nickname?: string; // will map to 'name'
+  isActive?: boolean; // will map to 'is_active'
+  hasAccommodation?: boolean; // will map to 'has_accommodation'
+  contactDetails?: ContactDetails; // will map to 'contact_details'
 }
 
-// For user updates
+// For user updates (PocketBase schema based)
 export interface UpdateUserData {
-  nickname?: string;
-  phone?: string;
-  role?: UserRole;
-  isActive?: boolean;
-  hasAccommodation?: boolean;
-  languages?: string[];
-  services?: string[];
-  contactDetails?: ContactDetails;
-  avatar?: string;
+  name?: string; // corresponds to 'name' field
+  role?: UserRole; // corresponds to 'role' field
+  languages?: string[]; // corresponds to 'languages' field
+  phone?: string; // corresponds to 'phone' field
+  contact_details?: ContactDetails; // corresponds to 'contact_details' field
+  services?: string[]; // corresponds to 'services' field (array of service IDs)
+  is_active?: boolean; // corresponds to 'is_active' field
+  has_accommodation?: boolean; // corresponds to 'has_accommodation' field
+  avatar?: string | File; // corresponds to 'avatar' field (string URL or File for upload)
+  
+  // Backwards compatibility (will be mapped to schema fields)
+  nickname?: string; // will map to 'name'
+  isActive?: boolean; // will map to 'is_active'
+  hasAccommodation?: boolean; // will map to 'has_accommodation'
+  contactDetails?: ContactDetails; // will map to 'contact_details'
 }
 
 // Authentication responses
@@ -106,11 +118,13 @@ export const COLLECTIONS = {
   NOTES: 'notes'
 } as const;
 
-// Available languages for the system
+// Available languages for the system (from PocketBase schema)
 export const AVAILABLE_LANGUAGES = [
+  { code: 'cz', name: 'Czech' },
   { code: 'en', name: 'English' },
-  { code: 'cs', name: 'Czech' },
-  { code: 'ru', name: 'Russian' }
+  { code: 'ru', name: 'Russian' },
+  { code: 'de', name: 'German' },
+  { code: 'sk', name: 'Slovak' }
 ] as const;
 
 // Available services (you can expand this based on your needs)
