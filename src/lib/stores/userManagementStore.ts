@@ -101,8 +101,8 @@ export async function updateUser(userId: string, updateData: UpdateUserData): Pr
       await storage.addToSyncQueue(syncItem);
     }
     
-    // Save updated user locally
-    await storage.saveUser(updatedUser);
+    // Save updated user locally using the constraint-aware method
+    await storage.saveOrUpdateUser(updatedUser);
     
     // Update stores
     users.update(list => 
@@ -134,10 +134,25 @@ export async function deleteUser(userId: string): Promise<{ success: boolean; me
     if (navigator.onLine && pb) {
       try {
         await pb.collection(COLLECTIONS.USERS).delete(userId);
-      } catch (onlineErr) {
+      } catch (onlineErr: any) {
         console.warn('Online delete failed, adding to sync queue:', onlineErr);
         
-        // Add to sync queue
+        // Check if it's a relation constraint error
+        if (onlineErr.status === 400 && onlineErr.message?.includes('relation reference')) {
+          setError('Cannot delete user: User has related data (bookings, appointments, etc.). Please remove related data first.');
+          return { success: false, message: 'User has related data and cannot be deleted' };
+        }
+        
+        // Check if record doesn't exist
+        if (onlineErr.status === 404) {
+          console.info('User already deleted on server, removing locally');
+          // Just delete locally since it's already gone from server
+          await storage.deleteUser(userId);
+          users.update(list => list.filter(user => user.id !== userId));
+          return { success: true, message: 'User deleted successfully' };
+        }
+        
+        // For other errors, add to sync queue for later retry
         const syncItem: SyncQueueItem = {
           id: crypto.randomUUID(),
           collection: COLLECTIONS.USERS,
@@ -191,9 +206,9 @@ export async function fetchUsersFromServer(): Promise<{ success: boolean; messag
     const response = await pb.collection(COLLECTIONS.USERS).getList(1, 200);
     const serverUsers = response.items as User[];
     
-    // Save all users locally
+    // Save all users locally using the constraint-aware method
     for (const user of serverUsers) {
-      await storage.saveUser(user);
+      await storage.saveOrUpdateUser(user);
     }
     
     // Update store

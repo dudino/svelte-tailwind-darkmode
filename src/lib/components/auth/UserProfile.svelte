@@ -30,7 +30,7 @@
 		<div class="hidden md:flex md:items-center md:space-x-3">
 			<div class="text-right">
 				<div class="text-sm font-medium text-foreground">
-					{user.contactDetails?.firstName || user.nickname} {user.contactDetails?.lastName || ''}
+					{user.contact_details?.firstName || user.name || user.nickname || 'User'} {user.contact_details?.lastName || ''}
 				</div>
 				<div class="flex items-center space-x-2">
 					<span class={`text-xs px-2 py-1 rounded-full border ${getRoleBadgeColor(user.role)}`}>

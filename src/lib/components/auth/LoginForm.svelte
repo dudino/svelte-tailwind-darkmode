@@ -1,6 +1,6 @@
 <script>
 	import { goto } from '$app/navigation';
-	import { isAuthenticated } from '$lib/stores';
+	import { isAuthenticated, login, currentUser } from '$lib/stores';
 	
 	let email = '';
 	let password = '';
@@ -17,16 +17,18 @@
 		error = '';
 
 		try {
-			// TODO: Replace with actual PocketBase authentication
-			// For now, simulate login
-			if (email === 'admin@massage.com' && password === 'admin123456') {
-				// Simulate successful login
-				isAuthenticated.login();
+			// Use the actual login function from authStore
+			const result = await login(email, password);
+			
+			if (result.success) {
+				// Login successful - redirect to user management
 				goto('/user-management');
 			} else {
-				error = 'Invalid email or password';
+				// Login failed - show error message
+				error = result.message || 'Invalid email or password';
 			}
 		} catch (err) {
+			console.error('Login error:', err);
 			error = 'Login failed. Please try again.';
 		} finally {
 			loading = false;
@@ -110,7 +112,10 @@
 
 			<div class="text-center">
 				<p class="text-sm text-gray-600 dark:text-gray-400">
-					Demo credentials: admin@massage.com / admin123456
+					Demo credentials: admin@massage.com / password
+				</p>
+				<p class="text-xs text-gray-500 dark:text-gray-500 mt-1">
+					Other demo accounts: operator@massage.com or user@massage.com
 				</p>
 			</div>
 		</form>

@@ -8,6 +8,9 @@
 	import ThemeToggle from '$lib/components/ThemeToggle.svelte';
 	import { initPocketBase, isAuthenticated } from '$lib/stores';
 
+	// Import debug utilities in development
+	import '$lib/utils/debugUtils';
+
 	// Get the locale data from the load function
 	let { data, children } = $props();
 	

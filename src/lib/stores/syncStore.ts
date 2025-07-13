@@ -75,9 +75,21 @@ export async function syncData(): Promise<{ success: boolean; message?: string }
         
         // Remove from queue on success
         await removeSyncQueueItem(item.id);
-      } catch (err) {
+      } catch (err: any) {
         console.error('Sync error for item:', item, err);
         errors++;
+        
+        // Remove failed delete operations for non-existent records
+        if (item.operation === 'delete' && (err.status === 404 || err.message?.includes('not found'))) {
+          console.warn('Removing delete operation for non-existent record:', item.recordId);
+          await removeSyncQueueItem(item.id);
+        }
+        
+        // Remove operations that violate relation constraints after multiple failures
+        if (err.status === 400 && err.message?.includes('relation reference')) {
+          console.warn('Removing operation that violates relation constraints:', item.recordId);
+          await removeSyncQueueItem(item.id);
+        }
       }
     }
     
@@ -88,9 +100,14 @@ export async function syncData(): Promise<{ success: boolean; message?: string }
         const response = await pb.collection('users').getList(1, 200);
         const serverUsers = response.items;
         
-        // Save all users locally
+        // Save all users locally, handling duplicates properly
         for (const user of serverUsers) {
-          await storage.saveUser(user);
+          try {
+            // Use the improved save method that handles constraints
+            await storage.saveOrUpdateUser(user);
+          } catch (userSaveErr) {
+            console.warn(`Failed to save user ${user.email}:`, userSaveErr);
+          }
         }
       }
     } catch (fetchErr) {

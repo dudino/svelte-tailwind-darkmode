@@ -45,6 +45,14 @@ export {
   getSelectedUser
 } from './userManagementStore';
 
+// Theme Store
+export {
+  theme,
+  initTheme,
+  toggleTheme,
+  setTheme
+} from './themeStore';
+
 // Sync Store
 export {
   addToSyncQueue,

@@ -1,53 +1,84 @@
 # Store Architecture
 
-The user management system has been refactored into modular stores for better separation of concerns and maintainability.
+The application stores have been organized into modular, focused stores for better separation of concerns and maintainability.
 
-## Store Structure
+## Store Organization
 
-### 1. **appStateStore.ts**
-Manages general application state:
-- `isLoading`: Boolean indicating if any operation is in progress
-- `syncStatus`: Connection status ('online' | 'offline' | 'syncing')
-- `error`: Current error message (if any)
+### `index.ts` - Central Export Point
+Central export file that re-exports all stores from their respective modules. Always import stores from here:
+```typescript
+import { login, logout, isAuthenticated, currentUser } from '$lib/stores';
+```
 
-**Functions:**
-- `setLoading(loading: boolean)`
-- `setError(message: string | null)`
-- `clearError()`
-- `setSyncStatus(status)`
+## Store Modules
 
-### 2. **authStore.ts**
-Handles authentication and session management:
-- `currentUser`: Currently logged-in user
-- `isAuthenticated`: Derived store indicating if user is logged in
+### 1. **authStore.ts** - Authentication Management
+Handles user authentication, login, logout, and session management.
+
+**State:**
+- `currentUser`: Currently authenticated user
+- `isAuthenticated`: Derived store indicating authentication status
 - `userRole`: Current user's role
 
 **Functions:**
 - `initPocketBase()`: Initialize PocketBase client
 - `login(email, password)`: Authenticate user
 - `register(userData)`: Register new user
-- `logout()`: Clear session
+- `logout()`: Clear session and logout user
 - `hasPermission(permission)`: Check user permissions
 - `hasRole(role)`: Check if user has specific role
+- `getCurrentUser()`: Get current user data
 
-### 3. **userManagementStore.ts**
-Manages user CRUD operations:
+### 2. **userManagementStore.ts** - User CRUD Operations
+Manages user creation, reading, updating, and deletion operations.
+
+**State:**
 - `users`: Array of all users
 - `selectedUser`: Currently selected user for editing
 
 **Functions:**
 - `loadUsersFromStorage()`: Load users from local storage
-- `getUserById(userId)`: Get specific user
+- `getUserById(userId)`: Get specific user by ID
 - `updateUser(userId, updateData)`: Update user data
 - `deleteUser(userId)`: Delete user
 - `fetchUsersFromServer()`: Sync users from server
-- `searchUsers(query, field)`: Search users
-- `filterUsersByRole(role)`: Filter by role
+- `searchUsers(query, field)`: Search users by field
+- `filterUsersByRole(role)`: Filter users by role
 - `selectUser(user)`: Select user for editing
 
-### 4. **syncStore.ts**
-Handles offline synchronization:
-- Manages sync queue for offline operations
+### 3. **appStateStore.ts** - Application State
+Manages general application state like loading, errors, and connection status.
+
+**State:**
+- `isLoading`: Global loading state indicator
+- `error`: Current error message
+- `syncStatus`: Synchronization status
+
+**Functions:**
+- `setLoading(loading: boolean)`: Set global loading state
+- `setError(message: string | null)`: Set error message
+- `clearError()`: Clear current error
+- `setSyncStatus(status)`: Set synchronization status
+
+### 4. **themeStore.ts** - Theme Management
+Manages application theme and UI preferences.
+
+**State:**
+- `theme`: Current theme ('light' | 'dark')
+
+**Functions:**
+- `toggleTheme()`: Toggle between light and dark theme
+- `setTheme(theme)`: Set specific theme
+- `initTheme()`: Initialize theme from localStorage
+
+### 5. **syncStore.ts** - Data Synchronization
+Handles offline/online data synchronization and sync queue management.
+
+**Functions:**
+- `syncData()`: Sync pending operations with server
+- `addToSyncQueue(operation)`: Add operation to sync queue
+- `hasPendingSyncOperations()`: Check for pending sync operations
+- `clearSyncQueue()`: Clear all pending sync operations
 - Syncs data when connection is restored
 
 **Functions:**

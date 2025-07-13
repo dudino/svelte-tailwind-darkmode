@@ -188,6 +188,38 @@ class IndexedDBStorage {
     return this.put(STORES.USERS, user);
   }
 
+  /**
+   * Save or update user with better error handling
+   */
+  async saveOrUpdateUser(user: User): Promise<void> {
+    try {
+      // Try to save the user
+      await this.put(STORES.USERS, user);
+    } catch (err) {
+      // If it's a constraint error, try to update existing user
+      if (err instanceof Error && err.name === 'ConstraintError') {
+        console.warn(`User with email ${user.email} already exists, updating...`);
+        const existingUser = await this.getUserByEmail(user.email);
+        if (existingUser) {
+          // Merge with existing user, preserving the original ID
+          const updatedUser = { ...existingUser, ...user, id: existingUser.id };
+          await this.put(STORES.USERS, updatedUser);
+        } else {
+          throw err; // Re-throw if we can't find the existing user
+        }
+      } else {
+        throw err; // Re-throw other errors
+      }
+    }
+  }
+
+  /**
+   * Clear all users (for debugging)
+   */
+  async clearAllUsers(): Promise<void> {
+    return this.clear(STORES.USERS);
+  }
+
   async getUser(id: string): Promise<User | null> {
     return this.get(STORES.USERS, id);
   }
