@@ -175,7 +175,7 @@
       if (!pb) throw new Error('PocketBase client not available');
 
       const records = await pb.collection('clients').getFullList({
-        sort: 'name'
+        sort: 'nickname,first_name,last_name'
       });
       
       clients = records;

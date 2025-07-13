@@ -6,49 +6,95 @@
 <script lang="ts">
   import { onMount } from 'svelte';
   import { goto } from '$app/navigation';
-  import { currentUser, isAuthenticated } from '$lib/stores';
-  import { hasRole } from '$lib/stores/authStore';
+  import { page } from '$app/stores';
+  import { currentUser, isAuthenticated, userRole } from '$lib/stores/authStore';
+  import Button from '$lib/components/ui/button/button.svelte';
+  import { Shield, AlertTriangle } from 'lucide-svelte';
 
   let { children } = $props();
+  let loading = $state(true);
+  let hasAccess = $state(false);
 
-  onMount(() => {
-    // Check if user is authenticated and has administrator role
-    if (!$isAuthenticated || !hasRole('administrator')) {
-      goto('/login');
+  onMount(async () => {
+    // Wait a bit for auth store to initialize
+    await new Promise(resolve => setTimeout(resolve, 100));
+    
+    if (!$isAuthenticated) {
+      goto(`/login?redirect=${encodeURIComponent($page.url.pathname)}`);
       return;
     }
+
+    if ($userRole !== 'administrator') {
+      // Non-administrators get redirected to home
+      goto('/');
+      return;
+    }
+
+    hasAccess = true;
+    loading = false;
   });
 
-  // Reactive check for authentication and role
+  // Reactive check for authentication and role changes
   $effect(() => {
-    if (!$isAuthenticated || !hasRole('administrator')) {
-      goto('/login');
+    if (!loading) {
+      if (!$isAuthenticated) {
+        goto(`/login?redirect=${encodeURIComponent($page.url.pathname)}`);
+      } else if ($userRole !== 'administrator') {
+        goto('/');
+      }
     }
   });
 </script>
 
-<!-- Only render admin content if user is authenticated and is an administrator -->
-{#if $isAuthenticated && hasRole('administrator')}
+{#if loading}
+  <div class="flex items-center justify-center min-h-[400px]">
+    <div class="text-center space-y-4">
+      <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
+      <p class="text-muted-foreground">Verifying access...</p>
+    </div>
+  </div>
+{:else if hasAccess && $isAuthenticated && $userRole === 'administrator'}
   <div class="admin-layout">
     <div class="admin-header bg-gradient-to-r from-primary/20 to-primary/10 border-b mb-6 p-4 rounded-lg">
-      <h1 class="text-2xl font-bold text-primary flex items-center gap-2">
-        <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 100 4m0-4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 100 4m0-4v2m0-6V4" />
-        </svg>
-        Administrator Panel
-      </h1>
-      <p class="text-muted-foreground mt-1">Manage all system entities and configurations</p>
+      <div class="flex items-center justify-between">
+        <div>
+          <h1 class="text-2xl font-bold text-primary flex items-center gap-2">
+            <Shield class="h-6 w-6" />
+            Administrator Panel
+          </h1>
+          <p class="text-muted-foreground mt-1">
+            Logged in as: {$currentUser?.name || 'Administrator'} 
+            <span class="text-xs bg-primary/10 text-primary px-2 py-1 rounded ml-2">
+              {$userRole}
+            </span>
+          </p>
+        </div>
+        <Button href="/" variant="outline" size="sm">
+          ← Back to Site
+        </Button>
+      </div>
     </div>
 
     {@render children?.()}
   </div>
 {:else}
   <div class="flex items-center justify-center min-h-[400px]">
-    <div class="text-center">
-      <div class="text-destructive text-6xl mb-4">🔒</div>
-      <h2 class="text-2xl font-bold text-foreground mb-2">Access Denied</h2>
-      <p class="text-muted-foreground mb-4">You need administrator privileges to access this area.</p>
-      <a href="/" class="text-primary hover:underline">Return to Home</a>
+    <div class="text-center space-y-4 max-w-md">
+      <div class="mx-auto w-16 h-16 bg-destructive/10 rounded-full flex items-center justify-center">
+        <AlertTriangle class="h-8 w-8 text-destructive" />
+      </div>
+      <h2 class="text-2xl font-bold text-destructive">Access Denied</h2>
+      <p class="text-muted-foreground">
+        You need administrator privileges to access this area.
+      </p>
+      <div class="flex gap-4 justify-center">
+        <Button href="/login" variant="default">
+          Login
+        </Button>
+        <Button href="/" variant="outline">
+          Return Home
+        </Button>
+      </div>
     </div>
   </div>
 {/if}

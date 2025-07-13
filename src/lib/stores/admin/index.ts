@@ -8,7 +8,7 @@ export { default as servicesStore, servicesActions, services, servicesLoading, s
 export { default as clientsStore, clientsActions, clients, clientsLoading, clientsError, clientsState, filteredClients, clientsCount } from './clientsStore';
 export { default as bookingsStore, bookingsActions, bookings, bookingsLoading, bookingsError, bookingsState, filteredBookings, bookingsCount } from './bookingsStore';
 export { default as reviewsStore, reviewsActions, reviews, reviewsLoading, reviewsError, reviewsState, filteredReviews, reviewsCount } from './reviewsStore';
-export { default as dashboardStore, dashboardActions, dashboardStats, dashboardLoading, dashboardError } from './dashboardStore';
+export { default as dashboardStore, dashboardActions, dashboardStats, dashboardLoading, dashboardError, recentBookings, recentReviews, recentUsers, todayBookings } from './dashboardStore';
 
 // Import actions for easier access
 import { usersActions, users } from './usersStore';

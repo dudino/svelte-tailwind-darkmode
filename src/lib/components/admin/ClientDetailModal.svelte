@@ -18,7 +18,8 @@
     Heart,
     Settings,
     FileText,
-    Clock
+    Clock,
+    AlertTriangle
   } from 'lucide-svelte';
   import Button from '$lib/components/ui/button/button.svelte';
   import { getPocketBaseClient } from '$lib/stores/authStore';
@@ -36,6 +37,8 @@
     switch (status) {
       case 'active':
         return 'bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400';
+      case 'blocked':
+        return 'bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-400';
       case 'inactive':
         return 'bg-gray-100 text-gray-800 dark:bg-gray-900/20 dark:text-gray-400';
       default:
@@ -170,8 +173,8 @@
                 <h3 class="text-2xl font-bold">{client.nickname || client.first_name || 'No name provided'}</h3>
                 <p class="text-muted-foreground">{client.email}</p>
                 <div class="flex items-center gap-2 mt-1">
-                  <span class="px-2 py-1 rounded-full text-xs font-medium {getStatusColor(client.status || 'active')}">
-                    {client.status ? client.status.charAt(0).toUpperCase() + client.status.slice(1) : 'Active'}
+                  <span class="px-2 py-1 rounded-full text-xs font-medium {getStatusColor(client.is_blocked ? 'blocked' : 'active')}">
+                    {client.is_blocked ? 'Blocked' : 'Active'}
                   </span>
                   <span class="text-sm text-muted-foreground">
                     ID: {client.id}
@@ -199,15 +202,13 @@
                     <span class="text-sm">{client.phone_number}</span>
                   </div>
                 {/if}
-              </div>
-              {#if client.address}
-                <div>
-                  <div class="flex items-start gap-2">
-                    <MapPin class="h-4 w-4 text-muted-foreground mt-0.5" />
-                    <span class="text-sm">{client.address}</span>
+                {#if client.channel}
+                  <div class="flex items-center gap-2">
+                    <Settings class="h-4 w-4 text-muted-foreground" />
+                    <span class="text-sm">Channel: {client.channel.charAt(0).toUpperCase() + client.channel.slice(1).replace('_', ' ')}</span>
                   </div>
-                </div>
-              {/if}
+                {/if}
+              </div>
             </div>
           </div>
 
@@ -228,62 +229,60 @@
                     </div>
                   </div>
                 {/if}
-                {#if client.gender}
+                {#if client.preferred_language}
                   <div>
-                    <span class="font-medium">Gender:</span>
-                    <p class="text-sm text-muted-foreground mt-1">{client.gender.charAt(0).toUpperCase() + client.gender.slice(1)}</p>
+                    <span class="font-medium">Preferred Language:</span>
+                    <p class="text-sm text-muted-foreground mt-1">{client.preferred_language.toUpperCase()}</p>
+                  </div>
+                {/if}
+                {#if client.total_visits}
+                  <div>
+                    <span class="font-medium">Total Visits:</span>
+                    <p class="text-sm text-muted-foreground mt-1">{client.total_visits}</p>
+                  </div>
+                {/if}
+                {#if client.last_visit_at}
+                  <div>
+                    <span class="font-medium">Last Visit:</span>
+                    <p class="text-sm text-muted-foreground mt-1">{formatDate(client.last_visit_at)}</p>
                   </div>
                 {/if}
               </div>
             </div>
           </div>
 
-          <!-- Emergency Contact -->
-          {#if client.emergency_contact_name || client.emergency_contact_phone}
+          <!-- Description/Notes -->
+          {#if client.description}
             <div class="bg-muted/50 rounded-lg p-4">
               <h3 class="font-medium mb-3 flex items-center gap-2">
-                <Heart class="h-4 w-4 text-primary" />
-                Emergency Contact
+                <FileText class="h-4 w-4 text-primary" />
+                Description
+              </h3>
+              <p class="text-sm whitespace-pre-wrap">{client.description}</p>
+            </div>
+          {/if}
+
+          <!-- Blocked Information -->
+          {#if client.is_blocked}
+            <div class="bg-destructive/10 rounded-lg p-4 border border-destructive/20">
+              <h3 class="font-medium mb-3 flex items-center gap-2 text-destructive">
+                <AlertTriangle class="h-4 w-4" />
+                Account Blocked
               </h3>
               <div class="space-y-2">
-                {#if client.emergency_contact_name}
+                {#if client.blocked_reason}
                   <div>
-                    <span class="font-medium">Name:</span>
-                    <p class="text-sm text-muted-foreground">{client.emergency_contact_name}</p>
+                    <span class="font-medium">Reason:</span>
+                    <p class="text-sm text-muted-foreground">{client.blocked_reason}</p>
                   </div>
                 {/if}
-                {#if client.emergency_contact_phone}
+                {#if client.blocked_at}
                   <div>
-                    <span class="font-medium">Phone:</span>
-                    <div class="flex items-center gap-2 mt-1">
-                      <Phone class="h-4 w-4 text-muted-foreground" />
-                      <span class="text-sm">{client.emergency_contact_phone}</span>
-                    </div>
+                    <span class="font-medium">Blocked At:</span>
+                    <p class="text-sm text-muted-foreground">{formatDateTime(client.blocked_at)}</p>
                   </div>
                 {/if}
               </div>
-            </div>
-          {/if}
-
-          <!-- Medical Notes -->
-          {#if client.medical_notes}
-            <div class="bg-muted/50 rounded-lg p-4">
-              <h3 class="font-medium mb-3 flex items-center gap-2">
-                <Heart class="h-4 w-4 text-primary" />
-                Medical Notes
-              </h3>
-              <p class="text-sm whitespace-pre-wrap">{client.medical_notes}</p>
-            </div>
-          {/if}
-
-          <!-- Preferences -->
-          {#if client.preferences}
-            <div class="bg-muted/50 rounded-lg p-4">
-              <h3 class="font-medium mb-3 flex items-center gap-2">
-                <Settings class="h-4 w-4 text-primary" />
-                Preferences
-              </h3>
-              <p class="text-sm whitespace-pre-wrap">{client.preferences}</p>
             </div>
           {/if}
 

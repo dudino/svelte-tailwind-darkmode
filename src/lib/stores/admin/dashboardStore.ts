@@ -22,6 +22,7 @@ interface DashboardState {
   error: string | null;
   recentBookings: any[];
   recentReviews: any[];
+  recentUsers: any[];
   todayBookings: any[];
 }
 
@@ -41,6 +42,7 @@ const initialState: DashboardState = {
   error: null,
   recentBookings: [],
   recentReviews: [],
+  recentUsers: [],
   todayBookings: []
 };
 
@@ -51,6 +53,10 @@ export const dashboardStore = writable<DashboardState>(initialState);
 export const dashboardStats = derived(dashboardStore, $state => $state.stats);
 export const dashboardLoading = derived(dashboardStore, $state => $state.loading);
 export const dashboardError = derived(dashboardStore, $state => $state.error);
+export const recentBookings = derived(dashboardStore, $state => $state.recentBookings);
+export const recentReviews = derived(dashboardStore, $state => $state.recentReviews);
+export const recentUsers = derived(dashboardStore, $state => $state.recentUsers);
+export const todayBookings = derived(dashboardStore, $state => $state.todayBookings);
 
 // Actions
 export const dashboardActions = {
@@ -99,6 +105,9 @@ export const dashboardActions = {
         loading: false
       }));
 
+      // Also load recent activity
+      await this.loadRecentActivity();
+
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Failed to load dashboard stats';
       dashboardStore.update(state => ({
@@ -115,25 +124,31 @@ export const dashboardActions = {
       if (!pb) throw new Error('PocketBase client not available');
 
       // Load recent data in parallel
-      const [recentBookings, recentReviews, todayBookings] = await Promise.all([
+      const [recentBookings, recentReviews, recentUsers, todayBookings] = await Promise.all([
         // Recent bookings
         pb.collection('bookings').getList(1, 5, {
           sort: '-created',
-          expand: 'client_id,service_id,location_id'
+          expand: 'client_id,service_id,user_id'
         }).then((result: any) => result.items).catch(() => []),
 
         // Recent reviews
         pb.collection('reviews').getList(1, 5, {
-          filter: 'status = "published"',
+          filter: 'is_published = true',
           sort: '-created',
-          expand: 'client_id,service_id'
+          expand: 'client_id,user_id'
+        }).then((result: any) => result.items).catch(() => []),
+
+        // Recent users
+        pb.collection('users').getList(1, 5, {
+          sort: '-created',
+          fields: 'id,name,email,role,created'
         }).then((result: any) => result.items).catch(() => []),
 
         // Today's bookings
         pb.collection('bookings').getList(1, 10, {
           filter: `date = "${new Date().toISOString().split('T')[0]}"`,
           sort: 'start_time',
-          expand: 'client_id,service_id,location_id'
+          expand: 'client_id,service_id,user_id'
         }).then((result: any) => result.items).catch(() => [])
       ]);
 
@@ -141,6 +156,7 @@ export const dashboardActions = {
         ...state,
         recentBookings,
         recentReviews,
+        recentUsers,
         todayBookings
       }));
 

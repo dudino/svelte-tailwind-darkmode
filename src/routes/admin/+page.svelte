@@ -1,10 +1,12 @@
 <!--
   Admin Dashboard
   Main dashboard for administrators with overview and quick actions
+  Restricted to administrator role only
 -->
 
 <script lang="ts">
   import { onMount } from 'svelte';
+  import { goto } from '$app/navigation';
   import { 
     Users, 
     MapPin, 
@@ -17,7 +19,9 @@
     Eye,
     Edit,
     Trash2,
-    BarChart3
+    BarChart3,
+    AlertTriangle,
+    Shield
   } from 'lucide-svelte';
   import Button from '$lib/components/ui/button/button.svelte';
   import { 
@@ -25,13 +29,17 @@
     dashboardActions,
     dashboardLoading,
     dashboardError,
-    usersCount,
-    locationsCount,
-    servicesCount,
-    clientsCount,
-    bookingsCount,
-    reviewsCount
+    recentBookings,
+    recentReviews,
+    recentUsers,
+    todayBookings
   } from '$lib/stores/admin';
+  import { currentUser, userRole, isAuthenticated } from '$lib/stores/authStore';
+
+  // Access control
+  let hasAccess = false;
+  let loading = true;
+  let authError = '';
 
   // Initialize with safe default values to prevent undefined errors
   let localStats = {
@@ -45,23 +53,78 @@
     schedules: 0
   };
 
-  // Reactive stats based on store values with safe defaults and null checks
+  // Check authentication and role on mount
+  onMount(async () => {
+    try {
+      // Wait a bit for auth store to initialize
+      await new Promise(resolve => setTimeout(resolve, 100));
+      
+      if (!$isAuthenticated) {
+        authError = 'You must be logged in to access the admin dashboard.';
+        goto('/login?redirect=/admin');
+        return;
+      }
+
+      if ($userRole !== 'administrator') {
+        authError = 'Access denied. Administrator role required.';
+        goto('/');
+        return;
+      }
+
+      hasAccess = true;
+      
+      // Load dashboard data
+      await dashboardActions.loadDashboardStats();
+    } catch (err) {
+      console.error('Failed to load dashboard:', err);
+      authError = 'Failed to load dashboard data.';
+    } finally {
+      loading = false;
+    }
+  });
+
+  // Reactive stats based on dashboard store values with safe defaults
   $: {
     localStats = {
-      users: $usersCount ?? 0,
-      locations: $locationsCount ?? 0,
+      users: $dashboardStats?.users ?? 0,
+      locations: $dashboardStats?.locations ?? 0,
       rooms: $dashboardStats?.rooms ?? 0,
-      bookings: $bookingsCount ?? 0,
-      clients: $clientsCount ?? 0,
-      reviews: $reviewsCount ?? 0,
-      services: $servicesCount ?? 0,
+      bookings: $dashboardStats?.bookings ?? 0,
+      clients: $dashboardStats?.clients ?? 0,
+      reviews: $dashboardStats?.reviews ?? 0,
+      services: $dashboardStats?.services ?? 0,
       schedules: $dashboardStats?.schedules ?? 0
     };
   }
 
   // Loading and error states from dashboard store with safe defaults
-  $: loading = $dashboardLoading ?? false;
+  $: dashboardIsLoading = $dashboardLoading ?? false;
   $: error = $dashboardError ?? null;
+
+  // Combine and sort all recent activity by date
+  $: allRecentActivity = [
+    ...($recentUsers || []).map(user => ({
+      type: 'user',
+      data: user,
+      created: user.created,
+      color: 'bg-green-500',
+      message: `New user registered: ${user.name || user.email || 'User'}${user.role ? ` (${user.role})` : ''}`
+    })),
+    ...($recentBookings || []).map(booking => ({
+      type: 'booking',
+      data: booking,
+      created: booking.created,
+      color: 'bg-blue-500',
+      message: `Booking created: #${booking.booking_number}${booking.expand?.client_id ? ` for ${booking.expand.client_id.nickname || booking.expand.client_id.first_name || 'Client'}` : ''}`
+    })),
+    ...($recentReviews || []).map(review => ({
+      type: 'review',
+      data: review,
+      created: review.created,
+      color: 'bg-yellow-500',
+      message: `New review: ${review.rating}/5 stars${review.expand?.client_id ? ` from ${review.expand.client_id.nickname || review.expand.client_id.first_name || 'Client'}` : ''}${review.title ? ` - "${review.title}"` : ''}`
+    }))
+  ].sort((a, b) => new Date(b.created).getTime() - new Date(a.created).getTime()).slice(0, 10);
 
   // Reactive admin sections that update when stats change
   $: adminSections = [
@@ -138,100 +201,139 @@
       statLabel: 'Reviews'
     }
   ];
-
-  onMount(async () => {
-    // Load dashboard stats using the dashboard store
-    try {
-      await dashboardActions.loadDashboardStats();
-    } catch (err) {
-      console.error('Failed to load dashboard stats:', err);
-    }
-  });
 </script>
 
 <svelte:head>
   <title>Admin Dashboard - Affinity</title>
 </svelte:head>
 
-<div class="space-y-6">
-  <!-- Welcome Section -->
-  <div class="bg-card text-card-foreground rounded-lg p-6 border">
-    <div class="flex items-center justify-between">
-      <div>
-        <h2 class="text-3xl font-bold mb-2">Welcome to Admin Dashboard</h2>
-        <p class="text-muted-foreground text-lg">
-          Manage all aspects of your massage parlor business from here.
-        </p>
+<!-- Loading State -->
+{#if loading}
+  <div class="flex items-center justify-center min-h-[400px]">
+    <div class="text-center space-y-4">
+      <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
+      <p class="text-muted-foreground">Loading admin dashboard...</p>
+    </div>
+  </div>
+{:else if authError}
+  <!-- Access Denied -->
+  <div class="flex items-center justify-center min-h-[400px]">
+    <div class="text-center space-y-4 max-w-md">
+      <div class="mx-auto w-16 h-16 bg-destructive/10 rounded-full flex items-center justify-center">
+        <Shield class="h-8 w-8 text-destructive" />
       </div>
-      <div class="hidden md:block">
-        <BarChart3 class="h-16 w-16 text-primary/20" />
+      <h2 class="text-2xl font-bold text-destructive">Access Denied</h2>
+      <p class="text-muted-foreground">{authError}</p>
+      <div class="flex gap-4 justify-center">
+        <Button href="/login" variant="default">
+          Go to Login
+        </Button>
+        <Button href="/" variant="outline">
+          Return Home
+        </Button>
       </div>
     </div>
   </div>
+{:else if hasAccess}
+  <!-- Admin Dashboard Content -->
+  <div class="space-y-6">
+    <!-- Welcome Section -->
+    <div class="bg-card text-card-foreground rounded-lg p-6 border">
+      <div class="flex items-center justify-between">
+        <div>
+          <h2 class="text-3xl font-bold mb-2">Welcome, {$currentUser?.name || 'Administrator'}</h2>
+          <p class="text-muted-foreground text-lg">
+            Manage all aspects of your massage parlor business from here.
+          </p>
+          <div class="flex items-center gap-2 mt-2">
+            <span class="px-2 py-1 rounded-full text-xs font-medium bg-primary/10 text-primary">
+              Administrator Access
+            </span>
+            <span class="text-sm text-muted-foreground">
+              Last login: {$currentUser?.last_login_at ? new Date($currentUser.last_login_at).toLocaleString() : 'N/A'}
+            </span>
+          </div>
+        </div>
+        <div class="hidden md:block">
+          <BarChart3 class="h-16 w-16 text-primary/20" />
+        </div>
+      </div>
+    </div>
 
-  <!-- Error Display -->
-  {#if error}
-    <div class="bg-destructive/10 border border-destructive/20 rounded-lg p-4">
-      <p class="text-destructive font-medium">Error loading dashboard data:</p>
-      <p class="text-destructive text-sm">{error}</p>
-    </div>
-  {/if}
+    <!-- Error Display -->
+    {#if error}
+      <div class="bg-destructive/10 border border-destructive/20 rounded-lg p-4">
+        <div class="flex items-center gap-2">
+          <AlertTriangle class="h-5 w-5 text-destructive" />
+          <p class="text-destructive font-medium">Error loading dashboard data:</p>
+        </div>
+        <p class="text-destructive text-sm mt-1">{error}</p>
+        <Button 
+          variant="outline" 
+          size="sm" 
+          class="mt-3"
+          on:click={() => dashboardActions.loadDashboardStats()}
+        >
+          Retry Loading
+        </Button>
+      </div>
+    {/if}
 
-  <!-- Quick Stats -->
-  <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-    <div class="bg-card rounded-lg p-4 border">
-      <div class="flex items-center justify-between">
-        <div>
-          <p class="text-sm text-muted-foreground">Total Users</p>
-          {#if loading}
-            <div class="h-8 bg-muted animate-pulse rounded"></div>
-          {:else}
-            <p class="text-2xl font-bold">{localStats.users}</p>
-          {/if}
+    <!-- Quick Stats -->
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <div class="bg-card rounded-lg p-4 border">
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-sm text-muted-foreground">Total Users</p>
+            {#if dashboardIsLoading}
+              <div class="h-8 bg-muted animate-pulse rounded"></div>
+            {:else}
+              <p class="text-2xl font-bold">{localStats.users}</p>
+            {/if}
+          </div>
+          <Users class="h-8 w-8 text-blue-500" />
         </div>
-        <Users class="h-8 w-8 text-blue-500" />
+      </div>
+      <div class="bg-card rounded-lg p-4 border">
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-sm text-muted-foreground">Active Bookings</p>
+            {#if dashboardIsLoading}
+              <div class="h-8 bg-muted animate-pulse rounded"></div>
+            {:else}
+              <p class="text-2xl font-bold">{localStats.bookings}</p>
+            {/if}
+          </div>
+          <FileText class="h-8 w-8 text-red-500" />
+        </div>
+      </div>
+      <div class="bg-card rounded-lg p-4 border">
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-sm text-muted-foreground">Total Clients</p>
+            {#if dashboardIsLoading}
+              <div class="h-8 bg-muted animate-pulse rounded"></div>
+            {:else}
+              <p class="text-2xl font-bold">{localStats.clients}</p>
+            {/if}
+          </div>
+          <Users class="h-8 w-8 text-teal-500" />
+        </div>
+      </div>
+      <div class="bg-card rounded-lg p-4 border">
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-sm text-muted-foreground">Total Reviews</p>
+            {#if dashboardIsLoading}
+              <div class="h-8 bg-muted animate-pulse rounded"></div>
+            {:else}
+              <p class="text-2xl font-bold">{localStats.reviews}</p>
+            {/if}
+          </div>
+          <Star class="h-8 w-8 text-yellow-500" />
+        </div>
       </div>
     </div>
-    <div class="bg-card rounded-lg p-4 border">
-      <div class="flex items-center justify-between">
-        <div>
-          <p class="text-sm text-muted-foreground">Active Bookings</p>
-          {#if loading}
-            <div class="h-8 bg-muted animate-pulse rounded"></div>
-          {:else}
-            <p class="text-2xl font-bold">{localStats.bookings}</p>
-          {/if}
-        </div>
-        <FileText class="h-8 w-8 text-red-500" />
-      </div>
-    </div>
-    <div class="bg-card rounded-lg p-4 border">
-      <div class="flex items-center justify-between">
-        <div>
-          <p class="text-sm text-muted-foreground">Total Clients</p>
-          {#if loading}
-            <div class="h-8 bg-muted animate-pulse rounded"></div>
-          {:else}
-            <p class="text-2xl font-bold">{localStats.clients}</p>
-          {/if}
-        </div>
-        <Users class="h-8 w-8 text-teal-500" />
-      </div>
-    </div>
-    <div class="bg-card rounded-lg p-4 border">
-      <div class="flex items-center justify-between">
-        <div>
-          <p class="text-sm text-muted-foreground">Total Reviews</p>
-          {#if loading}
-            <div class="h-8 bg-muted animate-pulse rounded"></div>
-          {:else}
-            <p class="text-2xl font-bold">{localStats.reviews}</p>
-          {/if}
-        </div>
-        <Star class="h-8 w-8 text-yellow-500" />
-      </div>
-    </div>
-  </div>
 
   <!-- Management Sections -->
   <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
@@ -275,27 +377,46 @@
       Recent Activity
     </h3>
     <div class="space-y-3">
-      <div class="flex items-center justify-between p-3 bg-muted/50 rounded-lg">
-        <div class="flex items-center">
-          <div class="w-2 h-2 bg-green-500 rounded-full mr-3"></div>
-          <span class="text-sm">New user registered: Maria Novakova</span>
-        </div>
-        <span class="text-xs text-muted-foreground">2 hours ago</span>
-      </div>
-      <div class="flex items-center justify-between p-3 bg-muted/50 rounded-lg">
-        <div class="flex items-center">
-          <div class="w-2 h-2 bg-blue-500 rounded-full mr-3"></div>
-          <span class="text-sm">Booking confirmed: #BK-2025-001</span>
-        </div>
-        <span class="text-xs text-muted-foreground">4 hours ago</span>
-      </div>
-      <div class="flex items-center justify-between p-3 bg-muted/50 rounded-lg">
-        <div class="flex items-center">
-          <div class="w-2 h-2 bg-yellow-500 rounded-full mr-3"></div>
-          <span class="text-sm">New review received: 5 stars</span>
-        </div>
-        <span class="text-xs text-muted-foreground">6 hours ago</span>
-      </div>
+      {#if dashboardIsLoading}
+        <!-- Loading skeleton -->
+        {#each Array(3) as _}
+          <div class="flex items-center justify-between p-3 bg-muted/50 rounded-lg animate-pulse">
+            <div class="flex items-center">
+              <div class="w-2 h-2 bg-muted rounded-full mr-3"></div>
+              <div class="h-4 bg-muted rounded w-48"></div>
+            </div>
+            <div class="h-3 bg-muted rounded w-16"></div>
+          </div>
+        {/each}
+      {:else}
+        <!-- Combined recent activity -->
+        {#each allRecentActivity as activity}
+          <div class="flex items-center justify-between p-3 bg-muted/50 rounded-lg">
+            <div class="flex items-center">
+              <div class="w-2 h-2 {activity.color} rounded-full mr-3"></div>
+              <span class="text-sm">{activity.message}</span>
+            </div>
+            <span class="text-xs text-muted-foreground">
+              {new Date(activity.created).toLocaleDateString()} {new Date(activity.created).toLocaleTimeString()}
+            </span>
+          </div>
+        {/each}
+
+        <!-- Show message if no recent activity -->
+        {#if allRecentActivity.length === 0}
+          <div class="flex items-center justify-center p-6 text-muted-foreground">
+            <div class="text-center">
+              <BarChart3 class="h-8 w-8 mx-auto mb-2 opacity-50" />
+              <p class="text-sm">No recent activity to display</p>
+              <p class="text-xs">Activity will appear here as users register, bookings are created, and reviews are submitted</p>
+            </div>
+          </div>
+        {/if}
+      {/if}
     </div>
   </div>
-</div>
+  <!-- End Recent Activity Section -->
+  
+  </div>
+  <!-- End Admin Dashboard Content -->
+{/if}
