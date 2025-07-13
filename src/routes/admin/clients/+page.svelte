@@ -24,6 +24,7 @@
   import ClientFormModal from '$lib/components/admin/ClientFormModal.svelte';
   import ClientDetailModal from '$lib/components/admin/ClientDetailModal.svelte';
   import { getPocketBaseClient } from '$lib/stores/authStore';
+  import { deleteRecord } from '$lib/utils/deleteHandler';
 
   // Data
   let clients: any[] = [];
@@ -166,8 +167,16 @@
       const pb = getPocketBaseClient();
       if (!pb) throw new Error('PocketBase client not available');
 
-      await pb.collection('clients').delete(client.id);
-      await loadClients(); // Reload the list
+      const result = await deleteRecord('clients', client.id);
+      
+      if (result.success) {
+        await loadClients(); // Reload the list
+        
+        // Show success message - clients don't have is_active, so will always be hard delete
+        console.log('Client deleted:', result.message);
+      } else {
+        error = result.message || 'Failed to delete client';
+      }
     } catch (err) {
       error = err instanceof Error ? err.message : 'Failed to delete client';
       console.error('Error deleting client:', err);

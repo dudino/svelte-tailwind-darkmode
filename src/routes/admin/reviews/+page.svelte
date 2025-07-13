@@ -25,11 +25,23 @@
   import ReviewFormModal from '$lib/components/admin/ReviewFormModal.svelte';
   import ReviewDetailModal from '$lib/components/admin/ReviewDetailModal.svelte';
   import { getPocketBaseClient } from '$lib/stores/authStore';
+  import { deleteRecord } from '$lib/utils/deleteHandler';
 
   // Data
   let reviews: any[] = [];
   let loading = true;
   let error = '';
+
+  // Helper function to get client display name
+  function getClientDisplayName(client: any): string {
+    if (!client) return 'Anonymous';
+    return client.nickname || 
+           (client.first_name && client.last_name ? `${client.first_name} ${client.last_name}` : '') ||
+           client.first_name || 
+           client.last_name || 
+           client.email || 
+           'Anonymous';
+  }
 
   // Related data
   let clients: any[] = [];
@@ -205,8 +217,16 @@
       const pb = getPocketBaseClient();
       if (!pb) throw new Error('PocketBase client not available');
 
-      await pb.collection('reviews').delete(review.id);
-      await loadReviews(); // Reload the list
+      const result = await deleteRecord('reviews', review.id);
+      
+      if (result.success) {
+        await loadReviews(); // Reload the list
+        
+        // Show success message - reviews don't have is_active, so will always be hard delete
+        console.log('Review deleted:', result.message);
+      } else {
+        error = result.message || 'Failed to delete review';
+      }
     } catch (err) {
       error = err instanceof Error ? err.message : 'Failed to delete review';
       console.error('Error deleting review:', err);
@@ -392,7 +412,7 @@
                 <User class="h-5 w-5 text-primary" />
               </div>
               <div>
-                <div class="font-medium">{review.expand?.client_id?.name || review.expand?.client_id?.email || 'Anonymous'}</div>
+                <div class="font-medium">{getClientDisplayName(review.expand?.client_id)}</div>
                 <div class="text-sm text-muted-foreground">{formatDate(review.created)}</div>
               </div>
             </div>

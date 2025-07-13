@@ -23,6 +23,7 @@
   import ScheduleFormModal from '$lib/components/admin/ScheduleFormModal.svelte';
   import ScheduleDetailModal from '$lib/components/admin/ScheduleDetailModal.svelte';
   import ConfirmDialog from '$lib/components/ui/ConfirmDialog.svelte';
+  import { deleteRecord } from '$lib/utils/deleteHandler';
 
   // Local state
   let schedules: any[] = [];
@@ -184,11 +185,18 @@
       const pb = getPocketBaseClient();
       if (!pb) throw new Error('PocketBase client not available');
 
-      await pb.collection('schedules').delete(scheduleToDelete.id);
+      const result = await deleteRecord('schedules', scheduleToDelete.id);
       
-      showDeleteConfirm = false;
-      scheduleToDelete = null;
-      await loadSchedules(); // Refresh the list
+      if (result.success) {
+        showDeleteConfirm = false;
+        scheduleToDelete = null;
+        await loadSchedules(); // Refresh the list
+        
+        // Show success message - schedules don't have is_active, so will always be hard delete
+        console.log('Schedule deleted:', result.message);
+      } else {
+        error = result.message || 'Failed to delete schedule';
+      }
     } catch (err) {
       error = err instanceof Error ? err.message : 'Failed to delete schedule';
       console.error('Error deleting schedule:', err);

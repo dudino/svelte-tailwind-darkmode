@@ -30,6 +30,15 @@
     description: string;
     is_blocked: boolean;
     blocked_reason: string;
+    name: string;
+    phone: string;
+    address: string;
+    gender: string;
+    emergency_contact_name: string;
+    emergency_contact_phone: string;
+    medical_notes: string;
+    preferences: string;
+    status: boolean;
   } = {
     phone_number: '',
     channel: 'phone',
@@ -41,7 +50,16 @@
     preferred_language: '',
     description: '',
     is_blocked: false,
-    blocked_reason: ''
+    blocked_reason: '',
+    name: '',
+    phone: '',
+    address: '',
+    gender: '',
+    emergency_contact_name: '',
+    emergency_contact_phone: '',
+    medical_notes: '',
+    preferences: '',
+    status: false
   };
 
   let loading = false;
@@ -65,6 +83,20 @@
     { value: 'sk', label: 'Slovak' }
   ];
 
+  // Status options
+  const statusOptions = [
+    { value: false, label: 'Active' },
+    { value: true, label: 'Blocked' }
+  ];
+
+  // Gender options
+  const genderOptions = [
+    { value: '', label: 'Not specified' },
+    { value: 'male', label: 'Male' },
+    { value: 'female', label: 'Female' },
+    { value: 'other', label: 'Other' }
+  ];
+
   // Reactive updates when client prop changes
   $: if (client) {
     formData = {
@@ -78,7 +110,16 @@
       preferred_language: client.preferred_language || '',
       description: client.description || '',
       is_blocked: client.is_blocked || false,
-      blocked_reason: client.blocked_reason || ''
+      blocked_reason: client.blocked_reason || '',
+      name: client.name || '',
+      phone: client.phone || '',
+      address: client.address || '',
+      gender: client.gender || '',
+      emergency_contact_name: client.emergency_contact_name || '',
+      emergency_contact_phone: client.emergency_contact_phone || '',
+      medical_notes: client.medical_notes || '',
+      preferences: client.preferences || '',
+      status: client.is_blocked || false
     };
   } else {
     // Reset form for new client
@@ -93,7 +134,16 @@
       preferred_language: '',
       description: '',
       is_blocked: false,
-      blocked_reason: ''
+      blocked_reason: '',
+      name: '',
+      phone: '',
+      address: '',
+      gender: '',
+      emergency_contact_name: '',
+      emergency_contact_phone: '',
+      medical_notes: '',
+      preferences: '',
+      status: false
     };
   }
 

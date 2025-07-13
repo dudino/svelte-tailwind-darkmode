@@ -61,8 +61,7 @@
 		switch (role) {
 			case 'administrator':
 				return [
-					...baseItems,
-					{ href: '/admin', icon: Settings, labelKey: 'Admin Panel', show: true },
+					{ href: '/admin', icon: Settings, labelKey: 'Dashboard', show: true },
 					{ href: '/admin/users', icon: Users, labelKey: 'Users', show: true },
 					{ href: '/admin/locations', icon: MapPin, labelKey: 'Locations', show: true },
 					{ href: '/admin/rooms', icon: Building, labelKey: 'Rooms', show: true },
@@ -75,7 +74,6 @@
 
 			case 'operator':
 				return [
-					...baseItems,
 					{ href: '/operator/schedules', icon: Calendar, labelKey: 'Schedules', show: true },
 					{ href: '/operator/bookings', icon: FileText, labelKey: 'Bookings', show: true },
 					{ href: '/operator/clients', icon: User, labelKey: 'Clients', show: true },
@@ -84,7 +82,6 @@
 
 			case 'user':
 				return [
-					...baseItems,
 					{ href: '/user/schedule', icon: Calendar, labelKey: 'My Schedule', show: true },
 					{ href: '/user/bookings', icon: FileText, labelKey: 'My Bookings', show: true },
 					{ href: '/user/profile', icon: User, labelKey: 'Profile', show: true }
@@ -100,7 +97,7 @@
 	<!-- Mobile Header -->
 	<div class="flex items-center justify-between p-4">
 		<!-- Logo/Brand with enhanced styling -->
-		<div class="flex items-center space-x-3">
+		<div class="flex items-center space-x-3 cursor-pointer hover:opacity-80 transition-opacity" on:click={() => window.location.href = '/'}>
 			<div class="w-10 h-10 bg-gradient-to-br from-primary to-primary/70 rounded-xl flex items-center justify-center shadow-lg">
 				<span class="text-primary-foreground font-bold text-lg">A</span>
 			</div>

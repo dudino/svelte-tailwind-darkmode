@@ -21,6 +21,7 @@
   } from 'lucide-svelte';
   import Button from '$lib/components/ui/button/button.svelte';
   import { getPocketBaseClient } from '$lib/stores/authStore';
+  import { deleteRecord } from '$lib/utils/deleteHandler';
   
   export let show = false;
   export let booking: any = null;
@@ -29,6 +30,24 @@
 
   let loading = false;
   let error = '';
+
+  // Helper function to get client display name
+  function getClientDisplayName(client: any): string {
+    if (!client) return 'N/A';
+    return client.nickname || 
+           (client.first_name && client.last_name ? `${client.first_name} ${client.last_name}` : '') ||
+           client.first_name || 
+           client.last_name || 
+           client.email || 
+           'N/A';
+  }
+
+  // Helper function to get location display name
+  function getLocationDisplayName(location: any): string {
+    if (!location) return 'No location assigned';
+    if (!location.name) return 'Location name missing';
+    return location.name;
+  }
 
   // Status styling
   function getStatusColor(status: string): string {
@@ -131,10 +150,17 @@
       const pb = getPocketBaseClient();
       if (!pb) throw new Error('PocketBase client not available');
 
-      await pb.collection('bookings').delete(booking.id);
+      const result = await deleteRecord('bookings', booking.id);
       
-      dispatch('deleted', booking);
-      handleClose();
+      if (result.success) {
+        dispatch('deleted', booking);
+        handleClose();
+        
+        // Show success message - bookings don't have is_active, so will always be hard delete
+        console.log('Booking deleted:', result.message);
+      } else {
+        error = result.message || 'Failed to delete booking';
+      }
     } catch (err) {
       error = err instanceof Error ? err.message : 'Failed to delete booking';
       console.error('Error deleting booking:', err);
@@ -205,10 +231,10 @@
               Client Information
             </h3>
             <div class="space-y-1">
-              <p><span class="font-medium">Name:</span> {booking.expand?.client_id?.name || 'N/A'}</p>
+              <p><span class="font-medium">Name:</span> {getClientDisplayName(booking.expand?.client_id)}</p>
               <p><span class="font-medium">Email:</span> {booking.expand?.client_id?.email || 'N/A'}</p>
-              {#if booking.expand?.client_id?.phone}
-                <p><span class="font-medium">Phone:</span> {booking.expand?.client_id?.phone}</p>
+              {#if booking.expand?.client_id?.phone_number}
+                <p><span class="font-medium">Phone:</span> {booking.expand?.client_id?.phone_number}</p>
               {/if}
             </div>
           </div>
@@ -236,9 +262,17 @@
                 Location
               </h3>
               <div class="space-y-1">
-                <p><span class="font-medium">Name:</span> {booking.expand?.location_id?.name || 'N/A'}</p>
+                <p><span class="font-medium">Name:</span> 
+                  {getLocationDisplayName(booking.expand?.location_id)}
+                  {#if booking.expand?.location_id && !booking.expand?.location_id?.is_active}
+                    <span class="text-xs bg-red-100 text-red-800 px-2 py-1 rounded ml-2">Inactive</span>
+                  {/if}
+                </p>
                 {#if booking.expand?.location_id?.address}
                   <p><span class="font-medium">Address:</span> {booking.expand?.location_id?.address}</p>
+                {/if}
+                {#if booking.expand?.location_id?.city}
+                  <p><span class="font-medium">City:</span> {booking.expand?.location_id?.city}</p>
                 {/if}
               </div>
             </div>

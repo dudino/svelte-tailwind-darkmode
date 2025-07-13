@@ -22,6 +22,7 @@
   import RoomFormModal from '$lib/components/admin/RoomFormModal.svelte';
   import RoomDetailModal from '$lib/components/admin/RoomDetailModal.svelte';
   import ConfirmDialog from '$lib/components/ui/ConfirmDialog.svelte';
+  import { deleteRecord } from '$lib/utils/deleteHandler';
 
   // Local state
   let rooms: any[] = [];
@@ -153,11 +154,24 @@
       const pb = getPocketBaseClient();
       if (!pb) throw new Error('PocketBase client not available');
 
-      await pb.collection('rooms').delete(roomToDelete.id);
+      const result = await deleteRecord('rooms', roomToDelete.id);
       
-      showDeleteConfirm = false;
-      roomToDelete = null;
-      await loadRooms(); // Refresh the list
+      if (result.success) {
+        showDeleteConfirm = false;
+        roomToDelete = null;
+        await loadRooms(); // Refresh the list
+        
+        // Show success message based on delete method
+        if (result.method === 'soft') {
+          // Room was deactivated instead of deleted
+          console.log('Room deactivated:', result.message);
+        } else {
+          // Room was actually deleted
+          console.log('Room deleted:', result.message);
+        }
+      } else {
+        error = result.message || 'Failed to delete room';
+      }
     } catch (err) {
       error = err instanceof Error ? err.message : 'Failed to delete room';
       console.error('Error deleting room:', err);

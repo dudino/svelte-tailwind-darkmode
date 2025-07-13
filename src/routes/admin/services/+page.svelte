@@ -21,6 +21,7 @@
   import ServiceFormModal from '$lib/components/admin/ServiceFormModal.svelte';
   import ServiceDetailModal from '$lib/components/admin/ServiceDetailModal.svelte';
   import ConfirmDialog from '$lib/components/ui/ConfirmDialog.svelte';
+  import { deleteRecord } from '$lib/utils/deleteHandler';
 
   // Local state
   let services: any[] = [];
@@ -132,11 +133,22 @@
       const pb = getPocketBaseClient();
       if (!pb) throw new Error('PocketBase client not available');
 
-      await pb.collection('services').delete(serviceToDelete.id);
+      const result = await deleteRecord('services', serviceToDelete.id);
       
-      showDeleteConfirm = false;
-      serviceToDelete = null;
-      await loadServices(); // Refresh the list
+      if (result.success) {
+        showDeleteConfirm = false;
+        serviceToDelete = null;
+        await loadServices(); // Refresh the list
+        
+        // Show success message based on delete method
+        if (result.method === 'soft') {
+          console.log('Service deactivated:', result.message);
+        } else {
+          console.log('Service deleted:', result.message);
+        }
+      } else {
+        error = result.message || 'Failed to delete service';
+      }
     } catch (err) {
       error = err instanceof Error ? err.message : 'Failed to delete service';
       console.error('Error deleting service:', err);

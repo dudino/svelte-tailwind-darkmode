@@ -23,6 +23,7 @@
   } from 'lucide-svelte';
   import Button from '$lib/components/ui/button/button.svelte';
   import { getPocketBaseClient } from '$lib/stores/authStore';
+  import { deleteRecord } from '$lib/utils/deleteHandler';
   
   export let show = false;
   export let client: any = null;
@@ -113,10 +114,17 @@
       const pb = getPocketBaseClient();
       if (!pb) throw new Error('PocketBase client not available');
 
-      await pb.collection('clients').delete(client.id);
+      const result = await deleteRecord('clients', client.id);
       
-      dispatch('deleted', client);
-      handleClose();
+      if (result.success) {
+        dispatch('deleted', client);
+        handleClose();
+        
+        // Show success message - clients don't have is_active, so will always be hard delete
+        console.log('Client deleted:', result.message);
+      } else {
+        error = result.message || 'Failed to delete client';
+      }
     } catch (err) {
       error = err instanceof Error ? err.message : 'Failed to delete client';
       console.error('Error deleting client:', err);

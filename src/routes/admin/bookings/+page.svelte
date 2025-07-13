@@ -16,13 +16,17 @@
     Clock,
     User,
     Filter,
-    FileText
+    FileText,
+    Building,
+    Wrench,
+    Users
   } from 'lucide-svelte';
   import Button from '$lib/components/ui/button/button.svelte';
   import Input from '$lib/components/ui/input/input.svelte';
   import { getPocketBaseClient } from '$lib/stores/authStore';
   import BookingFormModal from '$lib/components/admin/BookingFormModal.svelte';
   import BookingDetailModal from '$lib/components/admin/BookingDetailModal.svelte';
+  import { deleteRecord } from '$lib/utils/deleteHandler';
   import ConfirmDialog from '$lib/components/ui/ConfirmDialog.svelte';
 
   // Local state
@@ -61,13 +65,33 @@
     { value: 'completed', label: 'Completed' }
   ];
 
+  // Helper function to get client display name
+  function getClientDisplayName(client: any): string {
+    if (!client) return 'Unknown Client';
+    return client.nickname || 
+           (client.first_name && client.last_name ? `${client.first_name} ${client.last_name}` : '') ||
+           client.first_name || 
+           client.last_name || 
+           client.email || 
+           'Unknown Client';
+  }
+
+  // Helper function to get location display name
+  function getLocationDisplayName(location: any): string {
+    if (!location) return 'No location';
+    if (!location.name) return 'Location name missing';
+    return location.name;
+  }
+
   // Reactive filtering
   $: {
     filteredBookings = bookings.filter(booking => {
+      const clientName = getClientDisplayName(booking.expand?.client_id);
+      const locationName = getLocationDisplayName(booking.expand?.location_id);
       const matchesSearch = !searchTerm || 
-        booking.expand?.client_id?.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        clientName.toLowerCase().includes(searchTerm.toLowerCase()) ||
         booking.expand?.service_id?.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        booking.expand?.location_id?.name?.toLowerCase().includes(searchTerm.toLowerCase());
+        locationName.toLowerCase().includes(searchTerm.toLowerCase());
       
       const matchesLocation = !filterLocation || booking.location_id === filterLocation;
       const matchesService = !filterService || booking.service_id === filterService;
@@ -126,6 +150,7 @@
       const pb = getPocketBaseClient();
       if (!pb) throw new Error('PocketBase client not available');
 
+      // Load only active locations for filter dropdown
       const records = await pb.collection('locations').getFullList({
         sort: 'name',
         filter: 'is_active = true'
@@ -227,11 +252,18 @@
       const pb = getPocketBaseClient();
       if (!pb) throw new Error('PocketBase client not available');
 
-      await pb.collection('bookings').delete(bookingToDelete.id);
+      const result = await deleteRecord('bookings', bookingToDelete.id);
       
-      showDeleteConfirm = false;
-      bookingToDelete = null;
-      await loadBookings(); // Refresh the list
+      if (result.success) {
+        showDeleteConfirm = false;
+        bookingToDelete = null;
+        await loadBookings(); // Refresh the list
+        
+        // Show success message - bookings don't have is_active, so will always be hard delete
+        console.log('Booking deleted:', result.message);
+      } else {
+        error = result.message || 'Failed to delete booking';
+      }
     } catch (err) {
       error = err instanceof Error ? err.message : 'Failed to delete booking';
       console.error('Error deleting booking:', err);
@@ -319,6 +351,10 @@
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-4">
       <!-- Search -->
       <div class="lg:col-span-2">
+        <label class="text-sm font-medium mb-1 flex items-center gap-2">
+          <Search class="h-4 w-4" />
+          Search
+        </label>
         <div class="relative">
           <Search class="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input
@@ -331,6 +367,10 @@
 
       <!-- Location Filter -->
       <div>
+        <label class="text-sm font-medium mb-1 flex items-center gap-2">
+          <MapPin class="h-4 w-4" />
+          Location
+        </label>
         <select 
           bind:value={filterLocation}
           class="w-full px-3 py-2 border rounded-md bg-background"
@@ -344,6 +384,10 @@
 
       <!-- Service Filter -->
       <div>
+        <label class="text-sm font-medium mb-1 flex items-center gap-2">
+          <Wrench class="h-4 w-4" />
+          Service
+        </label>
         <select 
           bind:value={filterService}
           class="w-full px-3 py-2 border rounded-md bg-background"
@@ -357,11 +401,15 @@
 
       <!-- User Filter -->
       <div>
+        <label class="text-sm font-medium mb-1 flex items-center gap-2">
+          <Users class="h-4 w-4" />
+          Staff
+        </label>
         <select 
           bind:value={filterUser}
           class="w-full px-3 py-2 border rounded-md bg-background"
         >
-          <option value="">All Users</option>
+          <option value="">All Staff</option>
           {#each users as user}
             <option value={user.id}>{user.name || user.email}</option>
           {/each}
@@ -370,6 +418,10 @@
 
       <!-- Status Filter -->
       <div>
+        <label class="text-sm font-medium mb-1 flex items-center gap-2">
+          <Filter class="h-4 w-4" />
+          Status
+        </label>
         <select 
           bind:value={filterStatus}
           class="w-full px-3 py-2 border rounded-md bg-background"
@@ -430,11 +482,34 @@
                   on:change={selectedBookings.length === paginatedBookings.length ? clearSelection : selectAllBookings}
                 />
               </th>
-              <th class="p-4 font-medium">Client & Service</th>
-              <th class="p-4 font-medium">Location & Room</th>
-              <th class="p-4 font-medium">Staff</th>
-              <th class="p-4 font-medium">Date & Time</th>
-              <th class="p-4 font-medium">Status</th>
+              <th class="p-4 font-medium flex items-center gap-2">
+                <User class="h-4 w-4" />
+                Client & Service
+              </th>
+              <th class="p-4 font-medium">
+                <div class="flex items-center gap-2">
+                  <MapPin class="h-4 w-4" />
+                  Location & Room
+                </div>
+              </th>
+              <th class="p-4 font-medium">
+                <div class="flex items-center gap-2">
+                  <Users class="h-4 w-4" />
+                  Staff
+                </div>
+              </th>
+              <th class="p-4 font-medium">
+                <div class="flex items-center gap-2">
+                  <Calendar class="h-4 w-4" />
+                  Date & Time
+                </div>
+              </th>
+              <th class="p-4 font-medium">
+                <div class="flex items-center gap-2">
+                  <Filter class="h-4 w-4" />
+                  Status
+                </div>
+              </th>
               <th class="p-4 font-medium">Actions</th>
             </tr>
           </thead>
@@ -451,7 +526,7 @@
                 </td>
                 <td class="p-4">
                   <div>
-                    <p class="font-medium">{booking.expand?.client_id?.name || 'Unknown Client'}</p>
+                    <p class="font-medium">{getClientDisplayName(booking.expand?.client_id)}</p>
                     <p class="text-sm text-muted-foreground">{booking.expand?.service_id?.name || 'No service'}</p>
                   </div>
                 </td>
@@ -459,7 +534,10 @@
                   <div>
                     <div class="flex items-center gap-1 text-sm">
                       <MapPin class="h-3 w-3 text-muted-foreground" />
-                      {booking.expand?.location_id?.name || 'Unknown'}
+                      {getLocationDisplayName(booking.expand?.location_id)}
+                      {#if booking.expand?.location_id && !booking.expand?.location_id?.is_active}
+                        <span class="text-xs bg-red-100 text-red-800 px-1 py-0.5 rounded ml-1">Inactive</span>
+                      {/if}
                     </div>
                     {#if booking.expand?.room_id}
                       <p class="text-sm text-muted-foreground">{booking.expand.room_id.name}</p>
@@ -559,7 +637,7 @@
 <ConfirmDialog
   bind:show={showDeleteConfirm}
   title="Delete Booking"
-  message="Are you sure you want to delete this booking? This action cannot be undone."
+  description="Are you sure you want to delete this booking? This action cannot be undone."
   confirmText="Delete"
   confirmVariant="destructive"
   on:confirm={confirmDeleteBooking}

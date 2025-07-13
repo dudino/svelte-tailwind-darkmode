@@ -3,6 +3,7 @@
 
 import { writable, derived } from 'svelte/store';
 import { getPocketBaseClient } from '../authStore';
+import { deleteRecord } from '$lib/utils/deleteHandler';
 
 // Types
 interface Booking {
@@ -187,13 +188,22 @@ export const bookingsActions = {
       const pb = getPocketBaseClient();
       if (!pb) throw new Error('PocketBase client not available');
 
-      await pb.collection('bookings').delete(id);
+      const result = await deleteRecord('bookings', id);
       
-      bookingsStore.update(state => ({
-        ...state,
-        bookings: state.bookings.filter(booking => booking.id !== id),
-        totalItems: state.totalItems - 1
-      }));
+      if (result.success) {
+        // Bookings don't have is_active field, so this will always be hard delete
+        bookingsStore.update(state => ({
+          ...state,
+          bookings: state.bookings.filter(booking => booking.id !== id),
+          totalItems: state.totalItems - 1
+        }));
+        
+        return { success: true, message: result.message };
+      } else {
+        const errorMessage = result.message || 'Failed to delete booking';
+        bookingsStore.update(state => ({ ...state, error: errorMessage }));
+        throw new Error(errorMessage);
+      }
       
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Failed to delete booking';

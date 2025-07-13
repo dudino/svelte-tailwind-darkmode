@@ -9,6 +9,7 @@ import { setLoading, setError, clearError } from './appStateStore';
 import { getPocketBaseClient, getCurrentUser } from './authStore';
 import type { User, UpdateUserData, AuthResponse, SyncQueueItem } from '$lib/types/user';
 import { COLLECTIONS } from '$lib/types/user';
+import { deleteRecord } from '$lib/utils/deleteHandler';
 
 // Check if we're in browser environment
 const browser = typeof window !== 'undefined';
@@ -138,20 +139,44 @@ export async function deleteUser(userId: string): Promise<{ success: boolean; me
     // Online delete
     if (navigator.onLine && pb) {
       try {
-        await pb.collection(COLLECTIONS.USERS).delete(userId);
+        const result = await deleteRecord(COLLECTIONS.USERS, userId);
+        
+        if (result.success) {
+          // Remove from local storage only if hard delete was successful
+          if (result.method === 'hard') {
+            await storage.deleteUser(userId);
+            users.update(list => list.filter(user => user.id !== userId));
+          } else if (result.method === 'soft') {
+            // For soft delete, update the user's is_active status locally
+            users.update(list => 
+              list.map(user => 
+                user.id === userId ? { ...user, is_active: false } : user
+              )
+            );
+            // Also update in local storage
+            const localUser = await storage.getUser(userId);
+            if (localUser) {
+              await storage.saveUser({ ...localUser, is_active: false });
+            }
+          }
+          
+          return { 
+            success: true, 
+            message: result.message 
+          };
+        } else {
+          setError(result.message || 'Failed to delete user');
+          return { 
+            success: false, 
+            message: result.message || 'Failed to delete user' 
+          };
+        }
       } catch (onlineErr: any) {
         console.warn('Online delete failed, adding to sync queue:', onlineErr);
-        
-        // Check if it's a relation constraint error
-        if (onlineErr.status === 400 && onlineErr.message?.includes('relation reference')) {
-          setError('Cannot delete user: User has related data (bookings, appointments, etc.). Please remove related data first.');
-          return { success: false, message: 'User has related data and cannot be deleted' };
-        }
         
         // Check if record doesn't exist
         if (onlineErr.status === 404) {
           console.info('User already deleted on server, removing locally');
-          // Just delete locally since it's already gone from server
           await storage.deleteUser(userId);
           users.update(list => list.filter(user => user.id !== userId));
           return { success: true, message: 'User deleted successfully' };
@@ -179,7 +204,7 @@ export async function deleteUser(userId: string): Promise<{ success: boolean; me
       await storage.addToSyncQueue(syncItem);
     }
     
-    // Remove from local storage
+    // Remove from local storage for offline case
     await storage.deleteUser(userId);
     
     // Update stores

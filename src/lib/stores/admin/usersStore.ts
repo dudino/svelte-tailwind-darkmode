@@ -3,6 +3,7 @@
 
 import { writable, derived } from 'svelte/store';
 import { getPocketBaseClient } from '../authStore';
+import { deleteRecord } from '$lib/utils/deleteHandler';
 
 // Types
 interface User {
@@ -174,14 +175,32 @@ export const usersActions = {
       const pb = getPocketBaseClient();
       if (!pb) throw new Error('PocketBase client not available');
 
-      await pb.collection('users').delete(id);
+      const result = await deleteRecord('users', id);
       
-      // Remove user from store
-      usersStore.update(state => ({
-        ...state,
-        users: state.users.filter(user => user.id !== id),
-        totalItems: state.totalItems - 1
-      }));
+      if (result.success) {
+        if (result.method === 'hard') {
+          // Remove user from store completely
+          usersStore.update(state => ({
+            ...state,
+            users: state.users.filter(user => user.id !== id),
+            totalItems: state.totalItems - 1
+          }));
+        } else if (result.method === 'soft') {
+          // Update user's is_active status in store
+          usersStore.update(state => ({
+            ...state,
+            users: state.users.map(user => 
+              user.id === id ? { ...user, is_active: false } : user
+            )
+          }));
+        }
+        
+        return { success: true, message: result.message };
+      } else {
+        const errorMessage = result.message || 'Failed to delete user';
+        usersStore.update(state => ({ ...state, error: errorMessage }));
+        throw new Error(errorMessage);
+      }
       
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Failed to delete user';

@@ -19,6 +19,7 @@
   } from 'lucide-svelte';
   import Button from '$lib/components/ui/button/button.svelte';
   import { getPocketBaseClient } from '$lib/stores/authStore';
+  import { deleteRecord } from '$lib/utils/deleteHandler';
   
   export let show = false;
   export let review: any = null;
@@ -27,6 +28,17 @@
 
   let loading = false;
   let error = '';
+
+  // Helper function to get client display name
+  function getClientDisplayName(client: any): string {
+    if (!client) return 'N/A';
+    return client.nickname || 
+           (client.first_name && client.last_name ? `${client.first_name} ${client.last_name}` : '') ||
+           client.first_name || 
+           client.last_name || 
+           client.email || 
+           'N/A';
+  }
 
   // Status styling
   function getStatusColor(status: string): string {
@@ -107,10 +119,17 @@
       const pb = getPocketBaseClient();
       if (!pb) throw new Error('PocketBase client not available');
 
-      await pb.collection('reviews').delete(review.id);
+      const result = await deleteRecord('reviews', review.id);
       
-      dispatch('deleted', review);
-      handleClose();
+      if (result.success) {
+        dispatch('deleted', review);
+        handleClose();
+        
+        // Show success message - reviews don't have is_active, so will always be hard delete
+        console.log('Review deleted:', result.message);
+      } else {
+        error = result.message || 'Failed to delete review';
+      }
     } catch (err) {
       error = err instanceof Error ? err.message : 'Failed to delete review';
       console.error('Error deleting review:', err);
@@ -231,10 +250,10 @@
               Client Information
             </h3>
             <div class="space-y-1">
-              <p><span class="font-medium">Name:</span> {review.expand?.client_id?.name || 'N/A'}</p>
+              <p><span class="font-medium">Name:</span> {getClientDisplayName(review.expand?.client_id)}</p>
               <p><span class="font-medium">Email:</span> {review.expand?.client_id?.email || 'N/A'}</p>
-              {#if review.expand?.client_id?.phone}
-                <p><span class="font-medium">Phone:</span> {review.expand?.client_id?.phone}</p>
+              {#if review.expand?.client_id?.phone_number}
+                <p><span class="font-medium">Phone:</span> {review.expand?.client_id?.phone_number}</p>
               {/if}
             </div>
           </div>
