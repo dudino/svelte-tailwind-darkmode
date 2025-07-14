@@ -25,7 +25,7 @@
 			
 			if (result.success) {
 				// Redirect based on user role
-				const redirectPath = $currentUser?.role === 'administrator' ? '/admin' : '/user-management';
+				const redirectPath = $currentUser?.role === 'administrator' ? '/admin' : '/';
 				goto(redirectPath);
 			} else {
 				// Login failed - show error message

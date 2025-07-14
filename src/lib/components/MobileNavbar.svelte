@@ -7,9 +7,7 @@
 	import { 
 		Menu, X, User, Settings, Calendar, 
 		Users, MapPin, FileText, Star, Building,
-
-		Key
-
+		Key, Home, Shield
 	} from 'lucide-svelte';
 
 	let isOpen = false;
@@ -83,8 +81,10 @@
 
 			case 'user':
 				return [
-					{ href: '/user/schedule', icon: Calendar, labelKey: 'My Schedule', show: true },
+					{ href: '/user', icon: Home, labelKey: 'Dashboard', show: true },
 					{ href: '/user/bookings', icon: FileText, labelKey: 'My Bookings', show: true },
+					{ href: '/user/schedule', icon: Calendar, labelKey: 'My Schedule', show: true },
+					{ href: '/user/confirm-booking', icon: Shield, labelKey: 'Confirm Booking', show: true },
 					{ href: '/user/profile', icon: User, labelKey: 'Profile', show: true }
 				];
 
