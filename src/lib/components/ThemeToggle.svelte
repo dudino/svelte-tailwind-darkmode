@@ -4,6 +4,7 @@
 	import Button from '$lib/components/ui/button/button.svelte';
 	import { onMount } from 'svelte';
 
+	let { standalone = false } = $props();
 	let isDark = $state(false);
 
 	function toggleTheme() {
@@ -25,12 +26,30 @@
 	});
 </script>
 
-<div class="fixed top-4 right-4 z-50">
+{#if standalone}
+	<div class="fixed top-20 right-4 z-50">
+		<Button
+			variant="ghost"
+			size="icon"
+			on:click={toggleTheme}
+			class="relative h-9 w-9 bg-background/80 backdrop-blur-sm border border-border hover:bg-accent"
+			aria-label="Toggle theme"
+		>
+			<div class="absolute inset-0 flex items-center justify-center transition-transform duration-300 {isDark ? 'rotate-0 scale-100' : 'rotate-90 scale-0'}">
+				<Sun class="h-4 w-4" />
+			</div>
+			<div class="absolute inset-0 flex items-center justify-center transition-transform duration-300 {isDark ? 'rotate-90 scale-0' : 'rotate-0 scale-100'}">
+				<Moon class="h-4 w-4" />
+			</div>
+			<span class="sr-only">Toggle theme</span>
+		</Button>
+	</div>
+{:else}
 	<Button
 		variant="ghost"
 		size="icon"
 		on:click={toggleTheme}
-		class="relative h-9 w-9 bg-background/80 backdrop-blur-sm border border-border hover:bg-accent"
+		class="relative h-9 w-9"
 		aria-label="Toggle theme"
 	>
 		<div class="absolute inset-0 flex items-center justify-center transition-transform duration-300 {isDark ? 'rotate-0 scale-100' : 'rotate-90 scale-0'}">
@@ -41,4 +60,4 @@
 		</div>
 		<span class="sr-only">Toggle theme</span>
 	</Button>
-</div>
+{/if}

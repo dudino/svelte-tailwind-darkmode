@@ -132,7 +132,7 @@
 </script>
 
 <svelte:head>
-  <title>Location Management - Admin - Affinity</title>
+  <title>Location Management - Admin - TimeIt</title>
 </svelte:head>
 
 <div class="space-y-6">

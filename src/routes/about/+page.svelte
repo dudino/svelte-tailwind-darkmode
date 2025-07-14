@@ -3,7 +3,7 @@
 </script>
 
 <svelte:head>
-	<title>About - Affinity</title>
+	<title>About - TimeIt</title>
 </svelte:head>
 
 <div class="space-y-12">

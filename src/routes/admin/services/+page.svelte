@@ -194,7 +194,7 @@
 </script>
 
 <svelte:head>
-  <title>Service Management - Admin - Affinity</title>
+  <title>Service Management - Admin - TimeIt</title>
 </svelte:head>
 
 <div class="space-y-6">

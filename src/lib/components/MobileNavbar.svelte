@@ -73,9 +73,10 @@
 
 			case 'operator':
 				return [
-					{ href: '/admin/schedules', icon: Calendar, labelKey: 'Schedules', show: true },
-					{ href: '/admin/bookings', icon: FileText, labelKey: 'Bookings', show: true },
+					{ href: '/operator', icon: Home, labelKey: 'Dashboard', show: true },
+					{ href: '/operator/bookings', icon: FileText, labelKey: 'Bookings', show: true },
 					{ href: '/admin/clients', icon: User, labelKey: 'Clients', show: true },
+					{ href: '/admin/schedules', icon: Calendar, labelKey: 'Schedules', show: true },
 					{ href: '/admin/reviews', icon: Star, labelKey: 'Reviews', show: true }
 				];
 
@@ -94,7 +95,7 @@
 	}
 </script>
 
-<nav class="mobile-nav fixed top-0 left-0 right-0 z-50">
+<nav class="mobile-nav fixed top-0 left-0 right-0 z-50 bg-background/95 backdrop-blur-sm border-b">
 	<!-- Mobile Header -->
 	<div class="flex items-center justify-between p-4">
 		<!-- Logo/Brand with enhanced styling -->
@@ -157,6 +158,3 @@
 		</div>
 	{/if}
 </nav>
-
-<!-- Spacer to prevent content from going under fixed navbar -->
-<div class="h-16"></div>

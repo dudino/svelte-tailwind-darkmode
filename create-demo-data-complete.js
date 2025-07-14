@@ -12,7 +12,7 @@ const demoData = {
       name: 'Prague Center',
       address: 'Wenceslas Square 1, 110 00 Prague 1, Czech Republic',
       phone: '+420 224 123 456',
-      email: 'prague@affinity.cz',
+      email: 'prague@TimeIt.cz',
       opening_hours: {
         monday: '9:00-21:00',
         tuesday: '9:00-21:00',
@@ -29,7 +29,7 @@ const demoData = {
       name: 'Brno Wellness',
       address: 'Svobody Square 5, 602 00 Brno, Czech Republic',
       phone: '+420 543 123 789',
-      email: 'brno@affinity.cz',
+      email: 'brno@TimeIt.cz',
       opening_hours: {
         monday: '10:00-20:00',
         tuesday: '10:00-20:00',

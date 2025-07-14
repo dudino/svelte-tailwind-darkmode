@@ -1,4 +1,4 @@
-# PocketBase Setup Guide for Affinity Application
+# PocketBase Setup Guide for TimeIt Application
 
 ## Step 1: Access PocketBase Admin
 1. Open your browser and go to: **http://localhost:8090/_/**
@@ -16,7 +16,7 @@ After importing collections, you'll have a `users` collection. Create these demo
 
 ### Admin User
 - Go to Collections > users > "New record"
-- **Email**: `admin@affinity.com`
+- **Email**: `admin@TimeIt.com`
 - **Password**: `admin123`
 - **Password confirm**: `admin123`
 - **Name**: `System Administrator`
@@ -25,7 +25,7 @@ After importing collections, you'll have a `users` collection. Create these demo
 - **Email visibility**: ✅ (checked)
 
 ### Operator User
-- **Email**: `operator@affinity.com`
+- **Email**: `operator@TimeIt.com`
 - **Password**: `operator123`
 - **Password confirm**: `operator123`
 - **Name**: `Massage Operator`
@@ -34,7 +34,7 @@ After importing collections, you'll have a `users` collection. Create these demo
 - **Email visibility**: ✅ (checked)
 
 ### Regular User
-- **Email**: `user@affinity.com`
+- **Email**: `user@TimeIt.com`
 - **Password**: `user123`
 - **Password confirm**: `user123`
 - **Name**: `Regular User`

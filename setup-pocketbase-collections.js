@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /**
  * Automated PocketBase Setup Script
- * This script will create the required collections and demo users for the Affinity application
+ * This script will create the required collections and demo users for the TimeIt application
  */
 
 import fs from 'fs';
@@ -185,21 +185,21 @@ console.log('');
 console.log('📝 After importing collections, create these demo users:');
 console.log('');
 console.log('Admin User:');
-console.log('  Email: admin@affinity.com');
+console.log('  Email: admin@TimeIt.com');
 console.log('  Password: admin123');
 console.log('  Name: System Administrator');
 console.log('  Role: admin');
 console.log('  Status: active');
 console.log('');
 console.log('Operator User:');
-console.log('  Email: operator@affinity.com'); 
+console.log('  Email: operator@TimeIt.com'); 
 console.log('  Password: operator123');
 console.log('  Name: Massage Operator');
 console.log('  Role: operator');
 console.log('  Status: active');
 console.log('');
 console.log('Regular User:');
-console.log('  Email: user@affinity.com');
+console.log('  Email: user@TimeIt.com');
 console.log('  Password: user123');
 console.log('  Name: Regular User'); 
 console.log('  Role: user');

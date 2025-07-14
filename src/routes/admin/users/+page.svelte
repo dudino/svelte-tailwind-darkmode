@@ -167,7 +167,7 @@
 </script>
 
 <svelte:head>
-  <title>User Management - Admin - Affinity</title>
+  <title>User Management - Admin - TimeIt</title>
 </svelte:head>
 
 <div class="space-y-6">

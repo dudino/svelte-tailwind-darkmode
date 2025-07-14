@@ -65,8 +65,8 @@
         return;
       }
 
-      if ($userRole !== 'administrator') {
-        authError = 'Access denied. Administrator role required.';
+      if ($userRole !== 'administrator' && $userRole !== 'operator') {
+        authError = 'Access denied. Administrator or operator role required.';
         goto('/');
         return;
       }
@@ -204,7 +204,7 @@
 </script>
 
 <svelte:head>
-  <title>Admin Dashboard - Affinity</title>
+  <title>Admin Dashboard - TimeIt</title>
 </svelte:head>
 
 <!-- Loading State -->

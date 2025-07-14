@@ -20,8 +20,8 @@
 </script>
 
 <svelte:head>
-	<title>Sign In - Affinity</title>
-	<meta name="description" content="Sign in to your Affinity massage management account" />
+	<title>Sign In - TimeIt</title>
+	<meta name="description" content="Sign in to your TimeIt massage management account" />
 </svelte:head>
 
 <LoginForm />

@@ -95,7 +95,7 @@ async function setupCollections() {
     
     const demoUsers = [
       {
-        email: 'admin@affinity.com',
+        email: 'admin@TimeIt.com',
         password: 'admin123',
         passwordConfirm: 'admin123',
         name: 'System Administrator',
@@ -104,7 +104,7 @@ async function setupCollections() {
         emailVisibility: true
       },
       {
-        email: 'operator@affinity.com',
+        email: 'operator@TimeIt.com',
         password: 'operator123',
         passwordConfirm: 'operator123',
         name: 'Massage Operator',
@@ -113,7 +113,7 @@ async function setupCollections() {
         emailVisibility: true
       },
       {
-        email: 'user@affinity.com',
+        email: 'user@TimeIt.com',
         password: 'user123',
         passwordConfirm: 'user123',
         name: 'Regular User',
@@ -139,7 +139,7 @@ async function setupCollections() {
     // Test authentication
     console.log('🧪 Testing authentication...');
     try {
-      const authData = await pb.collection('users').authWithPassword('admin@affinity.com', 'admin123');
+      const authData = await pb.collection('users').authWithPassword('admin@TimeIt.com', 'admin123');
       console.log('✅ Authentication successful!');
       console.log(`   Logged in as: ${authData.record.name} (${authData.record.role})`);
     } catch (error) {
@@ -150,9 +150,9 @@ async function setupCollections() {
     console.log('🎉 Setup completed!');
     console.log('');
     console.log('Demo Login Credentials:');
-    console.log('  Admin:    admin@affinity.com    / admin123');
-    console.log('  Operator: operator@affinity.com / operator123');
-    console.log('  User:     user@affinity.com     / user123');
+    console.log('  Admin:    admin@TimeIt.com    / admin123');
+    console.log('  Operator: operator@TimeIt.com / operator123');
+    console.log('  User:     user@TimeIt.com     / user123');
     console.log('');
     console.log('Test your app at: http://localhost:5173/login');
 

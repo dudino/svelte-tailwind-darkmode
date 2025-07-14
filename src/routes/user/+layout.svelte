@@ -33,7 +33,7 @@
 </script>
 
 {#if $isAuthenticated && $currentUser?.role === 'user'}
-	<div class="user-layout">
+	<div class="user-layout pt-16">
 		<!-- User Panel Header -->
 		<div class="user-header bg-gradient-to-r from-primary/20 to-primary/10 border-b mb-6 p-4 rounded-lg">
 			<div class="flex items-center justify-between">

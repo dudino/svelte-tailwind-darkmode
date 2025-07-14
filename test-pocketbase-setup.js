@@ -61,7 +61,7 @@ async function testAuth() {
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        identity: 'admin@affinity.com',
+        identity: 'admin@TimeIt.com',
         password: 'admin123'
       })
     });

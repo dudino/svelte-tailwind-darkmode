@@ -1,5 +1,5 @@
 #!/usr/bin/env pwsh
-# PocketBase Startup Script for Affinity Application
+# PocketBase Startup Script for TimeIt Application
 
 Write-Host "Starting PocketBase server..." -ForegroundColor Green
 Write-Host "Admin UI will be available at: http://localhost:8090/_/" -ForegroundColor Yellow

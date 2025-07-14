@@ -25,7 +25,16 @@
 			
 			if (result.success) {
 				// Redirect based on user role
-				const redirectPath = $currentUser?.role === 'administrator' ? '/admin' : '/';
+				let redirectPath = '/';
+				if ($currentUser?.role === 'administrator') {
+					redirectPath = '/admin';
+				} else if ($currentUser?.role === 'operator') {
+					redirectPath = '/operator';
+				} else if ($currentUser?.role === 'user') {
+					redirectPath = '/user';
+				}
+				
+				console.log('Login successful, redirecting to:', redirectPath, 'for role:', $currentUser?.role);
 				goto(redirectPath);
 			} else {
 				// Login failed - show error message
@@ -117,7 +126,7 @@
 					<LogIn class="h-8 w-8 text-primary-foreground" />
 				</div>
 				<h1 class="text-3xl font-bold mb-2">
-					Welcome to <span class="gradient-text">Affinity</span>
+					Welcome to <span class="gradient-text">TimeIt</span>
 				</h1>
 				<p class="text-muted-foreground">
 					Sign in to your massage management account

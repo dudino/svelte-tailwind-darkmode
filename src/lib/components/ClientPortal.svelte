@@ -148,7 +148,7 @@
 				</div>
 				
 				<h1 class="text-3xl font-bold text-foreground mb-2">Session Complete!</h1>
-				<p class="text-muted-foreground mb-6">Thank you for visiting Affinity</p>
+				<p class="text-muted-foreground mb-6">Thank you for visiting TimeIt</p>
 				
 				<div class="bg-accent/20 rounded-lg p-6 mb-6 space-y-3">
 					<div class="text-sm text-muted-foreground">Session Details</div>

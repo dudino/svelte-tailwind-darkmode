@@ -1,6 +1,6 @@
 /**
  * PocketBase Collections Setup Script
- * Run this script to automatically create the required collections for the Affinity application
+ * Run this script to automatically create the required collections for the TimeIt application
  */
 
 // Collection configurations
@@ -198,7 +198,7 @@ const collections = [
 // Demo users to create
 const demoUsers = [
   {
-    email: "admin@affinity.com",
+    email: "admin@TimeIt.com",
     password: "admin123",
     passwordConfirm: "admin123",
     name: "System Administrator",
@@ -207,7 +207,7 @@ const demoUsers = [
     emailVisibility: true
   },
   {
-    email: "operator@affinity.com", 
+    email: "operator@TimeIt.com", 
     password: "operator123",
     passwordConfirm: "operator123",
     name: "Massage Operator",
@@ -216,7 +216,7 @@ const demoUsers = [
     emailVisibility: true
   },
   {
-    email: "user@affinity.com",
+    email: "user@TimeIt.com",
     password: "user123", 
     passwordConfirm: "user123",
     name: "Regular User",

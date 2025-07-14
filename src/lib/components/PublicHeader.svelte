@@ -2,8 +2,17 @@
 	import Button from '$lib/components/ui/button/button.svelte';
 	import { isAuthenticated, currentUser, logout } from '$lib/stores';
 	import { goto } from '$app/navigation';
-	import { User, LogOut, Settings } from 'lucide-svelte';
+	import { User, LogOut, Settings, Sun, Moon } from 'lucide-svelte';
 	import { toast } from 'svelte-sonner';
+	import { onMount } from 'svelte';
+
+	let isDark = $state(false);
+
+	function toggleTheme() {
+		isDark = !isDark;
+		document.documentElement.classList.toggle('dark', isDark);
+		localStorage.setItem('theme', isDark ? 'dark' : 'light');
+	}
 	
 	function handleLogin() {
 		goto('/login');
@@ -15,12 +24,16 @@
 	
 	function handleDashboard() {
 		// Redirect to role-specific dashboard
-		if ($currentUser?.role === 'admin') {
+		console.log('handleDashboard called, user role:', $currentUser?.role);
+		if ($currentUser?.role === 'administrator') {
 			goto('/admin');
+		} else if ($currentUser?.role === 'operator') {
+			goto('/operator');
 		} else if ($currentUser?.role === 'user') {
 			goto('/user');
 		} else {
 			// Fallback for unknown roles
+			console.log('Unknown role, falling back to user dashboard');
 			goto('/user');
 		}
 	}
@@ -35,6 +48,18 @@
 			toast.error('Failed to logout');
 		}
 	}
+
+	onMount(() => {
+		// Get saved theme or check system preference
+		const savedTheme = localStorage.getItem('theme');
+		if (savedTheme) {
+			isDark = savedTheme === 'dark';
+		} else {
+			isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+		}
+		
+		document.documentElement.classList.toggle('dark', isDark);
+	});
 </script>
 
 <header class="border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-40">
@@ -43,16 +68,32 @@
 			<div class="w-8 h-8 bg-gradient-to-br from-primary to-primary/70 rounded-lg flex items-center justify-center">
 				<span class="text-primary-foreground font-bold text-lg">A</span>
 			</div>
-			<span class="text-xl font-bold">Affinity</span>
+			<span class="text-xl font-bold">TimeIt</span>
 		</button>
 		
 		<div class="flex items-center space-x-4">
+			<!-- Theme Toggle -->
+			<Button
+				variant="ghost"
+				size="icon"
+				on:click={toggleTheme}
+				class="relative h-9 w-9"
+				aria-label="Toggle theme"
+			>
+				<div class="absolute inset-0 flex items-center justify-center transition-transform duration-300 {isDark ? 'rotate-0 scale-100' : 'rotate-90 scale-0'}">
+					<Sun class="h-4 w-4" />
+				</div>
+				<div class="absolute inset-0 flex items-center justify-center transition-transform duration-300 {isDark ? 'rotate-90 scale-0' : 'rotate-0 scale-100'}">
+					<Moon class="h-4 w-4" />
+				</div>
+			</Button>
+
 			{#if $isAuthenticated && $currentUser}
 				<!-- User info and role indicator -->
 				<div class="hidden md:flex items-center space-x-2 text-sm text-muted-foreground">
 					<User class="h-4 w-4" />
 					<span>{$currentUser.name || $currentUser.email}</span>
-					{#if $currentUser.role === 'admin'}
+					{#if $currentUser.role === 'administrator'}
 						<span class="px-2 py-1 bg-primary/20 text-primary rounded-full text-xs font-medium">
 							Admin
 						</span>
@@ -65,7 +106,7 @@
 				
 				<!-- Dashboard button -->
 				<Button variant="outline" on:click={handleDashboard}>
-					{#if $currentUser.role === 'admin'}
+					{#if $currentUser.role === 'administrator'}
 						<Settings class="h-4 w-4 mr-2" />
 						Admin Panel
 					{:else}

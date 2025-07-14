@@ -5,7 +5,6 @@
 	import ProtectedRoute from '$lib/components/auth/ProtectedRoute.svelte';
 	import MobileNavbar from '$lib/components/MobileNavbar.svelte';
 	import PublicHeader from '$lib/components/PublicHeader.svelte';
-	import ThemeToggle from '$lib/components/ThemeToggle.svelte';
 	import StatusFooter from '$lib/components/StatusFooter.svelte';
 	import { initPocketBase, isAuthenticated } from '$lib/stores';
 	import { Toaster } from 'svelte-sonner';
@@ -37,12 +36,11 @@
 </script>
 
 <svelte:head>
-	<title>Affinity - Massage Parlor Management</title>
+	<title>TimeIt - Massage Parlor Management</title>
 </svelte:head>
 
 {#if appLoaded}
 	<div class="min-h-screen bg-gradient-to-br from-muted/40 via-muted/60 to-primary/20 dark:from-muted/60 dark:via-muted/80 dark:to-primary/30">
-		<ThemeToggle />
 		{#if shouldShowProtected}
 			<ProtectedRoute>
 				<MobileNavbar />
@@ -71,7 +69,7 @@
 			<div class="w-16 h-16 bg-gradient-to-br from-primary to-primary/70 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg animate-pulse">
 				<span class="text-primary-foreground font-bold text-2xl">A</span>
 			</div>
-			<div class="text-lg font-medium text-foreground mb-2">Loading Affinity...</div>
+			<div class="text-lg font-medium text-foreground mb-2">Loading TimeIt...</div>
 			<div class="w-8 h-8 border-4 border-primary/30 border-t-primary rounded-full animate-spin mx-auto"></div>
 		</div>
 	</div>

@@ -1,7 +1,7 @@
-// Affinity PWA Service Worker
-const CACHE_NAME = 'affinity-v1';
-const STATIC_CACHE = 'affinity-static-v1';
-const DYNAMIC_CACHE = 'affinity-dynamic-v1';
+// TimeIt PWA Service Worker
+const CACHE_NAME = 'TimeIt-v1';
+const STATIC_CACHE = 'TimeIt-static-v1';
+const DYNAMIC_CACHE = 'TimeIt-dynamic-v1';
 
 // Files to cache immediately (excluding dynamic HTML pages)
 const STATIC_FILES = [

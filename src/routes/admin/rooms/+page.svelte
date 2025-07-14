@@ -202,7 +202,7 @@
 </script>
 
 <svelte:head>
-  <title>Room Management - Admin - Affinity</title>
+  <title>Room Management - Admin - TimeIt</title>
 </svelte:head>
 
 <div class="space-y-6">

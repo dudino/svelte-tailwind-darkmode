@@ -168,7 +168,7 @@ Write-Host "Creating demo users..." -ForegroundColor Yellow
 # Demo users to create
 $demoUsers = @(
     @{
-        email = "admin@affinity.com"
+        email = "admin@TimeIt.com"
         password = "admin123"
         passwordConfirm = "admin123"
         name = "System Administrator"
@@ -177,7 +177,7 @@ $demoUsers = @(
         emailVisibility = $true
     },
     @{
-        email = "operator@affinity.com"
+        email = "operator@TimeIt.com"
         password = "operator123"
         passwordConfirm = "operator123"
         name = "Massage Operator"
@@ -186,7 +186,7 @@ $demoUsers = @(
         emailVisibility = $true
     },
     @{
-        email = "user@affinity.com"
+        email = "user@TimeIt.com"
         password = "user123"
         passwordConfirm = "user123"
         name = "Regular User"
@@ -213,7 +213,7 @@ Write-Host "Testing authentication..." -ForegroundColor Yellow
 
 # Test authentication with admin user
 $authTest = @{
-    identity = "admin@affinity.com"
+    identity = "admin@TimeIt.com"
     password = "admin123"
 }
 
@@ -229,9 +229,9 @@ Write-Host ""
 Write-Host "PocketBase setup completed!" -ForegroundColor Green
 Write-Host ""
 Write-Host "Demo Login Credentials:" -ForegroundColor Yellow
-Write-Host "  Admin:    admin@affinity.com    / admin123" -ForegroundColor White
-Write-Host "  Operator: operator@affinity.com / operator123" -ForegroundColor White
-Write-Host "  User:     user@affinity.com     / user123" -ForegroundColor White
+Write-Host "  Admin:    admin@TimeIt.com    / admin123" -ForegroundColor White
+Write-Host "  Operator: operator@TimeIt.com / operator123" -ForegroundColor White
+Write-Host "  User:     user@TimeIt.com     / user123" -ForegroundColor White
 Write-Host ""
 Write-Host "Test your app at: http://localhost:5173/login" -ForegroundColor Cyan
 Write-Host "PocketBase Admin: http://localhost:8090/_/" -ForegroundColor Cyan

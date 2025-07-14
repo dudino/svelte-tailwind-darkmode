@@ -28,8 +28,8 @@
       return;
     }
 
-    if ($userRole !== 'administrator') {
-      // Non-administrators get redirected to home
+    if ($userRole !== 'administrator' && $userRole !== 'operator') {
+      // Non-administrators and non-operators get redirected to home
       goto('/');
       return;
     }
@@ -43,7 +43,7 @@
     if (!loading) {
       if (!$isAuthenticated) {
         goto(`/login?redirect=${encodeURIComponent($page.url.pathname)}`);
-      } else if ($userRole !== 'administrator') {
+      } else if ($userRole !== 'administrator' && $userRole !== 'operator') {
         goto('/');
       }
     }
@@ -57,14 +57,14 @@
       <p class="text-muted-foreground">Verifying access...</p>
     </div>
   </div>
-{:else if hasAccess && $isAuthenticated && $userRole === 'administrator'}
+{:else if hasAccess && $isAuthenticated && ($userRole === 'administrator' || $userRole === 'operator')}
   <div class="admin-layout">
-    <div class="admin-header bg-gradient-to-r from-primary/20 to-primary/10 border-b mb-6 p-4 rounded-lg">
+    <div class="admin-header mt-16 bg-gradient-to-r from-primary/20 to-primary/10 border-b mb-6 p-4 rounded-lg">
       <div class="flex items-center justify-between">
         <div>
           <h1 class="text-2xl font-bold text-primary flex items-center gap-2">
             <Shield class="h-6 w-6" />
-            Administrator Panel
+            {$userRole === 'administrator' ? 'Administrator Panel' : 'Management Panel'}
           </h1>
           <p class="text-sm text-muted-foreground mt-1">
             Manage your application settings, users, and system configuration

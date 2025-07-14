@@ -1,6 +1,6 @@
 {
-	"name": "Affinity - Massage Parlor PWA",
-	"short_name": "Affinity",
+	"name": "TimeIt - Massage Parlor PWA",
+	"short_name": "TimeIt",
 	"description": "Professional massage scheduling and management application",
 	"start_url": "/",
 	"display": "standalone",
@@ -94,14 +94,14 @@
 			"sizes": "1280x720",
 			"type": "image/png",
 			"form_factor": "wide",
-			"label": "Affinity Desktop Application"
+			"label": "TimeIt Desktop Application"
 		},
 		{
 			"src": "/screenshot-mobile.png",
 			"sizes": "375x812",
 			"type": "image/png",
 			"form_factor": "narrow",
-			"label": "Affinity Mobile Application"
+			"label": "TimeIt Mobile Application"
 		}
 	]
 }
