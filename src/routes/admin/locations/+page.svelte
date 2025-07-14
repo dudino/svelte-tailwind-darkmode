@@ -5,7 +5,6 @@
 
 <script lang="ts">
   import { onMount } from 'svelte';
-  import { MapPin, Building } from 'lucide-svelte';
   import { getPocketBaseClient } from '$lib/stores/authStore';
   import { 
     locations,
@@ -23,7 +22,7 @@
   import LocationDetailModal from '$lib/components/admin/LocationDetailModal.svelte';
   import ConfirmDialog from '$lib/components/ui/ConfirmDialog.svelte';
   import Button from '$lib/components/ui/button/button.svelte';
-  import { Plus, MapPin, Eye, Edit, Trash2 } from 'lucide-svelte';
+  import { Plus, MapPin, Eye, Edit, Trash2, Building } from 'lucide-svelte';
 
   // Local state for UI
   let searchTerm = '';

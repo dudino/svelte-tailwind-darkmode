@@ -11,6 +11,7 @@
   import Label from '$lib/components/ui/label/label.svelte';
   import Textarea from '$lib/components/ui/textarea/textarea.svelte';
   import { getPocketBaseClient, getCurrentUser } from '$lib/stores/authStore';
+  import { formatDateForInput } from '$lib/utils/dateUtils';
   
   export let show = false;
   export let schedule: any = null;
@@ -54,7 +55,7 @@
       location_id: schedule.location_id || '',
       service_id: schedule.service_id || '',
       user_id: schedule.user_id || '',
-      date: schedule.date || '',
+      date: formatDateForInput(schedule.date),
       start_time: schedule.start_time || '',
       end_time: schedule.end_time || '',
       is_active: schedule.is_active !== false

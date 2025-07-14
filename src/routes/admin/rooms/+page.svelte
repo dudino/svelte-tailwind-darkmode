@@ -209,7 +209,10 @@
   <!-- Header -->
   <div class="flex items-center justify-between">
     <div>
-      <h1 class="text-3xl font-bold">Room Management</h1>
+      <h1 class="text-3xl font-bold flex items-center gap-2">
+        <Building class="h-8 w-8 text-primary" />
+        Room Management
+      </h1>
       <p class="text-muted-foreground mt-1">Manage rooms and their amenities</p>
     </div>
     <Button on:click={handleCreateRoom} class="flex items-center gap-2">

@@ -2,7 +2,7 @@
     import Button from '$lib/components/ui/button/button.svelte';
     import LanguageSelector from '$lib/components/LanguageSelector.svelte';
     import ThemeToggle from '$lib/components/ThemeToggle.svelte';
-    import { Palette, Globe } from 'lucide-svelte';
+    import { Palette, Globe, Bell, Shield } from 'lucide-svelte';
 </script>
 
 <svelte:head>

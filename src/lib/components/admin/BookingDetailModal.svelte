@@ -263,16 +263,16 @@
               </h3>
               <div class="space-y-1">
                 <p><span class="font-medium">Name:</span> 
-                  {getLocationDisplayName(booking.expand?.location_id)}
-                  {#if booking.expand?.location_id && !booking.expand?.location_id?.is_active}
+                  {getLocationDisplayName(booking.expand?.room_id?.expand?.location_id)}
+                  {#if booking.expand?.room_id?.expand?.location_id && !booking.expand?.room_id?.expand?.location_id?.is_active}
                     <span class="text-xs bg-red-100 text-red-800 px-2 py-1 rounded ml-2">Inactive</span>
                   {/if}
                 </p>
-                {#if booking.expand?.location_id?.address}
-                  <p><span class="font-medium">Address:</span> {booking.expand?.location_id?.address}</p>
+                {#if booking.expand?.room_id?.expand?.location_id?.address}
+                  <p><span class="font-medium">Address:</span> {booking.expand?.room_id?.expand?.location_id?.address}</p>
                 {/if}
-                {#if booking.expand?.location_id?.city}
-                  <p><span class="font-medium">City:</span> {booking.expand?.location_id?.city}</p>
+                {#if booking.expand?.room_id?.expand?.location_id?.city}
+                  <p><span class="font-medium">City:</span> {booking.expand?.room_id?.expand?.location_id?.city}</p>
                 {/if}
               </div>
             </div>

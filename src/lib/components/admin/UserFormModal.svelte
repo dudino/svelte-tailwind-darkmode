@@ -24,6 +24,7 @@
   import Textarea from '$lib/components/ui/textarea/textarea.svelte';
   import { createUser, updateUser } from '$lib/stores/userManagementStore';
   import type { UserRole } from '$lib/types/user';
+  import { formatDateForInput } from '$lib/utils/dateUtils';
   
   export let show = false;
   export let user: any = null;
@@ -106,7 +107,7 @@
       contact_details: {
         firstName: user.contact_details?.firstName || '',
         lastName: user.contact_details?.lastName || '',
-        dateOfBirth: user.contact_details?.dateOfBirth || '',
+        dateOfBirth: formatDateForInput(user.contact_details?.dateOfBirth),
         idNumber: user.contact_details?.idNumber || '',
         streetName: user.contact_details?.streetName || '',
         houseNumber: user.contact_details?.houseNumber || '',

@@ -518,7 +518,7 @@
 <ConfirmDialog
   bind:show={showDeleteConfirm}
   title="Delete Schedule"
-  message="Are you sure you want to delete this schedule? This action cannot be undone."
+  description="Are you sure you want to delete this schedule? This action cannot be undone."
   confirmText="Delete"
   confirmVariant="destructive"
   on:confirm={confirmDeleteSchedule}

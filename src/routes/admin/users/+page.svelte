@@ -15,7 +15,8 @@
     UserCheck,
     UserX,
     Download,
-    Upload
+    Upload,
+    Users
   } from 'lucide-svelte';
   import Button from '$lib/components/ui/button/button.svelte';
   import Input from '$lib/components/ui/input/input.svelte';
@@ -173,7 +174,10 @@
   <!-- Header -->
   <div class="flex items-center justify-between">
     <div>
-      <h1 class="text-3xl font-bold">User Management</h1>
+      <h1 class="text-3xl font-bold flex items-center gap-2">
+        <Users class="h-8 w-8 text-primary" />
+        User Management
+      </h1>
       <p class="text-muted-foreground mt-1">Manage users, roles, and permissions</p>
     </div>
     <Button on:click={handleCreateUser} class="flex items-center gap-2">

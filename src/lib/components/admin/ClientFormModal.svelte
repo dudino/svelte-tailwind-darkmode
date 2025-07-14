@@ -11,6 +11,7 @@
   import Label from '$lib/components/ui/label/label.svelte';
   import Textarea from '$lib/components/ui/textarea/textarea.svelte';
   import { getPocketBaseClient, getCurrentUser } from '$lib/stores/authStore';
+  import { formatDateForInput } from '$lib/utils/dateUtils';
   
   export let show = false;
   export let client: any = null;
@@ -106,7 +107,7 @@
       first_name: client.first_name || '',
       last_name: client.last_name || '',
       email: client.email || '',
-      date_of_birth: client.date_of_birth || '',
+      date_of_birth: formatDateForInput(client.date_of_birth),
       preferred_language: client.preferred_language || '',
       description: client.description || '',
       is_blocked: client.is_blocked || false,
@@ -194,7 +195,7 @@
         emergency_contact_phone: formData.emergency_contact_phone?.trim() || null,
         medical_notes: formData.medical_notes?.trim() || null,
         preferences: formData.preferences?.trim() || null,
-        status: formData.status,
+        is_blocked: formData.status,
         created_by: currentUser?.id
       };
 

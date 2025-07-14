@@ -13,7 +13,8 @@
     Settings,
     Eye,
     Clock,
-    DollarSign
+    DollarSign,
+    Briefcase
   } from 'lucide-svelte';
   import Button from '$lib/components/ui/button/button.svelte';
   import Input from '$lib/components/ui/input/input.svelte';
@@ -200,7 +201,10 @@
   <!-- Header -->
   <div class="flex items-center justify-between">
     <div>
-      <h1 class="text-3xl font-bold">Service Management</h1>
+      <h1 class="text-3xl font-bold flex items-center gap-2">
+        <Briefcase class="h-8 w-8 text-primary" />
+        Service Management
+      </h1>
       <p class="text-muted-foreground mt-1">Manage available services and pricing</p>
     </div>
     <Button on:click={handleCreateService} class="flex items-center gap-2">

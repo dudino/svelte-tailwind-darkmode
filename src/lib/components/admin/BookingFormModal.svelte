@@ -11,6 +11,7 @@
   import Label from '$lib/components/ui/label/label.svelte';
   import Textarea from '$lib/components/ui/textarea/textarea.svelte';
   import { getPocketBaseClient, getCurrentUser } from '$lib/stores/authStore';
+  import { formatDateForInput } from '$lib/utils/dateUtils';
   
   export let show = false;
   export let booking: any = null;
@@ -34,7 +35,7 @@
     end_time: string;
     status: string;
     notes: string;
-    price: number;
+    price: string;
   } = {
     client_id: '',
     service_id: '',
@@ -46,7 +47,7 @@
     end_time: '',
     status: 'pending',
     notes: '',
-    price: 0
+    price: '0'
   };
 
   let loading = false;
@@ -62,6 +63,27 @@
     }
   }
 
+  // Update location when room is selected, but only if no location is set
+  // or when explicitly clearing the room selection
+  $: {
+    if (formData.room_id && !formData.location_id) {
+      const selectedRoom = rooms.find(room => room.id === formData.room_id);
+      if (selectedRoom) {
+        formData.location_id = selectedRoom.location_id;
+      }
+    }
+  }
+
+  // Clear room selection when location changes to ensure rooms match location
+  $: {
+    if (formData.location_id && formData.room_id) {
+      const selectedRoom = rooms.find(room => room.id === formData.room_id);
+      if (selectedRoom && selectedRoom.location_id !== formData.location_id) {
+        formData.room_id = '';
+      }
+    }
+  }
+
   // Status options
   const statusOptions = [
     { value: 'pending', label: 'Pending' },
@@ -72,18 +94,20 @@
 
   // Reactive updates when booking prop changes
   $: if (booking) {
+    // Get location from room relationship
+    const roomLocation = booking.expand?.room_id?.location_id || '';
     formData = {
       client_id: booking.client_id || '',
       service_id: booking.service_id || '',
-      location_id: booking.location_id || '',
+      location_id: roomLocation,
       room_id: booking.room_id || '',
       user_id: booking.user_id || '',
-      date: booking.date || '',
+      date: formatDateForInput(booking.date),
       start_time: booking.start_time || '',
       end_time: booking.end_time || '',
       status: booking.status || 'pending',
       notes: booking.notes || '',
-      price: booking.price || 0
+      price: booking.price?.toString() || '0'
     };
   } else {
     // Reset form for new booking
@@ -98,7 +122,7 @@
       end_time: '',
       status: 'pending',
       notes: '',
-      price: 0
+      price: '0'
     };
   }
 
@@ -133,7 +157,7 @@
     if (formData.service_id) {
       const selectedService = services.find(s => s.id === formData.service_id);
       if (selectedService?.price) {
-        formData.price = selectedService.price;
+        formData.price = selectedService.price.toString();
       }
     }
   }
@@ -150,8 +174,8 @@
       if (!formData.service_id) {
         throw new Error('Service is required');
       }
-      if (!formData.location_id) {
-        throw new Error('Location is required');
+      if (!formData.room_id) {
+        throw new Error('Room is required');
       }
       if (!formData.user_id) {
         throw new Error('Staff member is required');
@@ -178,19 +202,18 @@
 
       const currentUser = getCurrentUser();
       
-      // Prepare booking data
+      // Prepare booking data - remove location_id since it comes through room
       const bookingData = {
         client_id: formData.client_id,
         service_id: formData.service_id,
-        location_id: formData.location_id,
-        room_id: formData.room_id || null,
+        room_id: formData.room_id,
         user_id: formData.user_id,
         date: formData.date,
         start_time: formData.start_time,
         end_time: formData.end_time,
         status: formData.status,
         notes: formData.notes?.trim() || null,
-        price: formData.price || null,
+        price: formData.price ? parseFloat(formData.price) : null,
         created_by: currentUser?.id
       };
 
@@ -307,13 +330,14 @@
             </div>
 
             <div>
-              <Label for="room_id">Room (Optional)</Label>
+              <Label for="room_id">Room *</Label>
               <select 
                 id="room_id"
                 bind:value={formData.room_id}
                 class="w-full px-3 py-2 border rounded-md bg-background"
+                required
               >
-                <option value="">No specific room</option>
+                <option value="">Select room...</option>
                 {#each filteredRooms as room}
                   <option value={room.id}>{room.name}</option>
                 {/each}
@@ -400,13 +424,14 @@
           <!-- Price -->
           <div>
             <Label for="price">Price (CZK)</Label>
-            <Input 
+            <input
               id="price"
               type="number"
               bind:value={formData.price}
               min="0"
               step="10"
               placeholder="Service price will be auto-filled"
+              class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
             />
           </div>
 

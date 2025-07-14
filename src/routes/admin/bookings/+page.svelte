@@ -77,7 +77,8 @@
   }
 
   // Helper function to get location display name
-  function getLocationDisplayName(location: any): string {
+  function getLocationDisplayName(booking: any): string {
+    const location = booking.expand?.room_id?.expand?.location_id;
     if (!location) return 'No location';
     if (!location.name) return 'Location name missing';
     return location.name;
@@ -87,13 +88,13 @@
   $: {
     filteredBookings = bookings.filter(booking => {
       const clientName = getClientDisplayName(booking.expand?.client_id);
-      const locationName = getLocationDisplayName(booking.expand?.location_id);
+      const locationName = getLocationDisplayName(booking);
       const matchesSearch = !searchTerm || 
         clientName.toLowerCase().includes(searchTerm.toLowerCase()) ||
         booking.expand?.service_id?.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
         locationName.toLowerCase().includes(searchTerm.toLowerCase());
       
-      const matchesLocation = !filterLocation || booking.location_id === filterLocation;
+      const matchesLocation = !filterLocation || booking.expand?.room_id?.expand?.location_id?.id === filterLocation;
       const matchesService = !filterService || booking.service_id === filterService;
       const matchesUser = !filterUser || booking.user_id === filterUser;
       const matchesStatus = !filterStatus || booking.status === filterStatus;
@@ -133,7 +134,7 @@
 
       const records = await pb.collection('bookings').getFullList({
         sort: '-created',
-        expand: 'location_id,service_id,user_id,client_id,room_id'
+        expand: 'service_id,user_id,client_id,room_id,room_id.location_id'
       });
       
       bookings = records;
@@ -150,10 +151,9 @@
       const pb = getPocketBaseClient();
       if (!pb) throw new Error('PocketBase client not available');
 
-      // Load only active locations for filter dropdown
+      // Load all locations (including inactive ones) for proper expansion of booking data
       const records = await pb.collection('locations').getFullList({
-        sort: 'name',
-        filter: 'is_active = true'
+        sort: 'name'
       });
       
       locations = records;
@@ -167,9 +167,9 @@
       const pb = getPocketBaseClient();
       if (!pb) throw new Error('PocketBase client not available');
 
+      // Load all services (including inactive ones) for proper expansion of booking data
       const records = await pb.collection('services').getFullList({
-        sort: 'name',
-        filter: 'is_active = true'
+        sort: 'name'
       });
       
       services = records;
@@ -183,9 +183,9 @@
       const pb = getPocketBaseClient();
       if (!pb) throw new Error('PocketBase client not available');
 
+      // Load all users (including inactive ones) for proper expansion of booking data
       const records = await pb.collection('users').getFullList({
-        sort: 'name',
-        filter: 'is_active = true'
+        sort: 'name'
       });
       
       users = records;
@@ -376,7 +376,7 @@
           class="w-full px-3 py-2 border rounded-md bg-background"
         >
           <option value="">All Locations</option>
-          {#each locations as location}
+          {#each locations.filter(loc => loc.is_active) as location}
             <option value={location.id}>{location.name}</option>
           {/each}
         </select>
@@ -393,7 +393,7 @@
           class="w-full px-3 py-2 border rounded-md bg-background"
         >
           <option value="">All Services</option>
-          {#each services as service}
+          {#each services.filter(svc => svc.is_active) as service}
             <option value={service.id}>{service.name}</option>
           {/each}
         </select>
@@ -410,7 +410,7 @@
           class="w-full px-3 py-2 border rounded-md bg-background"
         >
           <option value="">All Staff</option>
-          {#each users as user}
+          {#each users.filter(usr => usr.is_active) as user}
             <option value={user.id}>{user.name || user.email}</option>
           {/each}
         </select>
@@ -534,8 +534,8 @@
                   <div>
                     <div class="flex items-center gap-1 text-sm">
                       <MapPin class="h-3 w-3 text-muted-foreground" />
-                      {getLocationDisplayName(booking.expand?.location_id)}
-                      {#if booking.expand?.location_id && !booking.expand?.location_id?.is_active}
+                      {getLocationDisplayName(booking)}
+                      {#if booking.expand?.room_id?.expand?.location_id && !booking.expand?.room_id?.expand?.location_id?.is_active}
                         <span class="text-xs bg-red-100 text-red-800 px-1 py-0.5 rounded ml-1">Inactive</span>
                       {/if}
                     </div>

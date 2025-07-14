@@ -7,13 +7,17 @@
   import { onMount } from 'svelte';
   import { goto } from '$app/navigation';
   import { page } from '$app/stores';
-  import { currentUser, isAuthenticated, userRole } from '$lib/stores/authStore';
+  import { currentUser, isAuthenticated, userRole, logout } from '$lib/stores/authStore';
   import Button from '$lib/components/ui/button/button.svelte';
   import { Shield, AlertTriangle } from 'lucide-svelte';
 
   let { children } = $props();
   let loading = $state(true);
   let hasAccess = $state(false);
+
+  function handleLogout() {
+    logout();
+  }
 
   onMount(async () => {
     // Wait a bit for auth store to initialize
@@ -62,15 +66,18 @@
             <Shield class="h-6 w-6" />
             Administrator Panel
           </h1>
-          <p class="text-muted-foreground mt-1">
-            Logged in as: {$currentUser?.name || 'Administrator'} 
+          <p class="text-sm text-muted-foreground mt-1">
+            Manage your application settings, users, and system configuration
+          </p>
+          <p class="text-muted-foreground mt-2">
+            Logged in as: <span class="font-bold">{$currentUser?.name || 'Administrator'}</span>
             <span class="text-xs bg-primary/10 text-primary px-2 py-1 rounded ml-2">
               {$userRole}
             </span>
           </p>
         </div>
-        <Button href="/" variant="outline" size="sm">
-          ← Back to Site
+        <Button on:click={handleLogout} variant="outline" size="sm">
+          Logout
         </Button>
       </div>
     </div>

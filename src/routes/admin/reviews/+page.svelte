@@ -45,8 +45,8 @@
 
   // Related data
   let clients: any[] = [];
-  let services: any[] = [];
-  let locations: any[] = [];
+  let bookings: any[] = [];
+  let users: any[] = [];
 
   // Modals
   let showFormModal = false;
@@ -109,15 +109,23 @@
       const pb = getPocketBaseClient();
       if (!pb) return;
 
-      const [clientsResult, servicesResult, locationsResult] = await Promise.all([
-        pb.collection('clients').getList(1, 100, { fields: 'id,name,email' }),
-        pb.collection('services').getList(1, 100, { fields: 'id,name' }),
-        pb.collection('locations').getList(1, 100, { fields: 'id,name' })
+      const [clientsResult, bookingsResult, usersResult] = await Promise.all([
+        pb.collection('clients').getList(1, 200, { 
+          fields: 'id,nickname,first_name,last_name,email',
+          expand: 'client_id'
+        }),
+        pb.collection('bookings').getList(1, 200, { 
+          fields: 'id,booking_number,client_id',
+          expand: 'client_id'
+        }),
+        pb.collection('users').getList(1, 100, { 
+          fields: 'id,name,email'
+        })
       ]);
 
       clients = clientsResult.items;
-      services = servicesResult.items;
-      locations = locationsResult.items;
+      bookings = bookingsResult.items;
+      users = usersResult.items;
     } catch (err) {
       console.error('Error loading related data:', err);
     }
@@ -528,8 +536,8 @@
   bind:show={showFormModal}
   review={selectedReview}
   {clients}
-  {services}
-  {locations}
+  {bookings}
+  {users}
   on:saved={handleFormSaved}
 />
 

@@ -113,9 +113,10 @@
 
       if (clientIds.length > 0) {
         try {
-          // Get all bookings for these clients
+          // Get all bookings for these clients using proper OR syntax
+          const filterConditions = clientIds.map(id => `client_id = "${id}"`);
           const allBookings = await pb.collection('bookings').getFullList({
-            filter: `client_id ~ "${clientIds.join('|')}"`,
+            filter: filterConditions.join(' || '),
             fields: 'client_id'
           });
 

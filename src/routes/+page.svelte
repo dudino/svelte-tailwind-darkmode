@@ -20,9 +20,6 @@
 
 	<!-- Public landing page with welcome section -->
 	<div class="space-y-12 relative container mx-auto px-4 py-8">
-		<!-- Welcome Section for Translation Demo -->
-		<WelcomeSection />
-		
 		<!-- Hero Section with enhanced styling -->
 		<section class="text-center py-16 relative">
 			<div class="absolute inset-0 -z-10 overflow-hidden">
