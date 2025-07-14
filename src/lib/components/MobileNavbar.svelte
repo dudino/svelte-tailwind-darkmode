@@ -1,14 +1,15 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-
 	import { currentUser, isAuthenticated } from '$lib/stores';
 	import Button from '$lib/components/ui/button/button.svelte';
 	import ThemeToggle from './ThemeToggle.svelte';
 	import LanguageSelector from './LanguageSelector.svelte';
-	import UserProfile from './auth/UserProfile.svelte';
 	import { 
-		Menu, X, Home, User, Settings, Info, Calendar, 
-		Users, MapPin, FileText, Star, BarChart3, Building
+		Menu, X, User, Settings, Calendar, 
+		Users, MapPin, FileText, Star, Building,
+
+		Key
+
 	} from 'lucide-svelte';
 
 	let isOpen = false;
@@ -55,7 +56,7 @@
 		if (!role) return [];
 
 		const baseItems = [
-			{ href: '/', icon: Home, labelKey: 'Dashboard', show: true }
+			{ href: '/login', icon: Key, labelKey: 'Login', show: true }
 		];
 
 		switch (role) {
@@ -74,10 +75,10 @@
 
 			case 'operator':
 				return [
-					{ href: '/operator/schedules', icon: Calendar, labelKey: 'Schedules', show: true },
-					{ href: '/operator/bookings', icon: FileText, labelKey: 'Bookings', show: true },
-					{ href: '/operator/clients', icon: User, labelKey: 'Clients', show: true },
-					{ href: '/operator/reviews', icon: Star, labelKey: 'Reviews', show: true }
+					{ href: '/admin/schedules', icon: Calendar, labelKey: 'Schedules', show: true },
+					{ href: '/admin/bookings', icon: FileText, labelKey: 'Bookings', show: true },
+					{ href: '/admin/clients', icon: User, labelKey: 'Clients', show: true },
+					{ href: '/admin/reviews', icon: Star, labelKey: 'Reviews', show: true }
 				];
 
 			case 'user':
@@ -97,12 +98,16 @@
 	<!-- Mobile Header -->
 	<div class="flex items-center justify-between p-4">
 		<!-- Logo/Brand with enhanced styling -->
-		<div class="flex items-center space-x-3 cursor-pointer hover:opacity-80 transition-opacity" on:click={() => window.location.href = '/'}>
+		<button 
+			type="button"
+			class="flex items-center space-x-3 cursor-pointer hover:opacity-80 transition-opacity" 
+			on:click={() => window.location.href = '/'}
+		>
 			<div class="w-10 h-10 bg-gradient-to-br from-primary to-primary/70 rounded-xl flex items-center justify-center shadow-lg">
 				<span class="text-primary-foreground font-bold text-lg">A</span>
 			</div>
 			<span class="text-xl font-bold gradient-text">App</span>
-		</div>
+		</button>
 
 		<!-- Desktop Navigation with glass effect -->
 		<div class="hidden md:flex md:items-center md:space-x-8">
@@ -116,10 +121,9 @@
 
 		<!-- Right side actions -->
 		<div class="flex items-center space-x-2">
-			{#if $isAuthenticated}
-				<UserProfile />
+			{#if !$isAuthenticated}
+				<LanguageSelector />
 			{/if}
-			<LanguageSelector />
 			<ThemeToggle />
 			{#if $isAuthenticated}
 				<Button on:click={toggleMenu} variant="ghost" size="icon" class="md:hidden">

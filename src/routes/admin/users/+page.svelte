@@ -301,8 +301,8 @@
                     {/if}
                     <div>
                       <p class="font-medium">{user.name || 'No name'}</p>
-                      {#if user.phone}
-                        <p class="text-sm text-muted-foreground">{user.phone}</p>
+                      {#if (user as any).phone}
+                        <p class="text-sm text-muted-foreground">{(user as any).phone}</p>
                       {/if}
                     </div>
                   </div>
@@ -311,17 +311,17 @@
                   <span class="text-sm">{user.email}</span>
                 </td>
                 <td class="px-4 py-3">
-                  <span class="inline-flex px-2 py-1 text-xs font-medium rounded-full {getRoleBadgeClass(user.role)}">
-                    {user.role}
+                  <span class="inline-flex px-2 py-1 text-xs font-medium rounded-full {getRoleBadgeClass((user as any).role || 'user')}">
+                    {(user as any).role || 'user'}
                   </span>
                 </td>
                 <td class="px-4 py-3">
-                  <span class="inline-flex px-2 py-1 text-xs font-medium rounded-full {getStatusBadgeClass(user.is_active ?? false)}">
-                    {user.is_active ? 'Active' : 'Inactive'}
+                  <span class="inline-flex px-2 py-1 text-xs font-medium rounded-full {getStatusBadgeClass((user as any).is_active ?? false)}">
+                    {(user as any).is_active ? 'Active' : 'Inactive'}
                   </span>
                 </td>
                 <td class="px-4 py-3 text-sm text-muted-foreground">
-                  {formatDate(user.last_login_at)}
+                  {formatDate((user as any).last_login_at)}
                 </td>
                 <td class="px-4 py-3">
                   <div class="flex items-center gap-1">
@@ -359,7 +359,7 @@
       {#if totalPages > 1}
         <div class="flex items-center justify-between px-4 py-3 border-t">
           <div class="text-sm text-muted-foreground">
-            Showing {(currentPage - 1) * itemsPerPage + 1} to {Math.min(currentPage * itemsPerPage, filteredUsers.length)} of {filteredUsers.length} users
+            Showing {(currentPage - 1) * itemsPerPage + 1} to {Math.min(currentPage * itemsPerPage, $filteredUsers.length)} of {$filteredUsers.length} users
           </div>
           <div class="flex items-center gap-2">
             <Button
@@ -402,7 +402,7 @@
 <UserFormModal 
   bind:show={showUserForm}
   bind:user={editingUser}
-  on:saved={loadUsers}
+  on:saved={() => usersActions.loadUsers()}
 />
 
 <!-- User Detail Modal -->

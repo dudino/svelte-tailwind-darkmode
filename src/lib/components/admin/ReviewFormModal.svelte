@@ -5,9 +5,9 @@
 
 <script lang="ts">
   import { createEventDispatcher } from 'svelte';
-  import { X, Save, Star, MessageSquare, User, Settings, MapPin } from 'lucide-svelte';
-  import Button from '$lib/components/ui/button/button.svelte';
-  import Input from '$lib/components/ui/input/input.svelte';
+  import { Star, MessageSquare, User, Settings, MapPin } from 'lucide-svelte';
+  import BaseFormModal from '$lib/components/BaseFormModal.svelte';
+  import StarRating from '$lib/components/StarRating.svelte';
   import Label from '$lib/components/ui/label/label.svelte';
   import Textarea from '$lib/components/ui/textarea/textarea.svelte';
   import { getPocketBaseClient, getCurrentUser } from '$lib/stores/authStore';
@@ -79,7 +79,6 @@
   }
 
   $: isEditing = !!review?.id;
-  $: modalTitle = isEditing ? 'Edit Review' : 'Create New Review';
 
   function handleClose() {
     show = false;
@@ -90,10 +89,6 @@
     if (event.key === 'Escape') {
       handleClose();
     }
-  }
-
-  function renderStars(rating: number): string {
-    return '★'.repeat(rating) + '☆'.repeat(5 - rating);
   }
 
   async function handleSubmit() {
@@ -146,168 +141,139 @@
 </script>
 
 <!-- Modal Backdrop -->
-{#if show}
-  <div 
-    class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4" 
-    role="dialog" 
-    aria-modal="true" 
-    aria-labelledby="modal-title"
-    tabindex="-1"
-    on:click={handleClose}
-    on:keydown={handleBackdropKeydown}
-  >
-    <div 
-      class="bg-card rounded-lg border shadow-lg w-full max-w-2xl max-h-[90vh] overflow-hidden" 
-      role="presentation"
-      on:click|stopPropagation
-      on:keydown|stopPropagation
-    >
-      <!-- Header -->
-      <div class="flex items-center justify-between p-6 border-b">
-        <h2 id="modal-title" class="text-xl font-semibold flex items-center gap-2">
-          <Star class="h-5 w-5 text-primary" />
-          {modalTitle}
-        </h2>
-        <Button variant="ghost" size="sm" on:click={handleClose}>
-          <X class="h-4 w-4" />
-        </Button>
+<BaseFormModal 
+  bind:show 
+  title={isEditing ? 'Edit Review' : 'Create New Review'}
+  {isEditing}
+  {loading}
+  {error}
+  icon={Star}
+  on:close={handleClose}
+  on:submit={handleSubmit}
+>
+  <div class="space-y-4">
+    <!-- Client Selection -->
+    <div>
+      <Label for="client_id">Client *</Label>
+      <div class="relative">
+        <User class="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+        <select 
+          id="client_id"
+          bind:value={formData.client_id}
+          class="w-full pl-10 pr-3 py-2 border rounded-md bg-background"
+          required
+        >
+          <option value="">Select client...</option>
+          {#each clients as client}
+            <option value={client.id}>{client.nickname || client.first_name || client.email}</option>
+          {/each}
+        </select>
+      </div>
+    </div>
+
+    <!-- Service and Location (Optional) -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div>
+        <Label for="service_id">Service (Optional)</Label>
+        <div class="relative">
+          <Settings class="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <select 
+            id="service_id"
+            bind:value={formData.service_id}
+            class="w-full pl-10 pr-3 py-2 border rounded-md bg-background"
+          >
+            <option value="">No specific service</option>
+            {#each services as service}
+              <option value={service.id}>{service.name}</option>
+            {/each}
+          </select>
+        </div>
       </div>
 
-      <!-- Content -->
-      <div class="p-6 overflow-y-auto max-h-[70vh]">
-        {#if error}
-          <div class="bg-destructive/10 border border-destructive/20 rounded-lg p-3 mb-4">
-            <p class="text-destructive text-sm">{error}</p>
-          </div>
-        {/if}
-
-        <div class="space-y-4">
-          <!-- Client Selection -->
-          <div>
-            <Label for="client_id">Client *</Label>
-            <div class="relative">
-              <User class="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-              <select 
-                id="client_id"
-                bind:value={formData.client_id}
-                class="w-full pl-10 pr-3 py-2 border rounded-md bg-background"
-                required
-              >
-                <option value="">Select client...</option>
-                {#each clients as client}
-                  <option value={client.id}>{client.nickname || client.first_name || client.email}</option>
-                {/each}
-              </select>
-            </div>
-          </div>
-
-          <!-- Service and Location (Optional) -->
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <Label for="service_id">Service (Optional)</Label>
-              <div class="relative">
-                <Settings class="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                <select 
-                  id="service_id"
-                  bind:value={formData.service_id}
-                  class="w-full pl-10 pr-3 py-2 border rounded-md bg-background"
-                >
-                  <option value="">No specific service</option>
-                  {#each services as service}
-                    <option value={service.id}>{service.name}</option>
-                  {/each}
-                </select>
-              </div>
-            </div>
-
-            <div>
-              <Label for="location_id">Location (Optional)</Label>
-              <div class="relative">
-                <MapPin class="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                <select 
-                  id="location_id"
-                  bind:value={formData.location_id}
-                  class="w-full pl-10 pr-3 py-2 border rounded-md bg-background"
-                >
-                  <option value="">No specific location</option>
-                  {#each locations as location}
-                    <option value={location.id}>{location.name}</option>
-                  {/each}
-                </select>
-              </div>
-            </div>
-          </div>
-
-          <!-- Rating -->
-          <div>
-            <Label for="rating">Rating *</Label>
-            <div class="space-y-3">
-              <select 
-                id="rating"
-                bind:value={formData.rating}
-                class="w-full px-3 py-2 border rounded-md bg-background"
-                required
-              >
-                {#each ratingOptions as option}
-                  <option value={option.value}>{option.label}</option>
-                {/each}
-              </select>
-              
-              <!-- Visual Star Display -->
-              <div class="flex items-center gap-2">
-                <span class="text-sm text-muted-foreground">Preview:</span>
-                <span class="text-2xl text-yellow-400">
-                  {renderStars(formData.rating)}
-                </span>
-                <span class="text-sm text-muted-foreground">
-                  ({formData.rating}/5)
-                </span>
-              </div>
-            </div>
-          </div>
-
-          <!-- Comment -->
-          <div>
-            <Label for="comment">Review Comment *</Label>
-            <div class="relative">
-              <MessageSquare class="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-              <Textarea 
-                id="comment"
-                bind:value={formData.comment}
-                placeholder="Write the review comment here..."
-                class="pl-10"
-                rows={4}
-                required
-              />
-            </div>
-            <div class="text-xs text-muted-foreground mt-1">
-              {formData.comment?.length || 0} characters
-            </div>
-          </div>
-
-          <!-- Status -->
-          <div>
-            <Label for="status">Status</Label>
-            <select 
-              id="status"
-              bind:value={formData.status}
-              class="w-full px-3 py-2 border rounded-md bg-background"
-            >
-              {#each statusOptions as option}
-                <option value={option.value}>{option.label}</option>
-              {/each}
-            </select>
-            <div class="text-xs text-muted-foreground mt-1">
-              {#if formData.status === 'published'}
-                This review will be visible to all users.
-              {:else if formData.status === 'pending'}
-                This review is awaiting approval.
-              {:else if formData.status === 'hidden'}
-                This review will not be visible to users.
-              {/if}
-            </div>
-          </div>
+      <div>
+        <Label for="location_id">Location (Optional)</Label>
+        <div class="relative">
+          <MapPin class="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <select 
+            id="location_id"
+            bind:value={formData.location_id}
+            class="w-full pl-10 pr-3 py-2 border rounded-md bg-background"
+          >
+            <option value="">No specific location</option>
+            {#each locations as location}
+              <option value={location.id}>{location.name}</option>
+            {/each}
+          </select>
         </div>
+      </div>
+    </div>
+
+    <!-- Rating -->
+    <div>
+      <Label for="rating">Rating *</Label>
+      <div class="space-y-3">
+        <select 
+          id="rating"
+          bind:value={formData.rating}
+          class="w-full px-3 py-2 border rounded-md bg-background"
+          required
+        >
+          {#each ratingOptions as option}
+            <option value={option.value}>{option.label}</option>
+          {/each}
+        </select>
+        
+        <!-- Visual Star Display -->
+        <div class="flex items-center gap-2">
+          <span class="text-sm text-muted-foreground">Preview:</span>
+          <StarRating rating={formData.rating} size="lg" />
+        </div>
+      </div>
+    </div>
+
+    <!-- Comment -->
+    <div>
+      <Label for="comment">Review Comment *</Label>
+      <div class="relative">
+        <MessageSquare class="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+        <Textarea 
+          id="comment"
+          bind:value={formData.comment}
+          placeholder="Write the review comment here..."
+          class="pl-10"
+          rows={4}
+          required
+        />
+      </div>
+      <div class="text-xs text-muted-foreground mt-1">
+        {formData.comment?.length || 0} characters
+      </div>
+    </div>
+
+    <!-- Status -->
+    <div>
+      <Label for="status">Status</Label>
+      <select 
+        id="status"
+        bind:value={formData.status}
+        class="w-full px-3 py-2 border rounded-md bg-background"
+      >
+        {#each statusOptions as option}
+          <option value={option.value}>{option.label}</option>
+        {/each}
+      </select>
+      <div class="text-xs text-muted-foreground mt-1">
+        {#if formData.status === 'published'}
+          This review will be visible to all users.
+        {:else if formData.status === 'pending'}
+          This review is awaiting approval.
+        {:else if formData.status === 'hidden'}
+          This review will not be visible to users.
+        {/if}
+      </div>
+    </div>
+  </div>
+</BaseFormModal>
       </div>
 
       <!-- Footer -->

@@ -5,20 +5,18 @@
 
 <script lang="ts">
   import { onMount } from 'svelte';
+  import Button from '$lib/components/ui/button/button.svelte';
   import { 
     Plus, 
     Search, 
-    Filter, 
     Users, 
     Eye, 
     Edit, 
     Trash2,
     Mail,
     Phone,
-    Calendar,
-    MapPin
+    FileText
   } from 'lucide-svelte';
-  import Button from '$lib/components/ui/button/button.svelte';
   import Input from '$lib/components/ui/input/input.svelte';
   import Label from '$lib/components/ui/label/label.svelte';
   import ClientFormModal from '$lib/components/admin/ClientFormModal.svelte';
@@ -90,11 +88,11 @@
       const filterConditions = [];
 
       if (searchTerm) {
-        filterConditions.push(`(name ~ "${searchTerm}" || email ~ "${searchTerm}" || phone ~ "${searchTerm}")`);
+        filterConditions.push(`(nickname ~ "${searchTerm}" || first_name ~ "${searchTerm}" || last_name ~ "${searchTerm}" || email ~ "${searchTerm}" || phone_number ~ "${searchTerm}")`);
       }
 
       if (statusFilter !== 'all') {
-        filterConditions.push(`status = "${statusFilter}"`);
+        filterConditions.push(`is_blocked = ${statusFilter === 'active' ? 'false' : 'true'}`);
       }
 
       if (filterConditions.length > 0) {
@@ -106,11 +104,38 @@
 
       const result = await pb.collection('clients').getList(currentPage, itemsPerPage, {
         filter: filter,
-        sort: sortString,
-        expand: 'bookings_via_client_id(count)'
+        sort: sortString
       });
 
-      clients = result.items;
+      // Get booking counts for all clients in a single query
+      const clientIds = result.items.map((client: any) => client.id);
+      let bookingCounts: { [key: string]: number } = {};
+
+      if (clientIds.length > 0) {
+        try {
+          // Get all bookings for these clients
+          const allBookings = await pb.collection('bookings').getFullList({
+            filter: `client_id ~ "${clientIds.join('|')}"`,
+            fields: 'client_id'
+          });
+
+          // Count bookings per client
+          bookingCounts = allBookings.reduce((acc: { [key: string]: number }, booking: any) => {
+            acc[booking.client_id] = (acc[booking.client_id] || 0) + 1;
+            return acc;
+          }, {});
+        } catch (err) {
+          console.warn('Failed to get booking counts:', err);
+        }
+      }
+
+      // Add booking counts to clients
+      const clientsWithCounts = result.items.map((client: any) => ({
+        ...client,
+        booking_count: bookingCounts[client.id] || 0
+      }));
+
+      clients = clientsWithCounts;
       totalItems = result.totalItems;
     } catch (err) {
       error = err instanceof Error ? err.message : 'Failed to load clients';
@@ -380,8 +405,19 @@
                   </span>
                 </td>
                 <td class="p-4">
-                  <div class="text-sm">
-                    {client.expand?.['bookings_via_client_id(count)'] || 0} bookings
+                  <div class="flex items-center gap-2">
+                    <div class="flex items-center gap-1 text-sm">
+                      <FileText class="h-3 w-3 text-muted-foreground" />
+                      <span class="font-medium">{client.booking_count || 0}</span>
+                      <span class="text-muted-foreground">
+                        {(client.booking_count || 0) === 1 ? 'booking' : 'bookings'}
+                      </span>
+                    </div>
+                    {#if (client.booking_count || 0) > 0}
+                      <span class="inline-flex items-center px-2 py-1 text-xs font-medium bg-primary/10 text-primary rounded-full">
+                        Active
+                      </span>
+                    {/if}
                   </div>
                 </td>
                 <td class="p-4">
