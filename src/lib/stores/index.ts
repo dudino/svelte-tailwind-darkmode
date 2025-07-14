@@ -63,3 +63,29 @@ export {
   clearSyncQueue,
   clearAllSyncPendingFlags
 } from './syncStore';
+
+// User Schedule Store
+export {
+  schedules,
+  locations,
+  rooms,
+  selectedWeek,
+  loading as scheduleLoading,
+  refreshing as scheduleRefreshing,
+  weekStart,
+  weekEnd,
+  weekDays,
+  schedulesByDate,
+  loadLocationsAndRooms,
+  loadSchedules,
+  createSchedule,
+  addScheduleOptimistically,
+  refreshSchedulesWithExpanded,
+  navigateWeek,
+  goToCurrentWeek,
+  getSchedulesForDate,
+  getLocationName,
+  getRoomName,
+  getScheduleStatus,
+  initializeUserSchedule
+} from './userScheduleStore';

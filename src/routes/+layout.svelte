@@ -8,6 +8,7 @@
 	import ThemeToggle from '$lib/components/ThemeToggle.svelte';
 	import StatusFooter from '$lib/components/StatusFooter.svelte';
 	import { initPocketBase, isAuthenticated } from '$lib/stores';
+	import { Toaster } from 'svelte-sonner';
 
 	// Import debug utilities in development
 	import '$lib/utils/debugUtils';
@@ -59,6 +60,9 @@
 		
 		<!-- Status Footer - shown on all pages when authenticated -->
 		<StatusFooter />
+		
+		<!-- Toast Notifications -->
+		<Toaster />
 	</div>
 {:else}
 	<!-- Loading state while app initializes -->

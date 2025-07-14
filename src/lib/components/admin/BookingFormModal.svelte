@@ -25,6 +25,7 @@
 
   // Form data with proper typing
   let formData: {
+    booking_number: string;
     client_id: string;
     service_id: string;
     location_id: string;
@@ -33,10 +34,13 @@
     date: string;
     start_time: string;
     end_time: string;
-    status: string;
-    notes: string;
+    duration_minutes: number;
+    is_confirmed: boolean;
+    pin_code: string;
+    special_requests: string;
     price: string;
   } = {
+    booking_number: '',
     client_id: '',
     service_id: '',
     location_id: '',
@@ -45,8 +49,10 @@
     date: '',
     start_time: '',
     end_time: '',
-    status: 'pending',
-    notes: '',
+    duration_minutes: 0,
+    is_confirmed: false,
+    pin_code: '',
+    special_requests: '',
     price: '0'
   };
 
@@ -84,19 +90,32 @@
     }
   }
 
-  // Status options
-  const statusOptions = [
-    { value: 'pending', label: 'Pending' },
-    { value: 'confirmed', label: 'Confirmed' },
-    { value: 'cancelled', label: 'Cancelled' },
-    { value: 'completed', label: 'Completed' }
-  ];
+  // Auto-calculate duration when times change
+  $: {
+    if (formData.start_time && formData.end_time) {
+      const start = new Date(`2000-01-01T${formData.start_time}`);
+      const end = new Date(`2000-01-01T${formData.end_time}`);
+      const diffMs = end.getTime() - start.getTime();
+      formData.duration_minutes = Math.max(0, Math.floor(diffMs / (1000 * 60)));
+    }
+  }
+
+  // Generate booking number for new bookings
+  function generateBookingNumber(): string {
+    const date = new Date();
+    const year = date.getFullYear().toString().slice(-2);
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    const day = date.getDate().toString().padStart(2, '0');
+    const random = Math.floor(Math.random() * 1000).toString().padStart(3, '0');
+    return `BK${year}${month}${day}${random}`;
+  }
 
   // Reactive updates when booking prop changes
   $: if (booking) {
     // Get location from room relationship
     const roomLocation = booking.expand?.room_id?.location_id || '';
     formData = {
+      booking_number: booking.booking_number || '',
       client_id: booking.client_id || '',
       service_id: booking.service_id || '',
       location_id: roomLocation,
@@ -105,13 +124,16 @@
       date: formatDateForInput(booking.date),
       start_time: booking.start_time || '',
       end_time: booking.end_time || '',
-      status: booking.status || 'pending',
-      notes: booking.notes || '',
+      duration_minutes: booking.duration_minutes || 0,
+      is_confirmed: booking.is_confirmed || false,
+      pin_code: booking.pin_code || '',
+      special_requests: booking.special_requests || '',
       price: booking.price?.toString() || '0'
     };
   } else {
     // Reset form for new booking
     formData = {
+      booking_number: generateBookingNumber(),
       client_id: '',
       service_id: '',
       location_id: '',
@@ -120,8 +142,10 @@
       date: '',
       start_time: '',
       end_time: '',
-      status: 'pending',
-      notes: '',
+      duration_minutes: 0,
+      is_confirmed: false,
+      pin_code: '',
+      special_requests: '',
       price: '0'
     };
   }
@@ -168,6 +192,9 @@
 
     try {
       // Validation
+      if (!formData.booking_number?.trim()) {
+        throw new Error('Booking number is required');
+      }
       if (!formData.client_id) {
         throw new Error('Client is required');
       }
@@ -189,6 +216,9 @@
       if (!formData.end_time) {
         throw new Error('End time is required');
       }
+      if (formData.duration_minutes <= 0) {
+        throw new Error('Duration must be greater than 0 minutes');
+      }
 
       // Validate time range
       const startTime = new Date(`2000-01-01T${formData.start_time}`);
@@ -202,8 +232,9 @@
 
       const currentUser = getCurrentUser();
       
-      // Prepare booking data - remove location_id since it comes through room
+      // Prepare booking data according to PocketBase schema
       const bookingData = {
+        booking_number: formData.booking_number,
         client_id: formData.client_id,
         service_id: formData.service_id,
         room_id: formData.room_id,
@@ -211,8 +242,10 @@
         date: formData.date,
         start_time: formData.start_time,
         end_time: formData.end_time,
-        status: formData.status,
-        notes: formData.notes?.trim() || null,
+        duration_minutes: formData.duration_minutes,
+        is_confirmed: formData.is_confirmed,
+        pin_code: formData.pin_code?.trim() || null,
+        special_requests: formData.special_requests?.trim() || null,
         price: formData.price ? parseFloat(formData.price) : null,
         created_by: currentUser?.id
       };
@@ -271,6 +304,18 @@
         {/if}
 
         <div class="space-y-4">
+          <!-- Booking Number -->
+          <div>
+            <Label for="booking_number">Booking Number *</Label>
+            <Input 
+              id="booking_number"
+              bind:value={formData.booking_number}
+              placeholder="Auto-generated booking number"
+              readonly={!isEditing}
+              required
+            />
+          </div>
+
           <!-- Client and Service -->
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
@@ -345,7 +390,7 @@
             </div>
           </div>
 
-          <!-- Staff and Status -->
+          <!-- Staff and Confirmation -->
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <Label for="user_id">Staff Member *</Label>
@@ -365,17 +410,14 @@
               </div>
             </div>
 
-            <div>
-              <Label for="status">Status</Label>
-              <select 
-                id="status"
-                bind:value={formData.status}
-                class="w-full px-3 py-2 border rounded-md bg-background"
-              >
-                {#each statusOptions as option}
-                  <option value={option.value}>{option.label}</option>
-                {/each}
-              </select>
+            <div class="flex items-center space-x-2 pt-6">
+              <input
+                id="is_confirmed"
+                type="checkbox"
+                bind:checked={formData.is_confirmed}
+                class="rounded border-input"
+              />
+              <Label for="is_confirmed">Confirmed Booking</Label>
             </div>
           </div>
 
@@ -421,27 +463,39 @@
             </div>
           </div>
 
-          <!-- Price -->
-          <div>
-            <Label for="price">Price (CZK)</Label>
-            <input
-              id="price"
-              type="number"
-              bind:value={formData.price}
-              min="0"
-              step="10"
-              placeholder="Service price will be auto-filled"
-              class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-            />
+          <!-- Price and PIN Code -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <Label for="price">Price (CZK)</Label>
+              <input
+                id="price"
+                type="number"
+                bind:value={formData.price}
+                min="0"
+                step="10"
+                placeholder="Service price will be auto-filled"
+                class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+              />
+            </div>
+
+            <div>
+              <Label for="pin_code">PIN Code</Label>
+              <Input 
+                id="pin_code"
+                bind:value={formData.pin_code}
+                placeholder="Optional booking PIN code"
+                maxlength="10"
+              />
+            </div>
           </div>
 
-          <!-- Notes -->
+          <!-- Special Requests -->
           <div>
-            <Label for="notes">Notes</Label>
+            <Label for="special_requests">Special Requests</Label>
             <Textarea 
-              id="notes"
-              bind:value={formData.notes}
-              placeholder="Additional notes for this booking..."
+              id="special_requests"
+              bind:value={formData.special_requests}
+              placeholder="Any special requests or notes for this booking..."
               rows={3}
             />
           </div>
