@@ -89,14 +89,21 @@
 	});
 </script>
 
-<div class="max-w-4xl mx-auto space-y-6">
-	<!-- Header -->
-	<div>
-		<h1 class="text-3xl font-bold gradient-text">My Bookings</h1>
-		<p class="text-muted-foreground mt-1">
-			View all your client bookings and appointments
-		</p>
-	</div>
+<div class="space-y-6">
+	<!-- Bookings Header -->
+	<Card class="p-4">
+		<div class="flex items-center justify-between">
+			<div>
+				<h2 class="text-xl font-bold flex items-center gap-2">
+					<Calendar class="h-5 w-5" />
+					My Bookings
+				</h2>
+				<p class="text-sm text-muted-foreground mt-1">
+					View all your client bookings and appointments
+				</p>
+			</div>
+		</div>
+	</Card>
 
 	{#if loading}
 		<div class="flex items-center justify-center py-12">

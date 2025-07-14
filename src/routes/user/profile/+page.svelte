@@ -13,7 +13,13 @@
 	// State variables
 	let isEditing = false;
 	let loading = false;
-	let formData = {
+	let formData: {
+		name: string;
+		phone: string;
+		email: string;
+		languages: string[];
+		contact_details: Record<string, any>;
+	} = {
 		name: '',
 		phone: '',
 		email: '',
@@ -75,16 +81,16 @@
 			
 			isEditing = false;
 			toast.success('Profile updated successfully');
-		} catch (error) {
+		} catch (error: any) {
 			console.error('Error updating profile:', error);
-			toast.error('Failed to update profile: ' + (error.message || 'Unknown error'));
+			toast.error('Failed to update profile: ' + (error?.message || 'Unknown error'));
 		} finally {
 			loading = false;
 		}
 	}
 
 	// Toggle language selection
-	function toggleLanguage(langValue) {
+	function toggleLanguage(langValue: string) {
 		if (formData.languages.includes(langValue)) {
 			formData.languages = formData.languages.filter(l => l !== langValue);
 		} else {
@@ -93,12 +99,12 @@
 	}
 
 	// Get language label
-	function getLanguageLabel(langValue) {
+	function getLanguageLabel(langValue: string) {
 		return languageOptions.find(l => l.value === langValue)?.label || langValue;
 	}
 
 	// Format date for display
-	function formatDate(dateStr) {
+	function formatDate(dateStr: string | null | undefined) {
 		if (!dateStr) return 'Not set';
 		return new Date(dateStr).toLocaleDateString('en-US', {
 			year: 'numeric',
@@ -117,34 +123,39 @@
 	}
 </script>
 
-<div class="max-w-2xl mx-auto space-y-6">
-	<!-- Header -->
-	<div class="flex items-center justify-between">
-		<div>
-			<h1 class="text-3xl font-bold gradient-text">My Profile</h1>
-			<p class="text-muted-foreground mt-1">
-				Manage your personal information and preferences
-			</p>
+<div class="space-y-6">
+	<!-- Profile Header -->
+	<Card class="p-4">
+		<div class="flex items-center justify-between">
+			<div>
+				<h2 class="text-xl font-bold flex items-center gap-2">
+					<User class="h-5 w-5" />
+					My Profile
+				</h2>
+				<p class="text-sm text-muted-foreground mt-1">
+					Manage your personal information and preferences
+				</p>
+			</div>
+			
+			<div class="flex gap-2">
+				{#if isEditing}
+					<Button variant="outline" on:click={toggleEdit} disabled={loading}>
+						<X class="h-4 w-4 mr-2" />
+						Cancel
+					</Button>
+					<Button on:click={saveProfile} disabled={loading}>
+						<Save class="h-4 w-4 mr-2" />
+						{loading ? 'Saving...' : 'Save'}
+					</Button>
+				{:else}
+					<Button on:click={toggleEdit}>
+						<Edit class="h-4 w-4 mr-2" />
+						Edit Profile
+					</Button>
+				{/if}
+			</div>
 		</div>
-		
-		<div class="flex gap-2">
-			{#if isEditing}
-				<Button variant="outline" on:click={toggleEdit} disabled={loading}>
-					<X class="h-4 w-4 mr-2" />
-					Cancel
-				</Button>
-				<Button on:click={saveProfile} {loading}>
-					<Save class="h-4 w-4 mr-2" />
-					{loading ? 'Saving...' : 'Save'}
-				</Button>
-			{:else}
-				<Button on:click={toggleEdit}>
-					<Edit class="h-4 w-4 mr-2" />
-					Edit Profile
-				</Button>
-			{/if}
-		</div>
-	</div>
+	</Card>
 
 	<!-- Profile Card -->
 	<Card class="p-6">
